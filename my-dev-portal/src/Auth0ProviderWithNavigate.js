@@ -12,8 +12,8 @@ export const Auth0ProviderWithNavigate = ({ children }) => {
 
     return (
         <Auth0Provider
-        domain="dev-zojlepeedyeleun3.us.auth0.com"
-        clientId="VFgqgySNsjhRJCl5DjsU6niftMDxIByT"
+        domain={process.env.REACT_APP_AUTH0_DOMAIN}
+        clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
         authorizationParams={{
             redirect_uri: window.location.origin
         }}

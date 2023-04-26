@@ -124,7 +124,7 @@ app.get("/embed-dash-time-series(/:userId)", function (req, res) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + moesifManagementToken,
+      "Authorization": `Bearer ${moesifManagementToken}`,
     },
     body: JSON.stringify(templateData),
   })
@@ -165,19 +165,13 @@ app.get("/embed-dash-live-event(/:userId)", function (req, res) {
     },
   };
 
-  // Set your desired expiration for the generated workspace token.
-  // Moesif's recommendation is to match or be larger than your user's session time while keeping time period less than 30 days.
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const expiration = tomorrow.toISOString();
-
   const moesif_url_live_event = `${moesifApiEndPoint}/v1/portal/~/workspaces/${templateWorkspaceIdLiveEvent}/access_token?expiration=${expiration}`;
 
   fetch(moesif_url_live_event, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + moesifManagementToken,
+      "Authorization": `Bearer ${moesifManagementToken}`,
     },
     body: JSON.stringify(templateData),
   })
@@ -206,11 +200,6 @@ app.get("/embed-dash-live-event(/:userId)", function (req, res) {
       });
     });
 });
-
-// app.get("/", function (_req, res) {
-//   res.sendFile(path.join(__dirname, "index.html"));
-//   res.sendFile(path.join(__dirname, "index.js"));
-// });
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
