@@ -5,8 +5,6 @@ import { PageLoader } from "../page-loader";
 export default function StripeProducts() {
   const { user, isLoading } = useAuth0();
 
-  console.log(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
-
   if (isLoading) {
     return <PageLoader />;
   }
