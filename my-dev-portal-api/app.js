@@ -70,8 +70,8 @@ app.post("/register", jsonParser, async (req, res) => {
 });
 
 app.post("/create-key", jsonParser, async function (req, res) {
-  console.log("Kong create consumer");
-  console.log(data);
+  console.log("Kong create key");
+  console.log(req);
   // send back a new API key for use
   var response = await fetch(
     `${process.env.KONG_URL}/consumers/${req.body.email}/key-auth`,
@@ -164,6 +164,12 @@ app.get("/embed-dash-live-event(/:userId)", function (req, res) {
       },
     },
   };
+
+    // Set your desired expiration for the generated workspace token.
+  // Moesif's recommendation is to match or be larger than your user's session time while keeping time period less than 30 days.
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const expiration = tomorrow.toISOString();
 
   const moesif_url_live_event = `${moesifApiEndPoint}/v1/portal/~/workspaces/${templateWorkspaceIdLiveEvent}/access_token?expiration=${expiration}`;
 
