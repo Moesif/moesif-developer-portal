@@ -60,6 +60,7 @@ app.post("/register", jsonParser, async (req, res) => {
 
   var body = { username: req.body.email, custom_id: stripe_customer_id };
   console.log(body);
+  
   await fetch(`${process.env.KONG_URL}/consumers/`, {
     method: "post",
     body: JSON.stringify(body),
