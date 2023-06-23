@@ -1,19 +1,11 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useOktaAuth } from "@okta/okta-react";
 import React from "react";
 
 export const SignupButton = () => {
-  const { loginWithRedirect } = useAuth0();
+  const { oktaAuth } = useOktaAuth();
 
   const handleSignUp = async () => {
-    await loginWithRedirect({
-      appState: {
-        returnTo: "/product-select",
-      },
-      authorizationParams: {
-        prompt: "login",
-        screen_hint: "signup",
-      },
-    });
+    await oktaAuth.signInWithRedirect({ originalUri: "/product-select" });
   };
 
   return (

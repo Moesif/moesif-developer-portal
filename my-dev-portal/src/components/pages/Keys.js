@@ -1,7 +1,6 @@
-import React from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import React, { useState } from "react";
+import { useOktaAuth } from "@okta/okta-react";
 import { PageLayout } from "../page-layout";
-import { useState } from "react";
 import Modal from "react-modal";
 
 import { PageLoader } from "../page-loader";
@@ -18,11 +17,36 @@ const customStyles = {
 };
 
 export default function Keys() {
-  const { user, isLoading } = useAuth0();
+  const { authState } = useOktaAuth();
   const [APIKey, setAPIKey] = useState("");
-  const [modalIsOpen, setIsOpen] = React.useState(false);
+  const [modalIsOpen, setIsOpen] = useState(false);
 
   Modal.setAppElement("#root");
+
+  function createKey(email) {
+    fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-key`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to create key");
+        }
+        return res.json();
+      })
+      .then((result) => {
+        console.log(result);
+        setAPIKey(result.apikey);
+        openModal();
+      })
+      .catch((error) => {
+        setAPIKey("Error creating key:", error);
+        openModal();
+      });
+  }
 
   function openModal() {
     setIsOpen(true);
@@ -32,24 +56,15 @@ export default function Keys() {
     setIsOpen(false);
   }
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
+  const handleCreateKey = () => {
+    const email = authState?.accessToken?.claims?.sub;
+    if (email) {
+      createKey(email);
+    }
+  };
 
-  function createKey() {
-    fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-key`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: user.email,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        console.log(result);
-        setAPIKey(result.apikey);
-        openModal();
-      });
+  if (!authState || authState.isPending) {
+    return <PageLoader />;
   }
 
   return (
@@ -58,22 +73,23 @@ export default function Keys() {
         <h2 className="white-text">Keys</h2>
 
         <h4 className="white-text">
-          On this page you can create an API key to access the APIs that are
+          On this page, you can create an API key to access the APIs that are
           protected through key-auth.
         </h4>
 
         <p className="white-text">
           To use the API key, add an <code>apiKey</code> header to your API
-          request with your generated key passed as the value
+          request with the generated key as the value.
         </p>
+
         <p className="white-text">
           <strong>
             Note: Make sure to store the key somewhere safe as you will not be
-            able to retrieve it once you close the modal
+            able to retrieve it once you close the modal.
           </strong>
         </p>
 
-        <button className="button__purp" onClick={() => createKey()}>
+        <button className="button__purp" onClick={handleCreateKey}>
           Create Key
         </button>
 
@@ -86,7 +102,7 @@ export default function Keys() {
           <h2>Your API key is below!</h2>
           <pre className="black-text">{APIKey}</pre>
           <button className="button__purp" onClick={closeModal}>
-            close
+            Close
           </button>
         </Modal>
       </>

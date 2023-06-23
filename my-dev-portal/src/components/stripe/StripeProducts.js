@@ -1,13 +1,15 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useOktaAuth } from "@okta/okta-react";
 import { PageLayout } from "../page-layout";
 import { PageLoader } from "../page-loader";
 
 export default function StripeProducts() {
-  const { user, isLoading } = useAuth0();
+  const { authState } = useOktaAuth();
 
-  if (isLoading) {
+  if (!authState || authState.isPending) {
     return <PageLoader />;
   }
+
+  const user = authState?.idToken?.claims;
 
   return (
     <PageLayout>

@@ -1,17 +1,18 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useOktaAuth } from "@okta/okta-react";
 import React from "react";
 import { LoginButton } from "../../buttons/login-button";
 import { LogoutButton } from "../../buttons/logout-button";
-import { SignupButton } from "../../buttons/signup-button";
+// import { SignupButton } from "../../buttons/signup-button";
 
 export const MobileNavBarButtons = () => {
-  const { isAuthenticated } = useAuth0();
+  const { authState } = useOktaAuth(); 
+  const isAuthenticated = authState?.isAuthenticated;
 
   return (
     <div className="mobile-nav-bar__buttons">
       {!isAuthenticated && (
         <>
-          <SignupButton />
+          {/* <SignupButton /> */}
           <LoginButton />
         </>
       )}

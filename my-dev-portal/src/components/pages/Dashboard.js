@@ -1,15 +1,19 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useOktaAuth } from "@okta/okta-react";
 import { PageLayout } from "../page-layout";
 import { useEffect, useState } from 'react';
 import {
+  useNavigate,
   useSearchParams
 } from "react-router-dom";
 import { PageLoader } from "../page-loader";
 import MoesifEmbeddedTemplate from "../moesif/moesif-embedded-template";
 
 export default function Dashboard() {
-  const { user, isLoading } = useAuth0();
+  const { authState } = useOktaAuth();
+  const isLoading = !authState?.isAuthenticated;
+  const user = authState?.idToken?.claims;
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const checkout_session_id = searchParams.get("checkout-session");
   const [error, setError] = useState();
   const [iFrameSrcLiveEvent, setIFrameSrcLiveEvent] = useState();
@@ -55,10 +59,17 @@ export default function Dashboard() {
         }
       }).then(res => res.json())
       .then(
-        (result) => { fetchEmbedInfo(result.data[0].id); }
+        (result) => { 
+          if(result.data.length < 1) {
+            navigate('/product-select');
+          }
+          else {
+            fetchEmbedInfo(result.data[0].id); 
+          }
+        }
       );
     }
-  }, [isLoading, checkout_session_id, user]);
+  }, [isLoading, navigate, checkout_session_id, user]);
 
   function fetchEmbedInfo(userId) {
     fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/embed-dash-live-event/` + encodeURIComponent(userId))
