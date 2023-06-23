@@ -10,3 +10,4 @@ npm-debug*
 .vscode/
 .devcontainer
 my-dev-portal/.env
+my-dev-portal-api/.env
