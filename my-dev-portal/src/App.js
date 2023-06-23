@@ -1,47 +1,54 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
+import { LoginCallback } from "@okta/okta-react";
 
 import Login from "./components/pages/Login";
 import Dashboard from "./components/pages/Dashboard";
 import Settings from "./components/pages/Settings";
-import { AuthenticationGuard } from "./components/authentication-guard";
 import StripeProducts from "./components/stripe/StripeProducts";
-import { Auth0ProviderWithNavigate } from "./Auth0ProviderWithNavigate";
+import { OktaProviderWithNavigate } from "./OktaProviderWithNavigate";
 import Keys from "./components/pages/Keys";
+import SecureRoute from "./components/okta/SecureRoute";
 
 function App() {
-  const { isAuthenticated } = useAuth0();
+
   return (
     <div className="App">
       <header className="App-header">
         <BrowserRouter>
-          <Auth0ProviderWithNavigate>
+          <OktaProviderWithNavigate>
             <Routes>
               <Route
                 path="/"
-                element={
-                  !isAuthenticated ? (
-                    <Login />
-                  ) : (
-                    <Navigate replace to={"dashboard"} />
-                  )
-                }
+                element={<Login />}
               />
+              <Route path="login/callback" element={<LoginCallback />} />
               <Route path="product-select" element={<StripeProducts />} />
               <Route
                 path="dashboard"
-                element={<AuthenticationGuard component={Dashboard} />}
+                element={
+                  <SecureRoute>
+                    <Dashboard />
+                  </SecureRoute>
+                }
               />
               <Route
                 path="settings"
-                element={<AuthenticationGuard component={Settings} />}
+                element={
+                  <SecureRoute>
+                    <Settings />
+                  </SecureRoute>
+                }
               />
               <Route
                 path="keys"
-                element={<AuthenticationGuard component={Keys} />}
+                element={
+                  <SecureRoute>
+                    <Keys />
+                  </SecureRoute>
+                }
               />
             </Routes>
-          </Auth0ProviderWithNavigate>
+          </OktaProviderWithNavigate>
         </BrowserRouter>
       </header>
     </div>

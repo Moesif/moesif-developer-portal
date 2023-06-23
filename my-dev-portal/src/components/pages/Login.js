@@ -1,12 +1,15 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useOktaAuth } from "@okta/okta-react";
+import { useNavigate } from 'react-router-dom';
 
 import { PageLayout } from "../page-layout";
 import { PageLoader } from "../page-loader";
 
 export default function Login() {
-  const { isLoading } = useAuth0();
+  const { authState } = useOktaAuth();
+  const navigate = useNavigate();
 
-  if (isLoading) {
+  if (authState?.isAuthenticated) {
+    navigate('/dashboard');
     return <PageLoader />;
   }
 
@@ -19,3 +22,4 @@ export default function Login() {
     </PageLayout>
   );
 }
+
