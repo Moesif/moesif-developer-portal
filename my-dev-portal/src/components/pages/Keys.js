@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useOktaAuth } from "@okta/okta-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { PageLayout } from "../page-layout";
 import Modal from "react-modal";
-
 import { PageLoader } from "../page-loader";
 
 const customStyles = {
@@ -18,17 +18,29 @@ const customStyles = {
 
 export default function Keys() {
   const { authState } = useOktaAuth();
+  const { user: auth0User, isLoading: auth0IsLoading } = useAuth0();
   const [APIKey, setAPIKey] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
 
+  let isLoading;
+  let userEmail;
+
+  if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
+    isLoading = authState?.isPending;
+    userEmail = authState?.accessToken?.claims?.sub;
+  } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
+    isLoading = auth0IsLoading;
+    userEmail = auth0User?.email;
+  }
+
   Modal.setAppElement("#root");
 
-  function createKey(email) {
+  function createKey() {
     fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-key`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: email,
+        email: userEmail,
       }),
     })
       .then((res) => {
@@ -56,14 +68,7 @@ export default function Keys() {
     setIsOpen(false);
   }
 
-  const handleCreateKey = () => {
-    const email = authState?.accessToken?.claims?.sub;
-    if (email) {
-      createKey(email);
-    }
-  };
-
-  if (!authState || authState.isPending) {
+  if (isLoading) {
     return <PageLoader />;
   }
 
@@ -71,28 +76,23 @@ export default function Keys() {
     <PageLayout>
       <>
         <h2 className="white-text">Keys</h2>
-
         <h4 className="white-text">
           On this page, you can create an API key to access the APIs that are
           protected through key-auth.
         </h4>
-
         <p className="white-text">
           To use the API key, add an <code>apiKey</code> header to your API
           request with the generated key as the value.
         </p>
-
         <p className="white-text">
           <strong>
             Note: Make sure to store the key somewhere safe as you will not be
             able to retrieve it once you close the modal.
           </strong>
         </p>
-
-        <button className="button__purp" onClick={handleCreateKey}>
+        <button className="button__purp" onClick={createKey}>
           Create Key
         </button>
-
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
