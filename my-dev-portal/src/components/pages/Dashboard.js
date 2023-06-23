@@ -1,3 +1,4 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import { useOktaAuth } from "@okta/okta-react";
 import { PageLayout } from "../page-layout";
 import { useEffect, useState } from 'react';
@@ -10,8 +11,20 @@ import MoesifEmbeddedTemplate from "../moesif/moesif-embedded-template";
 
 export default function Dashboard() {
   const { authState } = useOktaAuth();
-  const isLoading = !authState?.isAuthenticated;
-  const user = authState?.idToken?.claims;
+
+  const { user: auth0User, isLoading: auth0IsLoading } = useAuth0();
+
+  let isLoading;
+  let user;
+
+  if(process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
+    isLoading = !authState?.isAuthenticated;
+    user = authState?.idToken?.claims;
+  } else if(process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
+    isLoading = auth0IsLoading;
+    user = auth0User;
+  }
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const checkout_session_id = searchParams.get("checkout-session");
