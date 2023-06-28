@@ -16,22 +16,13 @@ const customStyles = {
   },
 };
 
-export default function Keys() {
+const KeysWithOkta = () => {
   const { authState } = useOktaAuth();
-  const { user: auth0User, isLoading: auth0IsLoading } = useAuth0();
   const [APIKey, setAPIKey] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
 
-  let isLoading;
-  let userEmail;
-
-  if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
-    isLoading = authState?.isPending;
-    userEmail = authState?.accessToken?.claims?.sub;
-  } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
-    isLoading = auth0IsLoading;
-    userEmail = auth0User?.email;
-  }
+  let isLoading = authState?.isPending;
+  let userEmail = authState?.accessToken?.claims?.sub;
 
   Modal.setAppElement("#root");
 
@@ -52,20 +43,12 @@ export default function Keys() {
       .then((result) => {
         console.log(result);
         setAPIKey(result.apikey);
-        openModal();
+        openModal(setIsOpen);
       })
       .catch((error) => {
         setAPIKey("Error creating key:", error);
-        openModal();
+        openModal(setIsOpen);
       });
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  function closeModal() {
-    setIsOpen(false);
   }
 
   if (isLoading) {
@@ -108,4 +91,97 @@ export default function Keys() {
       </>
     </PageLayout>
   );
+}
+
+const KeysWithAuth0 = () => {
+  const { user: auth0User, isLoading: auth0IsLoading } = useAuth0();
+  const [APIKey, setAPIKey] = useState("");
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  let isLoading = auth0IsLoading;
+  let userEmail = auth0User?.email;
+
+  Modal.setAppElement("#root");
+
+  function createKey() {
+    fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-key`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: userEmail,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to create key");
+        }
+        return res.json();
+      })
+      .then((result) => {
+        console.log(result);
+        setAPIKey(result.apikey);
+        openModal(setIsOpen);
+      })
+      .catch((error) => {
+        setAPIKey("Error creating key:", error);
+        openModal(setIsOpen);
+      });
+  }
+
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
+  return (
+    <PageLayout>
+      <>
+        <h2 className="white-text">Keys</h2>
+        <h4 className="white-text">
+          On this page, you can create an API key to access the APIs that are
+          protected through key-auth.
+        </h4>
+        <p className="white-text">
+          To use the API key, add an <code>apiKey</code> header to your API
+          request with the generated key as the value.
+        </p>
+        <p className="white-text">
+          <strong>
+            Note: Make sure to store the key somewhere safe as you will not be
+            able to retrieve it once you close the modal.
+          </strong>
+        </p>
+        <button className="button__purp" onClick={createKey}>
+          Create Key
+        </button>
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={() => closeModal(setIsOpen)}
+          style={customStyles}
+          contentLabel="API Key"
+        >
+          <h2>Your API key is below!</h2>
+          <pre className="black-text">{APIKey}</pre>
+          <button className="button__purp" onClick={() => closeModal(setIsOpen)}>
+            Close
+          </button>
+        </Modal>
+      </>
+    </PageLayout>
+  );
+}
+
+function openModal(setIsOpen) {
+  setIsOpen(true);
+}
+
+function closeModal(setIsOpen) {
+  setIsOpen(false);
+}
+
+export default function Keys() {
+  if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
+    return <KeysWithOkta />;
+  } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
+    return <KeysWithAuth0 />;
+  }
 }
