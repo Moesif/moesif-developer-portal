@@ -19,12 +19,12 @@ function OktaSettings(props) {
       <PageLayout>
         <div>
           {user.picture && <img src={user.picture} alt={user.name} />}
-          <h2 className="white-text">{user.name}</h2>
+          <h2 className="white-text">{user.name || user.preferred_username}</h2>
         </div>
         <div>
           <button
             className="button__purp"
-            onClick={() => openStripeManagement(user.email)}
+            onClick={() => openStripeManagement(user.email || user.preferred_username)}
           >
             Manage Billing
           </button>
