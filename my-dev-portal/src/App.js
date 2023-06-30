@@ -2,15 +2,17 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginCallback } from "@okta/okta-react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import Login from "./components/pages/Login";
-import Dashboard from "./components/pages/Dashboard";
-import Settings from "./components/pages/Settings";
+import Login from "./components/pages/login/Login";
+import Dashboard from "./components/pages/dashboard/Dashboard";
+import Settings from "./components/pages/settings/Settings";
 import StripeProducts from "./components/stripe/StripeProducts";
 import { OktaProviderWithNavigate } from "./OktaProviderWithNavigate";
 import { Auth0ProviderWithNavigate } from "./Auth0ProviderWithNavigate";
-import Keys from "./components/pages/Keys";
+import Keys from "./components/pages/keys/Keys";
 import SecureRoute from "./components/okta/SecureRoute";
 import { AuthenticationGuard } from "./components/authentication-guard";
+import SignUp from "./components/pages/signup/SignUp";
+import RedirectToSignIn from "./components/pages/signup/OktaPostCreate";
 
 function App() {
   const { isAuthenticated } = useAuth0();
@@ -23,7 +25,9 @@ function App() {
             <OktaProviderWithNavigate>
               <Routes>
                 <Route path="/" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
                 <Route path="login/callback" element={<LoginCallback />} />
+                <Route path="login/oktapostcreate" element={<RedirectToSignIn />} />
                 <Route path="product-select" element={<StripeProducts />} />
                 <Route
                   path="dashboard"
