@@ -1,12 +1,12 @@
 import React from "react";
-import { useOktaAuth } from "@okta/okta-react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from 'react-router-dom';
 
 const SignupButtonWithOkta = () => {
-  const { oktaAuth } = useOktaAuth();
+  const navigate = useNavigate();
 
   const handleSignUp = async () => {
-    await oktaAuth.signInWithRedirect({ originalUri: "/product-select" });
+    navigate('/signup');
   };
 
   return (
