@@ -57,7 +57,7 @@ const OktaDashboard = (props) => {
       )
     }
     else {
-      fetch(`https://api.stripe.com/v1/customers/search?query=${encodeURIComponent(`email:"${user.email}"`)}`, {
+      fetch(`https://api.stripe.com/v1/customers/search?query=${encodeURIComponent(`email:"${user.email || user.preferred_username}"`)}`, {
         headers: {
           'Authorization': process.env.REACT_APP_STRIPE_AUTH_KEY
         }

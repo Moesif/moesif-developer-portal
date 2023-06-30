@@ -20,7 +20,7 @@ const SignUp = () => {
       const response = await fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/okta/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ firstName, lastName, email, password }),
+        body: JSON.stringify({ firstName, lastName, email: email.toLowerCase(), password }),
       });
 
       if (response.ok) {
