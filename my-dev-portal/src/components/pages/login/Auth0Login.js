@@ -1,9 +1,10 @@
+import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import { PageLayout } from "../page-layout";
-import { PageLoader } from "../page-loader";
+import { PageLayout } from "../../page-layout";
+import { PageLoader } from "../../page-loader";
 
-export default function Login() {
+function Auth0Login() {
   const { isLoading } = useAuth0();
 
   if (isLoading) {
@@ -19,3 +20,5 @@ export default function Login() {
     </PageLayout>
   );
 }
+
+export default Auth0Login

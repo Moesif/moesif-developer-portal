@@ -6,6 +6,7 @@ const moesif = require("moesif-nodejs");
 const Stripe = require("stripe");
 var cors = require("cors");
 const fetch = require("node-fetch");
+const { Client } = require('@okta/okta-sdk-nodejs');
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -35,6 +36,74 @@ const moesifMiddleware = moesif({
 });
 
 app.use(moesifMiddleware, cors());
+
+app.post("/okta/register", jsonParser, async (req, res) => {
+  try {
+    const oktaClient = new Client({
+      orgUrl: process.env.OKTA_DOMAIN,
+      token: process.env.OKTA_API_TOKEN,
+    });
+
+      const { firstName, lastName, email, password } = req.body;
+  
+      const newUser = {
+        profile: {
+          firstName,
+          lastName,
+          email,
+          login: email,
+        },
+        credentials: {
+          password: {
+            value: password,
+          },
+        },
+      };
+  
+      const response = await fetch(
+        `${process.env.OKTA_DOMAIN}/api/v1/users`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `SSWS ${process.env.OKTA_API_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newUser),
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to create user");
+      }
+  
+      const createdUser = await response.json();
+  
+      res
+        .status(201)
+        .json({ message: "User created successfully", user: createdUser });
+
+        try {
+          console.log(`URL = ${process.env.OKTA_DOMAIN}/api/v1/apps/${process.env.OKTA_APPLICATION_ID}/users/${createdUser.id}`);
+          const assignUserResponse = await fetch(`${process.env.OKTA_DOMAIN}/api/v1/apps/${process.env.OKTA_APPLICATION_ID}/users/${createdUser.id}`, {
+            method: "PUT",
+            headers: {
+              Authorization: `SSWS ${process.env.OKTA_API_TOKEN}`,
+              "Content-Type": "application/json",
+            },
+          });
+      
+          if (!assignUserResponse.ok) {
+            throw new Error("Failed to assign user to application");
+          }
+          console.log('User assigned to application successfully.');
+        } catch (error) {
+          console.error('Failed to assign user to application:', error.message);
+        }
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ message: "Failed to create user" });
+    }
+});
 
 app.post("/register", jsonParser, async (req, res) => {
   console.log(req);
@@ -116,7 +185,7 @@ app.get("/embed-dash-time-series(/:userId)", function (req, res) {
   // Set your desired expiration for the generated workspace token.
   // Moesif's recommendation is to match or be larger than your user's session time while keeping time period less than 30 days.
   const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setDate(tomorrow.getDate() + 7);
   const expiration = tomorrow.toISOString();
 
   const moesif_url_time_series = `${moesifApiEndPoint}/v1/portal/~/workspaces/${templateWorkspaceIdTimeSeries}/access_token?expiration=${expiration}`;
@@ -165,6 +234,12 @@ app.get("/embed-dash-live-event(/:userId)", function (req, res) {
       },
     },
   };
+
+  // Set your desired expiration for the generated workspace token.
+  // Moesif's recommendation is to match or be larger than your user's session time while keeping time period less than 30 days.
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 7);
+  const expiration = tomorrow.toISOString();
 
   const moesif_url_live_event = `${moesifApiEndPoint}/v1/portal/~/workspaces/${templateWorkspaceIdLiveEvent}/access_token?expiration=${expiration}`;
 
