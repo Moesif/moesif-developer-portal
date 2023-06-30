@@ -1,8 +1,10 @@
 # moesif-developer-portal
 
+This is an open-source developer portal project using Moesif, Stripe, Auth0 or Okta, and Kong as backends to monetize APIs (more backends to come). You can deploy the dev portal so customers can subscribe to your APIs and purchase a plan. This project is a great starting place to quickly build your own developer experience. As an open-source project on GitHub, you can customize the portal to your needs without being worried about lock-in or lack of customization. See guide on [setting up the Moesif Developer Portal](https://www.moesif.com/docs/guides/setting-up-the-moesif-developer-portal/).
+
 In order to set up and use the Moesif Developer Portal, you will need the following:
 
-- An active Auth0 account
+- An active Auth0 or Okta account
 - An active Stripe account
 - An active Moesif account
 - A running Kong instance
@@ -90,6 +92,8 @@ REACT_APP_STRIPE_AUTH_KEY = 'Bearer sk_test_123abc'
 REACT_APP_DEV_PORTAL_API_SERVER = 'http://127.0.0.1:3030'
 REACT_APP_AUTH0_DOMAIN = 'yoururl.us.auth0.com'
 REACT_APP_AUTH0_CLIENT_ID = 'your Auth0 client ID'
+REACT_APP_OKTA_ORG_URL="https://yoururl.okta.com/oauth2/default"
+REACT_APP_OKTA_CLIENT_ID="Your Okta Client ID"
 ```
 
 The only value we need to set in this **.env** file currently is the `REACT_APP_DEV_PORTAL_API_SERVER` value. This should be set to the URL and port where our `my-dev-portal-api` project will be deployed. If you’re running this locally and using the default configuration, this value can stay as it is. If you are running your API project on another URL or port, you can change this value to match.
@@ -105,6 +109,9 @@ MOESIF_MANAGEMENT_TOKEN = 'your Moesif management token'
 MOESIF_TEMPLATE_WORKSPACE_ID_LIVE_EVENT_LOG = 'workspace ID'
 MOESIF_TEMPLATE_WORKSPACE_ID_TIME_SERIES = 'workspace ID'
 KONG_URL = 'http://localhost:8001'
+OKTA_DOMAIN="https://you-okta-url.okta.com/"
+OKTA_API_TOKEN="Okta API Token"
+OKTA_APPLICATION_ID="Okta App/Client Id"
 ```
 
 The only values we need set in this **.env** file currently will be the `KONG_URL` and `MOESIF_APPLICATION_ID`.
@@ -119,11 +126,12 @@ As with the previous **.env** file, All the other values in this file will be fi
 
 Now that We have our endpoints in Kong set up and our base developer portal code pulled down, we can start to get analytics flowing into Moesif from Kong. The Moesif-Kong plugin makes it easy to get API call analytics funneled into Moesif. For instructions on how to do this, you can reference [our integration documentation](https://docs.konghq.com/hub/moesif/kong-plugin-moesif/) or a more in-depth step-by-step approach in [our integration guide](https://www.moesif.com/docs/guides/guide-kong-gateway-integration/).
 
-Once the integration is complete, you should begin to see some API call metrics flowing into Moesif. Even if you are being blocked by the **key-auth** plugin in Kong, the `401 Unauthorized` responses will still show up in Moesif. Once the integration is confirmed, you can move to the next step and create the Auth0 app to be used with the Moesif Developer Portal.
+Once the integration is complete, you should begin to see some API call metrics flowing into Moesif. Even if you are being blocked by the **key-auth** plugin in Kong, the `401 Unauthorized` responses will still show up in Moesif. Once the integration is confirmed, you can move to the next step and create the Auth0 or Okta app to be used with the Moesif Developer Portal.
 
-## Creating the Auth0 App
+## Creating the app within your Identity Provider
+### Creating the Auth0 App (If Using Auth0)
 
-The Moesif Developer Portal is reliant on Auth0 for controlling access and user management. Of course, the open-source code could be tweaked to support other identity providers as well. In the case of the base code though, it leverages Auth0.
+With the Moesif Developer Portal you can use Auth0 for controlling access and user management. Of course, the open-source code could be tweaked to support other identity providers as well. 
 
 To configure Auth0 to work with the portal, you will need to create an **Auth0 Application**. To do this, log into Auth0, and from the left-side menu click on **Applications** and select **Applications**. From the **Applications** page, click the **Create Application** button.
 
@@ -133,7 +141,17 @@ On the next page that appears, select the **Settings** tab. In the settings tab,
 
 Once added, scroll to the bottom of the page and click **Save Changes** to save your application’s settings.
 
-## Adding Auth0 to the Moesif Developer Portal
+### Creating the Okta App (If Using Okta)
+With the Moesif Developer Portal you can use Okta for controlling access and user management. Of course, the open-source code could be tweaked to support other identity providers as well. 
+
+To configure Okta to work with the portal, you will need to create an **Okta Application** for the dev portal. To do this, log into Okta, and from the left-side menu click on **Applications** and select **Applications**. From the **Applications** page, click the **Create App Integration** button.
+
+In the modal that appears, Under **Sign-in method** select the **OIDC - OpenID Connect** option. In the **Application type** selection that appears, select **Single-Page Application** and click **Next**.  
+
+On the next page that appears, fill in the **App integration name** field with a value such as `Developer Portal`. Under **Grant type**, make sure `Authorization Code` and `Refresh Token` are selected. Then, Under the **Sign-in redirect URIs** section, add in the correct values, if you're running this locally, and example value would be `http://127.0.0.1:3000/login/callback`. You'll also want to add a similar value under the **Sign-in redirect URIs**, like `http://127.0.0.1:3000/`. Lastly, under **Assignments**, select `Skip group assignment for now` (unless you want to set this). Once added, scroll to the bottom of the page and click **Save** to save your application’s settings. 
+
+## Adding the Identity Provider to the Moesif Developer Portal
+### Adding Auth0 to the Moesif Developer Portal
 
 In the `my-dev-portal/.env` file, we will add the correct values for both the `REACT_APP_AUTH0_DOMAIN` and `REACT_APP_AUTH0_CLIENT_ID` entries. In the **.env** file, we will replace the following lines:
 
@@ -147,7 +165,32 @@ value under `REACT_APP_AUTH0_DOMAIN` in the **.env** file. Next copy the **Clien
 
 Once both values are added, save the file to make sure the updated values are persisted. Next, we will move on to creating our products in Stripe so that they can be used in the Developer Portal.
 
-## Creating Product in Stripe
+### Adding Okta to the Moesif Developer Portal
+#### For frontend
+In the `my-dev-portal/.env` file, we will add the correct values for both the `REACT_APP_AUTH0_DOMAIN` and `REACT_APP_AUTH0_CLIENT_ID` entries. In the **.env** file, we will replace the following lines:
+
+```shell
+REACT_APP_OKTA_ORG_URL="https://yoururl.okta.com/oauth2/default"
+REACT_APP_OKTA_CLIENT_ID="Your Okta Client ID"
+```
+
+To get these values, in the Okta console, navigate to the **Applications** screen and select the application you are using for the Developer Portal. Copy the **Client ID** value and add it as the value for the `REACT_APP_OKTA_CLIENT_ID` entry in the **.env** file. For the `REACT_APP_OKTA_ORG_URL` you'll use the domain where your Okta app is running and add `/oauth2/default`. IF you're just using a dev instance, the result will be something like `"https://dev-123456.okta.com/oauth2/default`.
+
+Once both values are added, save the file to make sure the updated values are persisted. Next, we will move on to creating our products in Stripe so that they can be used in the Developer Portal.
+
+#### For backend
+In the `my-dev-portal-api/.env` file, we will add the correct values for both the `OKTA_DOMAIN`, `OKTA_API_TOKEN`, and `OKTA_APPLICATION_ID` entries. In the **.env** file, we will replace the following lines:
+
+```shell
+OKTA_DOMAIN="https://you-okta-url.okta.com/"
+OKTA_API_TOKEN="Okta API Token"
+OKTA_APPLICATION_ID="Okta App/Client Id"
+```
+
+First, fill in the `OKTA_DOMAIN` with the same value we used in the `REACT_APP_OKTA_DOMAIN` in the frontend **.env** but without the `/oauth2/default` route attached. Next, generate an API token (as described [here](https://developer.okta.com/docs/guides/create-an-api-token/main/)), and add the value as the `OKTA_API_TOKEN`. Lastly, add the same **Client ID** value we used in the frontend **.env** to the value for `OKTA_APPLICATION_ID`.
+
+Once all three values are added, save the file to make sure the updated values are persisted. Next, we will move on to creating our products in Stripe so that they can be used in the Developer Portal.
+## Creating API Products in Stripe
 
 The next step we will take is to create a product and price in Stripe. It’s best to do this step before you integrate Stripe into Moesif so you’ll already have some pricing plans for Moesif to pull in. A pricing plan can then be associated with specific billing criteria set up within a Billing Meter in Moesif.
 
@@ -385,7 +428,7 @@ Secondly, we will start up our UI project by opening another terminal at the `/m
 npm start
 ```
 
-Once it has started, your browser will open up the Developer Portal on `http://localhost:3000`. Because of how we have Auth0 and Stripe configured, you’ll need to change that to `http://127.0.0.1` so that the platforms will recognize it as a valid URL. After changing the URL in the browser, you can move on to testing the Moesif Developer Portal to make sure all parts are working as expected.
+Once it has started, your browser will open up the Developer Portal on `http://localhost:3000`. Because of how we have Auth0/Okta and Stripe configured, you’ll need to change that to `http://127.0.0.1` so that the platforms will recognize it as a valid URL. After changing the URL in the browser, you can move on to testing the Moesif Developer Portal to make sure all parts are working as expected.
 
 ## Testing out All the Moving Parts of the Moesif Developer Portal
 
@@ -393,9 +436,10 @@ Testing out all of the moving parts of the Developer Portal is crucial to making
 
 To start, navigate to your developer portal in the browser, and at the Home Screen of the Developer Portal click the **Sign Up** button in the top right. On the form that appears, create your user, select a product, and complete the checkout process, and then you should land in the **Dashboard** screen of the Developer Portal. At this point, you can confirm a few things:
 
-In **Auth0**, on the **User Management > Users** screen, you should see your newly created user present, tracked by their email.
-In **Stripe**, on the **Customers** screen, you should also be able to see your newly created user as well, tracked by their email. If you click on the customer, you should also be able to see their subscription. The subscription should match the one selected in the sign-up flow in the Developer Portal
-In **Kong**, under **Consumers**, you should also see your new user added. For this entry, you should also see the **custom_id** field with the Stripe customer ID as well (will resemble `cus_123abc`).
+* If you're using Auth0, In **Auth0**, on the **User Management > Users** screen, you should see your newly created user present, tracked by their email.
+* If you're using Okta, in the Okta console, on the **Directory > People** screen, you should see your newly created user present, tracked by their email.
+* In **Stripe**, on the **Customers** screen, you should also be able to see your newly created user as well, tracked by their email. If you click on the customer, you should also be able to see their subscription. The subscription should match the one selected in the sign-up flow in the Developer Portal
+* In **Kong**, under **Consumers**, you should also see your new user added. For this entry, you should also see the **custom_id** field with the Stripe customer ID as well (will resemble `cus_123abc`).
 
 Next, in the Moesif Developer Portal, click on the **Keys** menu item at the top of the screen and open the **Keys** screen. On the **Keys** screen, click the Create Key button and generate an API key. Next, create an API request in Postman or Insomnia and attach the API key to the header. Once the API request is sent and the response is received, we can confirm a few more things:
 
