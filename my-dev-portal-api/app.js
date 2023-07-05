@@ -144,7 +144,7 @@ app.post("/create-key", jsonParser, async function (req, res) {
   console.log(data);
   // send back a new API key for use
   var response = await fetch(
-    `${process.env.KONG_URL}/consumers/${req.body.email}/key-auth`,
+    `${process.env.KONG_URL}/consumers/${encodeURIComponent(req.body.email)}/key-auth`,
     {
       method: "post",
     }
