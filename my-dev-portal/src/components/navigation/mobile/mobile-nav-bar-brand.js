@@ -8,7 +8,7 @@ export const MobileNavBarBrand = ({ handleClick }) => {
         <img
           className="mobile-nav-bar__logo"
           src="https://static.moesif.com/dist/302ffde161af22cc139df50c9845efac.svg"
-          alt="Auth0 shield logo"
+          alt="Moesif logo"
           width="82"
           height="24"
         />
