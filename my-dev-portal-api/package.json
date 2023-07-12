@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@okta/okta-sdk-nodejs": "^7.0.0",
     "@stripe/stripe-js": "^1.29.0",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
