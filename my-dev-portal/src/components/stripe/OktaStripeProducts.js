@@ -19,7 +19,7 @@ export default function OktaStripeProducts() {
       <stripe-pricing-table
         pricing-table-id={process.env.REACT_APP_STRIPE_PRICING_TABLE_ID}
         publishable-key={process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY}
-        customer-email={user.email}
+        customer-email={user.email || user.preferred_username}
       ></stripe-pricing-table>
     </PageLayout>
   );
