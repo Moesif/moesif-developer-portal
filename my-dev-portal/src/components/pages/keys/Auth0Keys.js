@@ -16,7 +16,7 @@ const customStyles = {
 };
 
 const Auth0Keys = () => {
-  const { user: auth0User, isLoading: auth0IsLoading } = useAuth0();
+  const { user: auth0User, isLoading: auth0IsLoading, getAccessTokenSilently } = useAuth0();
   const [APIKey, setAPIKey] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -25,10 +25,25 @@ const Auth0Keys = () => {
 
   Modal.setAppElement("#root");
 
-  function createKey() {
+  async function createKey() {
+    let token;
+    try {
+      token = await getAccessTokenSilently({
+        audience: `http://127.0.0.1:3030`, // replace with your API identifier
+      });
+
+      console.log(token);
+    } catch(e) {
+      console.error(e);
+      // handle error, return, or throw e
+    }
+
     fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-key`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // Include the access token in the Authorization header
+      },
       body: JSON.stringify({
         email: userEmail,
       }),

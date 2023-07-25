@@ -7,10 +7,12 @@ const Stripe = require("stripe");
 var cors = require("cors");
 const fetch = require("node-fetch");
 const { Client } = require("@okta/okta-sdk-nodejs");
+const { ManagementClient } = require('auth0');
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
 const port = 3030;
+const apimProvider = process.env.APIM_PROVIDER;
 
 const moesifManagementToken = process.env.MOESIF_MANAGEMENT_TOKEN;
 const templateWorkspaceIdLiveEvent =
@@ -109,16 +111,12 @@ app.post("/okta/register", jsonParser, async (req, res) => {
 
 app.post("/register", jsonParser, async (req, res) => {
   try {
-    console.log(req);
-
     const email = req.body.email;
     const stripe_customer_id = req.body.customer_id;
     const stripe_subscription_id = req.body.subscription_id;
 
-    // create user and company in Moesif
     var company = { companyId: stripe_subscription_id };
     moesifMiddleware.updateCompany(company);
-    console.log("Moesif create company");
 
     var user = {
       userId: stripe_customer_id,
@@ -128,17 +126,34 @@ app.post("/register", jsonParser, async (req, res) => {
       },
     };
     moesifMiddleware.updateUser(user);
-    console.log("Moesif create user");
 
-    var body = { username: req.body.email, custom_id: stripe_customer_id };
-    console.log(body);
+    if(apimProvider === "Kong") {
 
-    await fetch(`${process.env.KONG_URL}/consumers/`, {
-      method: "post",
-      body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
-    });
-
+      var body = { username: req.body.email, custom_id: stripe_customer_id };
+      await fetch(`${process.env.KONG_URL}/consumers/`, {
+        method: "post",
+        body: JSON.stringify(body),
+        headers: { "Content-Type": "application/json" },
+      });
+    } else if(apimProvider === "AWS") {
+      const auth0 = new ManagementClient({
+        token: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IklRYlRDY2xHeGU5LUhLUDROUVc2cyJ9.eyJpc3MiOiJodHRwczovL2Rldi16b2psZXBlZWR5ZWxldW4zLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJhd05zcnRXelVCRHpQenNQOEw2TkhybWNNNldoNXBQVUBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9kZXYtem9qbGVwZWVkeWVsZXVuMy51cy5hdXRoMC5jb20vYXBpL3YyLyIsImlhdCI6MTY5MDMxNjM0OCwiZXhwIjoxNjkwNDAyNzQ4LCJhenAiOiJhd05zcnRXelVCRHpQenNQOEw2TkhybWNNNldoNXBQVSIsInNjb3BlIjoicmVhZDpjbGllbnRfZ3JhbnRzIGNyZWF0ZTpjbGllbnRfZ3JhbnRzIGRlbGV0ZTpjbGllbnRfZ3JhbnRzIHVwZGF0ZTpjbGllbnRfZ3JhbnRzIHJlYWQ6dXNlcnMgdXBkYXRlOnVzZXJzIGRlbGV0ZTp1c2VycyBjcmVhdGU6dXNlcnMgcmVhZDp1c2Vyc19hcHBfbWV0YWRhdGEgdXBkYXRlOnVzZXJzX2FwcF9tZXRhZGF0YSBkZWxldGU6dXNlcnNfYXBwX21ldGFkYXRhIGNyZWF0ZTp1c2Vyc19hcHBfbWV0YWRhdGEgcmVhZDp1c2VyX2N1c3RvbV9ibG9ja3MgY3JlYXRlOnVzZXJfY3VzdG9tX2Jsb2NrcyBkZWxldGU6dXNlcl9jdXN0b21fYmxvY2tzIGNyZWF0ZTp1c2VyX3RpY2tldHMgcmVhZDpjbGllbnRzIHVwZGF0ZTpjbGllbnRzIGRlbGV0ZTpjbGllbnRzIGNyZWF0ZTpjbGllbnRzIHJlYWQ6Y2xpZW50X2tleXMgdXBkYXRlOmNsaWVudF9rZXlzIGRlbGV0ZTpjbGllbnRfa2V5cyBjcmVhdGU6Y2xpZW50X2tleXMgcmVhZDpjb25uZWN0aW9ucyB1cGRhdGU6Y29ubmVjdGlvbnMgZGVsZXRlOmNvbm5lY3Rpb25zIGNyZWF0ZTpjb25uZWN0aW9ucyByZWFkOnJlc291cmNlX3NlcnZlcnMgdXBkYXRlOnJlc291cmNlX3NlcnZlcnMgZGVsZXRlOnJlc291cmNlX3NlcnZlcnMgY3JlYXRlOnJlc291cmNlX3NlcnZlcnMgcmVhZDpkZXZpY2VfY3JlZGVudGlhbHMgdXBkYXRlOmRldmljZV9jcmVkZW50aWFscyBkZWxldGU6ZGV2aWNlX2NyZWRlbnRpYWxzIGNyZWF0ZTpkZXZpY2VfY3JlZGVudGlhbHMgcmVhZDpydWxlcyB1cGRhdGU6cnVsZXMgZGVsZXRlOnJ1bGVzIGNyZWF0ZTpydWxlcyByZWFkOnJ1bGVzX2NvbmZpZ3MgdXBkYXRlOnJ1bGVzX2NvbmZpZ3MgZGVsZXRlOnJ1bGVzX2NvbmZpZ3MgcmVhZDpob29rcyB1cGRhdGU6aG9va3MgZGVsZXRlOmhvb2tzIGNyZWF0ZTpob29rcyByZWFkOmFjdGlvbnMgdXBkYXRlOmFjdGlvbnMgZGVsZXRlOmFjdGlvbnMgY3JlYXRlOmFjdGlvbnMgcmVhZDplbWFpbF9wcm92aWRlciB1cGRhdGU6ZW1haWxfcHJvdmlkZXIgZGVsZXRlOmVtYWlsX3Byb3ZpZGVyIGNyZWF0ZTplbWFpbF9wcm92aWRlciBibGFja2xpc3Q6dG9rZW5zIHJlYWQ6c3RhdHMgcmVhZDppbnNpZ2h0cyByZWFkOnRlbmFudF9zZXR0aW5ncyB1cGRhdGU6dGVuYW50X3NldHRpbmdzIHJlYWQ6bG9ncyByZWFkOmxvZ3NfdXNlcnMgcmVhZDpzaGllbGRzIGNyZWF0ZTpzaGllbGRzIHVwZGF0ZTpzaGllbGRzIGRlbGV0ZTpzaGllbGRzIHJlYWQ6YW5vbWFseV9ibG9ja3MgZGVsZXRlOmFub21hbHlfYmxvY2tzIHVwZGF0ZTp0cmlnZ2VycyByZWFkOnRyaWdnZXJzIHJlYWQ6Z3JhbnRzIGRlbGV0ZTpncmFudHMgcmVhZDpndWFyZGlhbl9mYWN0b3JzIHVwZGF0ZTpndWFyZGlhbl9mYWN0b3JzIHJlYWQ6Z3VhcmRpYW5fZW5yb2xsbWVudHMgZGVsZXRlOmd1YXJkaWFuX2Vucm9sbG1lbnRzIGNyZWF0ZTpndWFyZGlhbl9lbnJvbGxtZW50X3RpY2tldHMgcmVhZDp1c2VyX2lkcF90b2tlbnMgY3JlYXRlOnBhc3N3b3Jkc19jaGVja2luZ19qb2IgZGVsZXRlOnBhc3N3b3Jkc19jaGVja2luZ19qb2IgcmVhZDpjdXN0b21fZG9tYWlucyBkZWxldGU6Y3VzdG9tX2RvbWFpbnMgY3JlYXRlOmN1c3RvbV9kb21haW5zIHVwZGF0ZTpjdXN0b21fZG9tYWlucyByZWFkOmVtYWlsX3RlbXBsYXRlcyBjcmVhdGU6ZW1haWxfdGVtcGxhdGVzIHVwZGF0ZTplbWFpbF90ZW1wbGF0ZXMgcmVhZDptZmFfcG9saWNpZXMgdXBkYXRlOm1mYV9wb2xpY2llcyByZWFkOnJvbGVzIGNyZWF0ZTpyb2xlcyBkZWxldGU6cm9sZXMgdXBkYXRlOnJvbGVzIHJlYWQ6cHJvbXB0cyB1cGRhdGU6cHJvbXB0cyByZWFkOmJyYW5kaW5nIHVwZGF0ZTpicmFuZGluZyBkZWxldGU6YnJhbmRpbmcgcmVhZDpsb2dfc3RyZWFtcyBjcmVhdGU6bG9nX3N0cmVhbXMgZGVsZXRlOmxvZ19zdHJlYW1zIHVwZGF0ZTpsb2dfc3RyZWFtcyBjcmVhdGU6c2lnbmluZ19rZXlzIHJlYWQ6c2lnbmluZ19rZXlzIHVwZGF0ZTpzaWduaW5nX2tleXMgcmVhZDpsaW1pdHMgdXBkYXRlOmxpbWl0cyBjcmVhdGU6cm9sZV9tZW1iZXJzIHJlYWQ6cm9sZV9tZW1iZXJzIGRlbGV0ZTpyb2xlX21lbWJlcnMgcmVhZDplbnRpdGxlbWVudHMgcmVhZDphdHRhY2tfcHJvdGVjdGlvbiB1cGRhdGU6YXR0YWNrX3Byb3RlY3Rpb24gcmVhZDpvcmdhbml6YXRpb25zIHVwZGF0ZTpvcmdhbml6YXRpb25zIGNyZWF0ZTpvcmdhbml6YXRpb25zIGRlbGV0ZTpvcmdhbml6YXRpb25zIGNyZWF0ZTpvcmdhbml6YXRpb25fbWVtYmVycyByZWFkOm9yZ2FuaXphdGlvbl9tZW1iZXJzIGRlbGV0ZTpvcmdhbml6YXRpb25fbWVtYmVycyBjcmVhdGU6b3JnYW5pemF0aW9uX2Nvbm5lY3Rpb25zIHJlYWQ6b3JnYW5pemF0aW9uX2Nvbm5lY3Rpb25zIHVwZGF0ZTpvcmdhbml6YXRpb25fY29ubmVjdGlvbnMgZGVsZXRlOm9yZ2FuaXphdGlvbl9jb25uZWN0aW9ucyBjcmVhdGU6b3JnYW5pemF0aW9uX21lbWJlcl9yb2xlcyByZWFkOm9yZ2FuaXphdGlvbl9tZW1iZXJfcm9sZXMgZGVsZXRlOm9yZ2FuaXphdGlvbl9tZW1iZXJfcm9sZXMgY3JlYXRlOm9yZ2FuaXphdGlvbl9pbnZpdGF0aW9ucyByZWFkOm9yZ2FuaXphdGlvbl9pbnZpdGF0aW9ucyBkZWxldGU6b3JnYW5pemF0aW9uX2ludml0YXRpb25zIHJlYWQ6b3JnYW5pemF0aW9uc19zdW1tYXJ5IGNyZWF0ZTphY3Rpb25zX2xvZ19zZXNzaW9ucyBjcmVhdGU6YXV0aGVudGljYXRpb25fbWV0aG9kcyByZWFkOmF1dGhlbnRpY2F0aW9uX21ldGhvZHMgdXBkYXRlOmF1dGhlbnRpY2F0aW9uX21ldGhvZHMgZGVsZXRlOmF1dGhlbnRpY2F0aW9uX21ldGhvZHMgcmVhZDpjbGllbnRfY3JlZGVudGlhbHMgY3JlYXRlOmNsaWVudF9jcmVkZW50aWFscyB1cGRhdGU6Y2xpZW50X2NyZWRlbnRpYWxzIGRlbGV0ZTpjbGllbnRfY3JlZGVudGlhbHMiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMifQ.jbjqG9K30nsw9q0YeUmNuRaTSPBbYNcuWPnnKw6PRdW8wy-7DLdaE_5HS-G_sukXEs9jufPRDdkokYIhCbNCbnVFXoUI6AjLfIqbqzME7GihTjgXKq_8F361186sdnSmOtfJ0dmXOjwlQevBQLpJlqIpjMl1B4thP-_6QVs4CrIcgtmLn4NiZrFOAulVkIuxapaBgI_TAI_kQ3WWnob5qnCs1bsMiTzsupLdaLoZrbb_gVr2iSBd4x0MH3Eg4itMsjVIPn8wZFRUAd3DtJKywR9t6vzLyvZNMVklVax0m1ndJBNizuCJMqjjLBC_zb9XYNFlDJM0oMKD4zDHppL8sA',
+        domain: 'dev-zojlepeedyeleun3.us.auth0.com',
+      });
+    
+      // Find the user in Auth0 by their email
+      const users = await auth0.getUsersByEmail(email);
+      const user = users[0];
+    
+      // Update the user's app_metadata with the stripe customer ID
+      await auth0.updateUser({
+        id: user.user_id}, {
+        app_metadata: { 
+          stripeCustomerId: stripe_customer_id,
+          stripeSubscriptionId: stripe_subscription_id
+        }
+      });
+    }
     res.status(200);
   } catch (error) {
     console.error("Error registering user:", error);
@@ -148,30 +163,42 @@ app.post("/register", jsonParser, async (req, res) => {
 
 app.post("/create-key", jsonParser, async function (req, res) {
   try {
-    console.log("Kong create consumer");
-    console.log(data);
-    // send back a new API key for use
-    var response = await fetch(
-      `${process.env.KONG_URL}/consumers/${encodeURIComponent(
-        req.body.email
-      )}/key-auth`,
-      {
-        method: "post",
-      }
-    );
-    console.log(response);
-    var data = await response.json();
-    console.log("Kong create API key");
-    console.log(data);
-    var kongAPIKey = data.key;
+    const email = req.body.email;
+    var apiKey = "";
 
-    res.status(200);
-    res.send({ apikey: kongAPIKey });
+    if (apimProvider === "Kong") {
+      const response = await fetch(
+        `${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`,
+        {
+          method: "post",
+        }
+      );
+      var data = await response.json();
+      apiKey = data.key;
+      res.status(200);
+      res.send({ apikey: apiKey });
+    } else if (apimProvider === "AWS") {
+
+      var auth0Jwt = req.headers.authorization; // Get the Auth0 JWT from the request
+
+      if (!auth0Jwt) {
+          throw new Error('No authorization header provided');
+      }
+      
+      if (!auth0Jwt.startsWith('Bearer ')) {
+          throw new Error('Invalid authorization header');
+      }
+      
+      auth0Jwt = auth0Jwt.slice(7);
+      res.status(200).send({ apikey: auth0Jwt });
+    
+    }
   } catch (error) {
     console.error("Error creating key:", error);
     res.status(500).json({ message: "Failed to create key" });
   }
 });
+
 
 if (!moesifManagementToken) {
   console.error(
@@ -188,7 +215,6 @@ if (!templateWorkspaceIdLiveEvent) {
 app.get("/embed-dash-time-series(/:userId)", function (req, res) {
   try {
     const userId = req.params.userId;
-    console.log(userId);
     const templateData = {
       template: {
         values: {
@@ -215,7 +241,6 @@ app.get("/embed-dash-time-series(/:userId)", function (req, res) {
     })
       .then((response) => {
         if (response.ok) {
-          console.log(response);
           return response;
         } else {
           console.log("Api call to moesif not successful. server response is:");
@@ -224,11 +249,9 @@ app.get("/embed-dash-time-series(/:userId)", function (req, res) {
         }
       })
       .then((response) => {
-        console.log(response);
         return response.json();
       })
       .then((info) => {
-        console.log(info);
         res.json(info);
       })
       .catch((err) => {
@@ -246,7 +269,6 @@ app.get("/embed-dash-time-series(/:userId)", function (req, res) {
 app.get("/embed-dash-live-event(/:userId)", function (req, res) {
   try {
     const userId = req.params.userId;
-    console.log(userId);
     const templateData = {
       template: {
         values: {
@@ -273,7 +295,6 @@ app.get("/embed-dash-live-event(/:userId)", function (req, res) {
     })
       .then((response) => {
         if (response.ok) {
-          console.log(response);
           return response;
         } else {
           console.log("Api call to moesif not successful. server response is:");
@@ -282,11 +303,9 @@ app.get("/embed-dash-live-event(/:userId)", function (req, res) {
         }
       })
       .then((response) => {
-        console.log(response);
         return response.json();
       })
       .then((info) => {
-        console.log(info);
         res.json(info);
       })
       .catch((err) => {
