@@ -18,7 +18,7 @@ function getKey(header, callback){
   });
 }
 
-exports.handler = function(event, context, callback){
+exports.handler = function(event, _context, callback){
   const token = event.authorizationToken;
   
   console.log(token);
