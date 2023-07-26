@@ -16,7 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.1",
-    "express-jwt": "^5.3.1",
+    "express-jwt": "^6.0.0",
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "moesif-nodejs": "^3.1.14",
