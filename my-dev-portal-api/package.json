@@ -20,7 +20,7 @@
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "moesif-nodejs": "^3.1.14",
-    "node-fetch": "^2.6.5",
+    "node-fetch": "^2.6.7",
     "path": "^0.12.7",
     "stripe": "^8.219.0"
   }
