@@ -6,6 +6,8 @@ import { PageLayout } from "../../page-layout";
 import { PageLoader } from "../../page-loader";
 
 import wfImage from "../../../images/assets/wf-diagram.svg";
+import { SignupButton } from "../../buttons/signup-button";
+import { LoginButton } from "../../buttons/login-button";
 
 function OktaLogin() {
   const { authState } = useOktaAuth();
@@ -22,7 +24,9 @@ function OktaLogin() {
     <PageLayout>
       <div className="login-page">
         <h1>Welcome to Your Custom Dev Portal!</h1>
-        <h2>Sign up or Log in to get started.</h2>
+        <h2>
+          <SignupButton isLink /> or <LoginButton isLink /> to get started.
+        </h2>
         <div className="page-layout__focus">
           <img src={wfImage} width="100%" alt="flow-diagram" />
         </div>

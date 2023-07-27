@@ -140,3 +140,12 @@ button {
     line-height: 1.6rem;
   }
 }
+
+.button__link {
+  border: none;
+  text-decoration: underline;
+  color: inherit;
+  padding-inline: 2px;
+  width: fit-content;
+  background-color: inherit;
+}

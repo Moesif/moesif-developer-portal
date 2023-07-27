@@ -182,3 +182,7 @@ code {
   padding-top: 82px;
   padding-bottom: 95px;
 }
+
+.lowercase {
+  text-transform: lowercase;
+}
