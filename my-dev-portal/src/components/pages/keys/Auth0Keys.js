@@ -30,6 +30,7 @@ const Auth0Keys = () => {
     try {
       token = await getAccessTokenSilently({
         audience: `http://127.0.0.1:3030`, // replace with your API identifier
+        ignoreCache: true,
       });
 
       console.log(token);

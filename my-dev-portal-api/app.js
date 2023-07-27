@@ -153,6 +153,8 @@ app.post("/register", jsonParser, async (req, res) => {
           stripeSubscriptionId: stripe_subscription_id
         }
       });
+
+      auth0.
     }
     res.status(200);
   } catch (error) {
