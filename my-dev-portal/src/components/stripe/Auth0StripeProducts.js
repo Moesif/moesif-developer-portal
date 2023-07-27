@@ -14,15 +14,17 @@ export default function Auth0StripeProducts() {
   }
 
   return (
-    <PageLayout>
+    <PageLayout hideNavTabs>
       <h1>Select Plan</h1>
       <h3>Select a payment plan to finish setting up your account.</h3>
       <div className="page-layout__focus">
-        <stripe-pricing-table
-          pricing-table-id={process.env.REACT_APP_STRIPE_PRICING_TABLE_ID}
-          publishable-key={process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY}
-          customer-email={user.email}
-        ></stripe-pricing-table>
+        <div className="stripe-pricing-table-container">
+          <stripe-pricing-table
+            pricing-table-id={process.env.REACT_APP_STRIPE_PRICING_TABLE_ID}
+            publishable-key={process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY}
+            customer-email={user.email}
+          ></stripe-pricing-table>
+        </div>
       </div>
     </PageLayout>
   );

@@ -8,17 +8,25 @@
   width: 100%;
 }
 
+.page-layout > * {
+  padding-inline: 24px;
+}
+
 .page-layout__content {
   flex: 1;
   flex-basis: auto;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 56px;
-
-  max-width: 120rem;
   width: 100%;
   white-space: pre-wrap;
+}
+
+.page-layout__content > * {
+  width: 100%;
+  max-width: 1200px;
 }
 
 .page-layout__focus {

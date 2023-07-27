@@ -177,7 +177,8 @@ code {
   }
 }
 
-stripe-pricing-table {
+.stripe-pricing-table-container {
+  background-color: white;
   padding-top: 82px;
   padding-bottom: 95px;
 }
