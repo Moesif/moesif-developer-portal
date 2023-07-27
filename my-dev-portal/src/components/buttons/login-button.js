@@ -27,6 +27,7 @@ const LoginButtonWithAuth0 = () => {
       authorizationParams: {
         prompt: "login",
       },
+      scope: 'openid profile email offline_access',
     });
   };
 
