@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@auth0/auth0-react": "^2.0.1",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.2",
     "@okta/okta-auth-js": "^6.9.0",
     "@okta/okta-react": "^6.7.0",
     "@stripe/react-stripe-js": "^2.1.0",

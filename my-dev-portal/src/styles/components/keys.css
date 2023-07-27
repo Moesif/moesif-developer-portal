@@ -1,3 +1,9 @@
+.keys-description {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 .api-key-container {
   display: flex;
 }
@@ -10,6 +16,7 @@
   border-radius: 4px 0 0 4px;
   padding: 8px;
   height: 32px;
+  flex-grow: 1;
 }
 
 .api-key {

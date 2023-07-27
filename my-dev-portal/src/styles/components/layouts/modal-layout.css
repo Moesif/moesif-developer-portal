@@ -1,6 +1,7 @@
 .modal-title {
   margin: 0;
   font-weight: 400;
+  color: var(--moesif-black);
 }
 
 .modal-body {
@@ -11,4 +12,14 @@
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+}
+
+.ReactModal__Overlay {
+  /* override library default */
+  background-color: rgba(39, 47, 52, 0.55) !important;
+}
+
+.ReactModal__Content {
+  min-width: 612px !important;
+  padding: 24px !important;
 }

@@ -1,6 +1,6 @@
 export default function MoesifEmbeddedTemplate(props) {
   return (
-    <>
+    <div className="page-layout__focus">
       <div className="iframeWrapper">
         <iframe
           title="Moesif Live Event Log"
@@ -20,6 +20,6 @@ export default function MoesifEmbeddedTemplate(props) {
         ></iframe>
       </div>
       {props.error}
-    </>
+    </div>
   );
 }

@@ -7,7 +7,8 @@
   box-shadow: rgb(90 95 102) 0-1.5px 0 inset;
 
   z-index: 300;
-  background-color: var(--black);
+  background-color: #191d20;
+  box-shadow: 0px 8px 16px 0px rgba(34, 34, 41, 0.4);
 }
 
 .nav-bar {
@@ -21,7 +22,6 @@
   height: 80px;
   max-width: 1200px;
 
-  padding: 0 24px;
   margin: 0;
 }
 

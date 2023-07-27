@@ -98,6 +98,10 @@ button {
   transition: background 0.3s ease-out, color 0.3s ease-out;
 }
 
+.button__purp {
+  width: 100%;
+}
+
 .button__sign-up {
   min-width: 8.4rem;
 

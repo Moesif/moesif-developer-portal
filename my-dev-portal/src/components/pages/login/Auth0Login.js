@@ -14,11 +14,11 @@ function Auth0Login() {
   return (
     <PageLayout>
       <>
-        <h1 className="white-text">Welcome to Your Custom Dev Portal!</h1>
-        <h3 className="white-text">Sign up or Log in to get started.</h3>
+        <h1>Welcome to Your Custom Dev Portal!</h1>
+        <h2>Sign up or Log in to get started.</h2>
       </>
     </PageLayout>
   );
 }
 
-export default Auth0Login
+export default Auth0Login;

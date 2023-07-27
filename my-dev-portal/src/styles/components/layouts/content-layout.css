@@ -47,3 +47,9 @@
     font-size: 2.4rem;
   }
 }
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}

@@ -24,7 +24,8 @@ function Auth0Settings(props) {
   return (
     isAuthenticated && (
       <PageLayout>
-        <div>
+        <h1>Settings</h1>
+        <div className="user-profile">
           {user.picture && (
             <img
               className="profile-picture"
@@ -32,9 +33,9 @@ function Auth0Settings(props) {
               alt={user.name}
             />
           )}
-          <h2 className="white-text">{user.name}</h2>
+          <h1>{user.name}</h1>
         </div>
-        <div>
+        <div className="page-layout__focus">
           <button
             disabled={!user.email}
             className="button__purp"
