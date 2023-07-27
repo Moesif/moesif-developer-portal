@@ -19,13 +19,6 @@ export const MobileNavBarTabs = ({ handleClick }) => {
 
   return (
     <div className="mobile-nav-bar__tabs">
-      {!isAuthenticated && (
-        <MobileNavBarTab
-          path="/home"
-          label="Home"
-          handleClick={handleClick}
-        />
-      )}
       {isAuthenticated && (
         <>
           <MobileNavBarTab
