@@ -1,5 +1,4 @@
 .nav-bar__container {
-  position: fixed;
   display: flex;
   justify-content: center;
   flex-shrink: 0;

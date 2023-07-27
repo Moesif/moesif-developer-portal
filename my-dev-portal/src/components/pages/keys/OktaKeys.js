@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { useOktaAuth } from "@okta/okta-react";
 import { PageLayout } from "../../page-layout";
 import Modal from "react-modal";
+import SVG from "react-inlinesvg";
+import copy from "copy-to-clipboard";
 import { PageLoader } from "../../page-loader";
+import copyIcon from "../../../images/icons/copy.svg";
+import successIcon from "../../../images/icons/success.svg";
+import apiKeyIcon from "../../../images/icons/api-key.svg";
 
 const customStyles = {
   content: {
@@ -19,6 +24,7 @@ const OktaKeys = () => {
   const { authState } = useOktaAuth();
   const [APIKey, setAPIKey] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   let isLoading = authState?.isPending;
   let userEmail = authState?.accessToken?.claims?.sub;
@@ -53,7 +59,7 @@ const OktaKeys = () => {
   function openModal() {
     setIsOpen(true);
   }
-  
+
   function closeModal() {
     setIsOpen(false);
   }
@@ -89,15 +95,45 @@ const OktaKeys = () => {
           style={customStyles}
           contentLabel="API Key"
         >
-          <h2>Your API key is below!</h2>
-          <pre className="black-text">{APIKey}</pre>
-          <button className="button__purp" onClick={closeModal}>
-            Close
-          </button>
+          <h3 className="modal-title">Copy API Key</h3>
+          <div className="modal-body">
+            <label>Your API Key</label>
+            <div className="api-key-container">
+              <span className="api-key-presentation">
+                <SVG src={apiKeyIcon} />
+                <pre className="api-key">{APIKey}</pre>
+              </span>
+              <button
+                className="copy-button"
+                onClick={() => {
+                  const successfulCopy = copy(APIKey);
+                  if (successfulCopy) {
+                    setIsCopied(true);
+                    setTimeout(() => setIsCopied(false), 3000);
+                  }
+                }}
+              >
+                <SVG
+                  className="icon"
+                  style={{ width: "15px", height: "13.5px" }}
+                  fill="currentcolor"
+                  src={isCopied ? successIcon : copyIcon}
+                />
+              </button>
+            </div>
+          </div>
+          <div className="modal-footer">
+            <button
+              className="button button--outline-secondary"
+              onClick={closeModal}
+            >
+              Close
+            </button>
+          </div>
         </Modal>
       </>
     </PageLayout>
   );
-}
+};
 
-export default OktaKeys
+export default OktaKeys;

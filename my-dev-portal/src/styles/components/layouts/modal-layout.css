@@ -1,0 +1,14 @@
+.modal-title {
+  margin: 0;
+  font-weight: 400;
+}
+
+.modal-body {
+  margin-block: 2.4rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

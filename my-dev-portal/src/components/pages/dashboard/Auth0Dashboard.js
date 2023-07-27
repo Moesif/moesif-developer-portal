@@ -64,7 +64,7 @@ const Auth0Dashboard = (props) => {
         }).then(res => res.json())
         .then(
           (result) => { 
-            fetchEmbedInfo(result.data[0].id, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError); 
+            fetchEmbedInfo(result?.data?.[0]?.id, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError); 
           }
         );
       }

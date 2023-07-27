@@ -68,7 +68,7 @@ const OktaDashboard = (props) => {
             navigate('/product-select');
           }
           else {
-            fetchEmbedInfo(result.data[0].id, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError); 
+            fetchEmbedInfo(result?.data?.[0]?.id, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError); 
           }
         }
       );

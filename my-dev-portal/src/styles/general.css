@@ -8,6 +8,7 @@ html {
   font-size: 10px;
   text-rendering: geometricPrecision;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  color: #d9d9d9;
 }
 
 html,
@@ -21,8 +22,8 @@ body {
 body {
   background-color: var(--black);
 
-  color: var(--white);
   font-family: var(--font-primary);
+  font-size: 1.6rem;
 
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-font-smoothing: antialiased;
@@ -31,14 +32,24 @@ body {
   overflow-y: scroll;
 }
 
+label {
+  display: block;
+  color: #5b676e;
+  font-family: Roboto;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 0.07px;
+  margin-bottom: 6px;
+}
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-secondary);
-  font-weight: 600;
   color: rgba(0, 0, 0, 0.86);
 }
 
@@ -58,14 +69,15 @@ h6 {
 
 h1 {
   font-size: 3.2rem;
+  font-weight: 300;
 }
 
 h2 {
-  font-size: 2.8rem;
+  font-size: 2.4rem;
 }
 
 h3 {
-  font-size: 2.4rem;
+  font-size: 1.8rem;
 }
 
 h4 {

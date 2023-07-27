@@ -13,10 +13,12 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  margin-top: 3.2rem;
 
-  margin-top: 8rem;
   max-width: 120rem;
   width: 100%;
+  background: #212121;
+  padding: 3rem;
 }
 
 @media only screen and (max-width: 640px) {

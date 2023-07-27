@@ -8,7 +8,9 @@ function OktaSettings(props) {
 
   const { openStripeManagement } = props;
 
-  let isLoading = authState?.isPending, isAuthenticated = authState?.isAuthenticated, user = authState?.idToken?.claims;
+  let isLoading = authState?.isPending,
+    isAuthenticated = authState?.isAuthenticated,
+    user = authState?.idToken?.claims;
 
   if (isLoading) {
     return <PageLoader />;
@@ -18,13 +20,21 @@ function OktaSettings(props) {
     isAuthenticated && (
       <PageLayout>
         <div>
-          {user.picture && <img src={user.picture} alt={user.name} />}
+          {user.picture && (
+            <img
+              className="profile-picture"
+              src={user.picture}
+              alt={user.name}
+            />
+          )}
           <h2 className="white-text">{user.name || user.preferred_username}</h2>
         </div>
         <div>
           <button
             className="button__purp"
-            onClick={() => openStripeManagement(user.email || user.preferred_username)}
+            onClick={() =>
+              openStripeManagement(user.email || user.preferred_username)
+            }
           >
             Manage Billing
           </button>
