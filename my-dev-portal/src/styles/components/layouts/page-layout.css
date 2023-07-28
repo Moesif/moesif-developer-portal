@@ -35,6 +35,10 @@
   width: 100%;
 }
 
+.page-layout__focus.dashboards {
+  max-width: 1800px;
+}
+
 @media only screen and (max-width: 640px) {
   .page-layout__content {
     margin-top: 6.4rem;
