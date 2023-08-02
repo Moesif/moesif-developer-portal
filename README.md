@@ -2,6 +2,15 @@
 
 This is an open-source developer portal project using Moesif, Stripe, Auth0 or Okta, and Kong as backends to monetize APIs (more backends to come). You can deploy the dev portal so customers can subscribe to your APIs and purchase a plan. This project is a great starting place to quickly build your own developer experience. As an open-source project on GitHub, you can customize the portal to your needs without being worried about lock-in or lack of customization. See guide on [setting up the Moesif Developer Portal](https://www.moesif.com/docs/guides/setting-up-the-moesif-developer-portal/).
 
+## Production readiness
+
+> This portal is a pre-release project in preview and actively being developed. Before going to production, a few things should be done
+1. Ensure APIs are secured using HTTPS and authentication layer. You can use Kong for this.
+2. Ensuring all keys (like Stripe and Auth0) stored securely in a keystore such as AWS KMS.
+3. Customize the CSS for your brand.
+
+## How to set up
+
 In order to set up and use the Moesif Developer Portal, you will need the following:
 
 - An active Auth0 or Okta account
