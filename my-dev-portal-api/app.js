@@ -8,6 +8,7 @@ var cors = require("cors");
 const fetch = require("node-fetch");
 const { Client } = require("@okta/okta-sdk-nodejs");
 const { ManagementClient } = require('auth0');
+const { registerStripeCheckout } = require('./register');
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -140,15 +141,15 @@ app.post("/register", jsonParser, async (req, res) => {
         token: process.env.AUTH0_MANAGEMENT_API_TOKEN,
         domain: process.env.AUTH0_DOMAIN,
       });
-    
+
       // Find the user in Auth0 by their email
       const users = await auth0.getUsersByEmail(email);
       const user = users[0];
-    
+
       // Update the user's app_metadata with the stripe customer ID
       await auth0.updateUser({
         id: user.user_id}, {
-        app_metadata: { 
+        app_metadata: {
           stripeCustomerId: stripe_customer_id,
           stripeSubscriptionId: stripe_subscription_id
         }
@@ -184,14 +185,14 @@ app.post("/create-key", jsonParser, async function (req, res) {
       if (!auth0Jwt) {
           throw new Error('No authorization header provided');
       }
-      
+
       if (!auth0Jwt.startsWith('Bearer ')) {
           throw new Error('Invalid authorization header');
       }
-      
+
       auth0Jwt = auth0Jwt.slice(7);
       res.status(200).send({ apikey: auth0Jwt });
-    
+
     }
   } catch (error) {
     console.error("Error creating key:", error);
@@ -319,6 +320,57 @@ app.get("/embed-dash-live-event(/:userId)", function (req, res) {
     res.status(500).json({ message: "Failed to retrieve embedded template" });
   }
 });
+
+app.post('/stripe/checkout/sessions/:checkout_session_id', function (req, res) {
+  // todo: verify auth0 or okta authentication
+
+  fetch(`https://api.stripe.com/v1/checkout/sessions/${checkout_session_id}`, {
+    headers: {
+      'Authorization': `Bearer: ${process.env.STRIPE_KEY}`,
+    }
+  }).then(res => res.json())
+  .then((result) => {
+    if (result.customer && result.subscription) {
+      // maybe await?
+      // or we can respond and do it later.
+      registerStripeCheckout(result);
+    }
+    // we still pass on result.
+    res.status(201).json(result);
+  }).catch((err) => {
+    console.error("Error getting checkout session info from stripe", err);
+    res.status(500).json({
+      message: "Failed to retrieve checkout session info from stripe"
+    })
+  });
+});
+
+app.get('/stripe/customer', function (req, res) {
+  // ideally use the auth0 or okta info directly get profile from based
+  // current user.
+  // or use another method verify email belong to the authorized user
+  // since they should only able to get stripe customer data for themselves.
+  const email = req.query && req.query.email
+  fetch(`https://api.stripe.com/v1/customers/search?query=${encodeURIComponent(`email:"${email}"`)}`, {
+    headers: {
+      'Authorization': `Bearer: ${process.env.STRIPE_KEY}`,
+    }
+  }).then(res => res.json()).then((result) => {
+    if (result.data && result.data[0]) {
+      res.status(200).json(result.data[0]);
+    } else {
+      // not found
+      // we can either use 404 or pass
+      res.status(404).json('stripe customer not found');
+    }
+  }).catch((err) => {
+    console.error("Error getting customer info from stripe", err);
+    res.status(500).json({
+      message: "Failed to retrieve customer info from stripe"
+    })
+  });
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
