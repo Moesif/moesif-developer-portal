@@ -3,14 +3,15 @@ const path = require("path");
 require("dotenv").config();
 var bodyParser = require("body-parser");
 const moesif = require("moesif-nodejs");
-const Stripe = require("stripe");
 var cors = require("cors");
 const fetch = require("node-fetch");
 const { Client } = require("@okta/okta-sdk-nodejs");
+const { ManagementClient } = require('auth0');
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
 const port = 3030;
+const apimProvider = process.env.APIM_PROVIDER;
 
 const moesifManagementToken = process.env.MOESIF_MANAGEMENT_TOKEN;
 const templateWorkspaceIdLiveEvent =
@@ -19,7 +20,6 @@ const templateWorkspaceIdTimeSeries =
   process.env.MOESIF_TEMPLATE_WORKSPACE_ID_TIME_SERIES;
 const moesifApiEndPoint = "https://api.moesif.com";
 
-const stripe = Stripe(process.env.STRIPE_KEY);
 var jsonParser = bodyParser.json();
 
 const moesifMiddleware = moesif({
@@ -27,11 +27,6 @@ const moesifMiddleware = moesif({
 
   identifyUser: function (req, _res) {
     return req.user ? req.user.id : undefined;
-  },
-
-  identifyCompany: function (req, res) {
-    // your code here, must return a string
-    return req.headers["X-Organization-Id"];
   },
 });
 
@@ -107,71 +102,163 @@ app.post("/okta/register", jsonParser, async (req, res) => {
   }
 });
 
-app.post("/register", jsonParser, async (req, res) => {
-  try {
-    console.log(req);
+app.post('/register/stripe/:checkout_session_id', function (req, res) {
+  const checkout_session_id = req.params.checkout_session_id;
 
-    const email = req.body.email;
-    const stripe_customer_id = req.body.customer_id;
-    const stripe_subscription_id = req.body.subscription_id;
+  fetch(`https://api.stripe.com/v1/checkout/sessions/${checkout_session_id}`, {
+    headers: {
+      'Authorization': `bearer ${process.env.STRIPE_API_KEY}`,
+    }
+  }).then(res => res.json())
+  .then(async (result) => {
+    console.log("in register");
+    console.log(result);
+    if (result.customer && result.subscription) {
+      console.log("customer and subscription present");
+        const email = result.customer_details.email;
+        const stripe_customer_id = result.customer;
+        const stripe_subscription_id = result.subscription;
+    
+        var company = { companyId: stripe_subscription_id };
+        moesifMiddleware.updateCompany(company);
+    
+        var user = {
+          userId: stripe_customer_id,
+          companyId: stripe_subscription_id,
+          metadata: {
+            email: email,
+          },
+        };
+        moesifMiddleware.updateUser(user);
+    
+        if(apimProvider === "Kong") {
+    
+          var body = { username: email, custom_id: stripe_customer_id };
+          await fetch(`${process.env.KONG_URL}/consumers/`, {
+            method: "post",
+            body: JSON.stringify(body),
+            headers: { "Content-Type": "application/json" },
+          });
+        } else if(apimProvider === "AWS") {
+          let url = `https://${process.env.AUTH0_DOMAIN}/oauth/token`;
+          let auth0Token;
+          
+          let options = {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({
+                  client_id: process.env.AUTH0_CLIENT_ID,
+                  client_secret: process.env.AUTH0_CLIENT_SECRET,
+                  audience: process.env.AUTH0_MANAGEMENT_API_AUDIENCE,
+                  grant_type:"client_credentials"
+              })
+          };
+          
+          fetch(url, options)
+              .then(response => response.json())
+              .then(result => { console.log(result); auth0Token = result.access_token; })
+              .catch(error => console.error('Error:', error));
+          
 
-    // create user and company in Moesif
-    var company = { companyId: stripe_subscription_id };
-    moesifMiddleware.updateCompany(company);
-    console.log("Moesif create company");
+          const auth0 = new ManagementClient({
+            clientId: process.env.AUTH0_CLIENT_ID,
+            clientSecret: process.env.AUTH0_CLIENT_SECRET,
+            token: auth0Token,
+            domain: process.env.AUTH0_DOMAIN,
+          });
+    
+          // Find the user in Auth0 by their email
+          const users = await auth0.getUsersByEmail(email);
+          const user = users[0];
+    
+          console.log(`setting Auth0 variables for ${user.email}`)
+    
+          // Update the user's app_metadata with the stripe customer ID
+          await auth0.updateUser({
+            id: user.user_id}, {
+            app_metadata: {
+              stripeCustomerId: stripe_customer_id,
+              stripeSubscriptionId: stripe_subscription_id
+            }
+          }, function (err, user) {
+            if(err) {
+              console.log(err);
+            }
+            console.log(user);
+          });
+        }
+    }
+    // we still pass on result.
+    console.log(JSON.stringify(result));
+    res.status(201).json(result);
+  }).catch((err) => {
+    console.error("Error registering user", err);
+    res.status(500).json({
+      message: "Failed to register user. Contact support for assistance"
+    })
+  });
+});
 
-    var user = {
-      userId: stripe_customer_id,
-      companyId: stripe_subscription_id,
-      metadata: {
-        email: email,
-      },
-    };
-    moesifMiddleware.updateUser(user);
-    console.log("Moesif create user");
-
-    var body = { username: req.body.email, custom_id: stripe_customer_id };
-    console.log(body);
-
-    await fetch(`${process.env.KONG_URL}/consumers/`, {
-      method: "post",
-      body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
-    });
-
-    res.status(200);
-  } catch (error) {
-    console.error("Error registering user:", error);
-    res.status(500).json({ message: "Failed to register user" });
-  }
+app.get('/stripe/customer', function (req, res) {
+  const email = req.query && req.query.email
+  fetch(`https://api.stripe.com/v1/customers/search?query=${encodeURIComponent(`email:"${email}"`)}`, {
+    headers: {
+      'Authorization': `Bearer: ${process.env.STRIPE_KEY}`,
+    }
+  }).then(res => res.json()).then((result) => {
+    if (result.data && result.data[0]) {
+      res.status(200).json(result.data[0]);
+    } else {
+      res.status(404).json('stripe customer not found');
+    }
+  }).catch((err) => {
+    console.error("Error getting customer info from stripe", err);
+    res.status(500).json({
+      message: "Failed to retrieve customer info from stripe"
+    })
+  });
 });
 
 app.post("/create-key", jsonParser, async function (req, res) {
   try {
-    console.log("Kong create consumer");
-    console.log(data);
-    // send back a new API key for use
-    var response = await fetch(
-      `${process.env.KONG_URL}/consumers/${encodeURIComponent(
-        req.body.email
-      )}/key-auth`,
-      {
-        method: "post",
-      }
-    );
-    console.log(response);
-    var data = await response.json();
-    console.log("Kong create API key");
-    console.log(data);
-    var kongAPIKey = data.key;
+    const email = req.body.email;
+    var apiKey = "";
 
-    res.status(200);
-    res.send({ apikey: kongAPIKey });
+    if (apimProvider === "Kong") {
+      console.log(`${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`);
+      const response = await fetch(
+        `${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`,
+        {
+          method: "post",
+        }
+      );
+      var data = await response.json();
+      console.log(data);
+      apiKey = data.key;
+      res.status(200);
+      res.send({ apikey: apiKey });
+    } else if (apimProvider === "AWS") {
+
+      var auth0Jwt = req.headers.authorization; // Get the Auth0 JWT from the request
+
+      if (!auth0Jwt) {
+          throw new Error('No authorization header provided');
+      }
+
+      if (!auth0Jwt.startsWith('Bearer ')) {
+          throw new Error('Invalid authorization header');
+      }
+
+      auth0Jwt = auth0Jwt.slice(7);
+      res.status(200).send({ apikey: auth0Jwt });
+
+    }
   } catch (error) {
     console.error("Error creating key:", error);
     res.status(500).json({ message: "Failed to create key" });
   }
 });
+
 
 if (!moesifManagementToken) {
   console.error(
@@ -188,7 +275,6 @@ if (!templateWorkspaceIdLiveEvent) {
 app.get("/embed-dash-time-series(/:userId)", function (req, res) {
   try {
     const userId = req.params.userId;
-    console.log(userId);
     const templateData = {
       template: {
         values: {
@@ -215,7 +301,6 @@ app.get("/embed-dash-time-series(/:userId)", function (req, res) {
     })
       .then((response) => {
         if (response.ok) {
-          console.log(response);
           return response;
         } else {
           console.log("Api call to moesif not successful. server response is:");
@@ -224,11 +309,9 @@ app.get("/embed-dash-time-series(/:userId)", function (req, res) {
         }
       })
       .then((response) => {
-        console.log(response);
         return response.json();
       })
       .then((info) => {
-        console.log(info);
         res.json(info);
       })
       .catch((err) => {
@@ -246,7 +329,6 @@ app.get("/embed-dash-time-series(/:userId)", function (req, res) {
 app.get("/embed-dash-live-event(/:userId)", function (req, res) {
   try {
     const userId = req.params.userId;
-    console.log(userId);
     const templateData = {
       template: {
         values: {
@@ -273,7 +355,6 @@ app.get("/embed-dash-live-event(/:userId)", function (req, res) {
     })
       .then((response) => {
         if (response.ok) {
-          console.log(response);
           return response;
         } else {
           console.log("Api call to moesif not successful. server response is:");
@@ -282,11 +363,9 @@ app.get("/embed-dash-live-event(/:userId)", function (req, res) {
         }
       })
       .then((response) => {
-        console.log(response);
         return response.json();
       })
       .then((info) => {
-        console.log(info);
         res.json(info);
       })
       .catch((err) => {

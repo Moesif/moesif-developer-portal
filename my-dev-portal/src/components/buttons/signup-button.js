@@ -28,6 +28,7 @@ const SignupButtonWithAuth0 = () => {
         prompt: "login",
         screen_hint: "signup",
       },
+      scope: 'openid profile email offline_access',
     });
   };
 
