@@ -118,10 +118,10 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
         const email = result.customer_details.email;
         const stripe_customer_id = result.customer;
         const stripe_subscription_id = result.subscription;
-    
+
         var company = { companyId: stripe_subscription_id };
         moesifMiddleware.updateCompany(company);
-    
+
         var user = {
           userId: stripe_customer_id,
           companyId: stripe_subscription_id,
@@ -130,9 +130,9 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
           },
         };
         moesifMiddleware.updateUser(user);
-    
+
         if(apimProvider === "Kong") {
-    
+
           var body = { username: email, custom_id: stripe_customer_id };
           await fetch(`${process.env.KONG_URL}/consumers/`, {
             method: "post",
@@ -142,7 +142,7 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
         } else if(apimProvider === "AWS") {
           let url = `https://${process.env.AUTH0_DOMAIN}/oauth/token`;
           let auth0Token;
-          
+
           let options = {
               method: 'POST',
               headers: { 'content-type': 'application/json' },
@@ -153,12 +153,12 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
                   grant_type:"client_credentials"
               })
           };
-          
+
           fetch(url, options)
               .then(response => response.json())
               .then(result => { console.log(result); auth0Token = result.access_token; })
               .catch(error => console.error('Error:', error));
-          
+
 
           const auth0 = new ManagementClient({
             clientId: process.env.AUTH0_CLIENT_ID,
@@ -166,13 +166,13 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
             token: auth0Token,
             domain: process.env.AUTH0_DOMAIN,
           });
-    
+
           // Find the user in Auth0 by their email
           const users = await auth0.getUsersByEmail(email);
           const user = users[0];
-    
+
           console.log(`setting Auth0 variables for ${user.email}`)
-    
+
           // Update the user's app_metadata with the stripe customer ID
           await auth0.updateUser({
             id: user.user_id}, {
@@ -203,7 +203,7 @@ app.get('/stripe/customer', function (req, res) {
   const email = req.query && req.query.email
   fetch(`https://api.stripe.com/v1/customers/search?query=${encodeURIComponent(`email:"${email}"`)}`, {
     headers: {
-      'Authorization': `Bearer: ${process.env.STRIPE_KEY}`,
+      'Authorization': `Bearer: ${process.env.STRIPE_API_KEY}`,
     }
   }).then(res => res.json()).then((result) => {
     if (result.data && result.data[0]) {
@@ -252,6 +252,63 @@ app.post("/create-key", jsonParser, async function (req, res) {
       auth0Jwt = auth0Jwt.slice(7);
       res.status(200).send({ apikey: auth0Jwt });
 
+    } else if (apimProvider === "Tyk") {
+      var stripe_customer_id = "";
+
+      // Fetch the customer info from Stripe
+      const stripeResponse = await fetch(
+        `https://api.stripe.com/v1/customers/search?query=${encodeURIComponent(
+          `email:"${email}"`
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.STRIPE_API_KEY}`,
+          },
+        }
+      );
+
+      if (stripeResponse.ok) {
+        const result = await stripeResponse.json();
+
+        if (result.data && result.data[0]) {
+          stripe_customer_id = result.data[0].id;
+        } else {
+          // Stripe customer not found
+          throw new Error("(Tyk) Stripe customer not found");
+        }
+      } else {
+        // Handle non-2xx HTTP response from Stripe
+        throw new Error(`(Tyk) Stripe API returned status: ${stripeResponse.status}`);
+      }
+
+      // Create the request body for Tyk API
+      var body = {
+        alias: stripe_customer_id,
+        org_id: `${process.env.TYK_DASH_ORG_ID}`,
+      };
+
+      // Send the request to Tyk API
+      var response = await fetch(`${process.env.TYK_GATEWAY_URL}/tyk/keys`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+          "x-tyk-authorization": `${process.env.TYK_GATEWAY_SECRET_KEY}`,
+        },
+      });
+
+      if (!response.ok) {
+        // Handle non-2xx HTTP response from Tyk
+        throw new Error(`(Tyk) Tyk API returned status: ${response.status}`);
+      }
+
+      var data = await response.json();
+      var tykAPIKey = data.key;
+
+      // Send the Tyk API key back as the response
+      res.status(200).send({ apikey: tykAPIKey });
     }
   } catch (error) {
     console.error("Error creating key:", error);
