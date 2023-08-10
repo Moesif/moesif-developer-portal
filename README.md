@@ -40,7 +40,7 @@ In order to set up and use the Moesif Developer Portal, you will need the follow
 
 Below is a step-by-step guide on how to set up the Moesif Developer Portal. Since there are a lot of moving parts, it’s suggested that you follow each step carefully and in the order that they are presented.
 
-## INtegrating Moesif and Your Gateway
+## Integrating Moesif and Your Gateway
 
 ### Kong
 
