@@ -227,11 +227,12 @@ app.post("/create-key", jsonParser, async function (req, res) {
     if (apimProvider === "Kong") {
       // Enterprise or Konnect
       if (typeof process.env.KONNECT_PAT !== 'undefined' && process.env.KONNECT_PAT !== "") {
-        // get Konnect Runtime Group ID
+
         console.log('Kong Konnect, collecting runtime group ID')
         const konnectURL = `${process.env.KONNECT_API_URL}/${process.env.KONNECT_API_VER}`
+        // get Konnect Runtime Group ID
         console.log('Kong Konnect, collecting runtime group ID')
-        const response = await
+        const rtgResponse = await
           fetch(`${konnectURL}/runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`, {
             method: "GET",
             headers: {
@@ -240,18 +241,44 @@ app.post("/create-key", jsonParser, async function (req, res) {
               "Accept": "application/json"
             }
           });
-        const rtgResult = await response.json();
+        const rtgResult = await rtgResponse.json();
         console.log(`Got Konnect runtime group ID: ${rtgResult.data[0].id}`)
-        const KonnectRtgId = rtgResult.data[0].id
+        const konnectRtgId = rtgResult.data[0].id
 
         // create Konnect Consumer
-
+        console.log('Kong Konnect, ensuring a consumer exists')
+        const konnectConsumerResponse = await
+          fetch(`${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${process.env.KONNECT_PAT}`,
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: `{"username": "${email}"}`
+          });
+          const konnectConsumerResult = await konnectConsumerResponse.json();
+          console.log(`Created Konnect Consumer, ${konnectConsumerResult}`);
 
         // create Key
-
-        // attach Key to Consumer
+        console.log('Kong Konnect, ensuring a key exists')
+        const konnectKeyResponse = await
+          fetch(`${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/${email}/key-auth`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${process.env.KONNECT_PAT}`,
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+          });
+        const konnectKeyResult = await konnectKeyResponse.json();
+        console.log(`Created Konnect Consumer Key, ${konnectKeyResult.key}`);
+        apiKey = data.key;
+        res.status(200);
+        res.send({ apikey: apiKey });
 
       } else
+          //TODO: Add admin api token for Kong Enterprise
           console.log(`${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`);
           const response = await fetch(
             `${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`,
