@@ -225,18 +225,45 @@ app.post("/create-key", jsonParser, async function (req, res) {
     var apiKey = "";
 
     if (apimProvider === "Kong") {
-      console.log(`${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`);
-      const response = await fetch(
-        `${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`,
-        {
-          method: "post",
-        }
-      );
-      var data = await response.json();
-      console.log(data);
-      apiKey = data.key;
-      res.status(200);
-      res.send({ apikey: apiKey });
+      // Enterprise or Konnect
+      if (typeof process.env.KONNECT_PAT !== 'undefined' && process.env.KONNECT_PAT !== "") {
+        // get Konnect Runtime Group ID
+        console.log('Kong Konnect, collecting runtime group ID')
+        const konnectURL = `${process.env.KONNECT_API_URL}/${process.env.KONNECT_API_VER}`
+        console.log('Kong Konnect, collecting runtime group ID')
+        const response = await
+          fetch(`${konnectURL}/runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${process.env.KONNECT_PAT}`,
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            }
+          });
+        const rtgResult = await response.json();
+        console.log(`Got Konnect runtime group ID: ${rtgResult.data[0].id}`)
+        const KonnectRtgId = rtgResult.data[0].id
+
+        // create Konnect Consumer
+
+
+        // create Key
+
+        // attach Key to Consumer
+
+      } else
+          console.log(`${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`);
+          const response = await fetch(
+            `${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`,
+            {
+              method: "post",
+            }
+          );
+          var data = await response.json();
+          console.log(data);
+          apiKey = data.key;
+          res.status(200);
+          res.send({ apikey: apiKey });
     } else if (apimProvider === "AWS") {
 
       var auth0Jwt = req.headers.authorization; // Get the Auth0 JWT from the request
