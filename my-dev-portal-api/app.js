@@ -246,6 +246,7 @@ app.post("/create-key", jsonParser, async function (req, res) {
         const konnectRtgId = rtgResult.data[0].id
 
         // create Konnect Consumer
+        // need to try this, if no good, collect existing consumer or vice versa
         console.log('Kong Konnect, ensuring a consumer exists')
         const konnectConsumerResponse = await
           fetch(`${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/`, {
@@ -261,6 +262,7 @@ app.post("/create-key", jsonParser, async function (req, res) {
           console.log(`Created Konnect Consumer, ${konnectConsumerResult}`);
 
         // create Key
+        // Need to collect proper Kong Consumer result for the creation of the key-auth key
         console.log('Kong Konnect, ensuring a key exists')
         const konnectKeyResponse = await
           fetch(`${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/${email}/key-auth`, {
@@ -283,7 +285,7 @@ app.post("/create-key", jsonParser, async function (req, res) {
           const response = await fetch(
             `${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`,
             {
-              method: "post",
+              method: "POST",
             }
           );
           var data = await response.json();
