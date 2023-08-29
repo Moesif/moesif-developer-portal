@@ -200,10 +200,10 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
 });
 
 app.get('/stripe/customer', function (req, res) {
-  const email = req.query && req.query.email
-  fetch(`https://api.stripe.com/v1/customers/search?query=${encodeURIComponent(`email:"${email}"`)}`, {
+  const email = req.query.email
+  fetch(`https://api.stripe.com/v1/customers/search?query=email:"${encodeURIComponent(email)}"`, {
     headers: {
-      'Authorization': `Bearer: ${process.env.STRIPE_API_KEY}`,
+      'Authorization': `bearer ${process.env.STRIPE_API_KEY}`,
     }
   }).then(res => res.json()).then((result) => {
     if (result.data && result.data[0]) {
