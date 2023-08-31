@@ -98,9 +98,41 @@ Lastly, to save our plugin configuration, scroll down to the bottom of the scree
 
 ### AWS
 
-#### TODO
+The Moesif Developer Portal can be used with a running instance of AWS API Gateway.
 
-TODO
+To integrate Moesif and AWS API Gateway, you can follow our guide that covers [integrating Moesif and AWS API Gateway in detail](https://www.moesif.com/docs/guides/integrating-api-analytics-with-aws-api-gateway/). Alternatively, you can also check out [our integration documentation for Tyk](https://www.moesif.com/docs/server-integration/aws-api-gateway/) if you’re already an experienced AWS user. Once you have the integration set, you’ll be ready to move to the next step in the Moesif Developer Portal setup process.
+
+Before proceeding, you'll also need to make sure that you've set up an API endpoint within AWS API Gateway and added the custom Authorizer covered below.
+
+#### Add The Auth0 Authorizer to AWS API Gateway
+We will add a custom Lambda Authorizer to our AWS API Gateway endpoint. Our first step is to enter the __dev-portal-authorizer__ project in the Moesif Developer Portal. Once you have the project opened in a terminal pointing to the __dev-portal-authorizer__ directory, do the following:
+
+Run `npm install` to install the project's dependencies.
+After the dependencies are installed, zip up the project using `npm run zip`. From this command, an __authorizer.zip__ file will be created in the root directory of the __authorizer__ project.
+
+* Next, log into AWS Lambda and from the main page click __Create function__ in the top-right corner. From here, you’ll do the following:
+* On the __Create function__ screen:
+* Select __Author from scratch__
+* Set the __Function name__ field as `Auth0Authorizer`
+* Choose `Node.js 18.x` as the __Runtime__ and `x86_64` as the __Architecture__
+* Everything else can stay as the default and then you’ll click __Create function__
+* On the __Auth0Authorizer__ screen, under __Code source__, click the __Upload from__ dropdown and select __.zip file__.
+* In the modal that appears, either drop your __.zip__ file onto it or select it from the file explorer by clicking the __Upload__ button. Then click __Save__ to load the .zip code.
+
+In AWS API Gateway, we will create the Authorizer by clicking on __Authorizers__ in the left-side menu. On the __Authorizers__ screen, we will do the following:
+* Click __Create New Authorizer__
+* Add our __Name__ as `Auth0_Authorizer`
+* Select the type as `Lambda`
+* Set the __Lambda Event Payload__ as `Token`
+* Set the __Token Source__ as `Authorization`
+* The rest of the fields can be left as their defaults, and you can click __Create__ to create the Authorizer.
+
+Next, we will add the Authorizer by going to __Resources__ in the left-side menu, clicking on our endpoint, and bringing up the __Method Execution__ screen. On this screen, do the following:
+* Click on __Method Request__
+* Under __Settings__ > __Authorizer__, click the __Edit__ (pencil) icon and select `Auth0_Authorizer`. Click the checkmark to save the setting.
+* Make sure that __API Key Required__ is set to `false`
+
+Lastly, select the appropriate stage from the list at __Stages__ in the left-side menu. In the __Stage Editor__ screen, click on the __Logs/Tracing__ tab. Under __Custom Access Logging__ > __Log Format__, paste in the log format from the __my-dev-portal-authorizer/aws-config/CustomAccessLogging_LogFormat.json__ file. The key here is that the ` "principalId": "$context.authorizer.principalId"` formatter is included to ensure that the Stripe data is correctly attributed to the request in Moesif.
 
 ---
 
@@ -238,6 +270,12 @@ TYK_DASH_ORG_ID="TYK_DASH_ORG_ID"
 # Okta envars
 OKTA_DOMAIN="https://you-okta-url.okta.com/"
 OKTA_API_TOKEN="Okta API Token"
+
+# Auth0 envars
+AUTH0_DOMAIN="your-domain.us.auth0.com"
+AUTH0_CLIENT_ID="auth0 client ID"
+AUTH0_CLIENT_SECRET="auth0 client secret"
+AUTH0_MANAGEMENT_API_AUDIENCE="https://your-domain.us.auth0.com/api/v2/"
 ```
 
 The only values we need set in this `.env` file currently will be your Gateway URL (Kong / Tyk) and `MOESIF_APPLICATION_ID`.
@@ -248,7 +286,7 @@ For the `KONG_URL`, If you’re running a local instance of Kong, by default thi
 
 #### AWS
 
-TODO
+For the `AWS_INVOKE_URL`, you'll need to grab the __Invoke URL__ from your AWS API gateway instance. To do this, go to your API Gateway instance, click on __Stages__, and then select the appropriate stage. On the __Stage Editor__ screen, grab the __Invoke URL__ and paste the value into `AWS_INVOKE_URL`.
 
 #### Tyk
 
@@ -282,13 +320,13 @@ Once the integration is complete, you should begin to see some API call metrics 
 
 ### AWS
 
-TODO
+With endpoints set up in AWS API Gateway and our base developer portal code pulled down, we can start to get analytics flowing into Moesif from AWS API Gateway. For instructions on how to do integrate AWS API Gateway and Moesif, you can reference [our integration documentation](https://www.moesif.com/docs/server-integration/aws-api-gateway/) or a more in-depth step-by-step approach in [our integration guide](https://www.moesif.com/docs/guides/integrating-api-analytics-with-aws-api-gateway/).
 
 ---
 
 ### Tyk
 
-Now that we have our endpoints in Tyk set up and our base developer portal code pulled down, we can start to get analytics flowing into Moesif from Tyk. For instructions on how to do integrate Tyke and Moesif, you can reference [our integration documentation](https://www.moesif.com/docs/server-integration/tyk-api-gateway/) or a more in-depth step-by-step approach in [our integration guide](https://www.moesif.com/docs/guides/integrating-api-analytics-with-tyk-api-gateway/).
+Now that we have our endpoints in Tyk set up and our base developer portal code pulled down, we can start to get analytics flowing into Moesif from Tyk. For instructions on how to do integrate Tyk and Moesif, you can reference [our integration documentation](https://www.moesif.com/docs/server-integration/tyk-api-gateway/) or a more in-depth step-by-step approach in [our integration guide](https://www.moesif.com/docs/guides/integrating-api-analytics-with-tyk-api-gateway/).
 
 Once the integration is complete, you should begin to see some API call metrics flowing into Moesif. Even if you are being blocked by the **Authentication Mode** in Tyk, the `401 Unauthorized` responses will still show up in Moesif. Once the integration is confirmed, you can move to the next step and create the Auth0 or Okta app to be used with the Moesif Developer Portal.
 
@@ -333,6 +371,59 @@ In Auth0, navigate to the **Applications** screen and select the application you
 value under `REACT_APP_AUTH0_DOMAIN` in the `.env` file. Next copy the **Client ID** value and add it as the value for the `REACT_APP_AUTH0_CLIENT_ID` entry in the `.env` file.
 
 Once both values are added, save the file to make sure the updated values are persisted. Next, we will move on to creating our products in Stripe so that they can be used in the Developer Portal.
+
+#### For AWS API Gateway
+
+A few additional steps need to happen in order to get the AWS APi Gateway integration to work. These include adding the Developer Portal API to Auth0 and adding  logic to add additional fields from Stripe to the JWT.
+
+##### Add The Developer Portal API to Auth0
+
+In Auth0, we will also need to add our  Developer Portal API to Auth0. To do this, log into Auth0, and from the left-side menu, select __Applications__ > __APIs__.
+
+Click the Create API button in the top right on the API screen to add the API to Auth0.
+
+We will fill in the following fields:
+* __Name__ - Here, we will put a friendly name for the API. For example, you can put in a value like “dev-portal-api”.
+* __Identifier__ - In this field, we will put our API endpoint, as recommended by Auth0. For example, you can put in a value like `http://127.0.0.1:3000` or the URL of where your Developer Portal API is hosted.
+* __Signing Algorithm__ - This field can be left as the default unless you require something more specific.
+
+Once the fields are filled in, click __Create__.
+
+In the Developer Portal UI projects __.env__ file, we will add the following values:
+
+``` shell
+REACT_APP_AUTH0_AUDIENCE="http://127.0.0.1:3030"
+```
+
+The value here will be what you put in the __Identifier__ field when you create the API in Auth0. Alternatively, you can retrieve the value by going to the __APIs__ page again, locating your API, and copying the __API Audience__ field.	
+
+##### Add Custom JWT Field Logic to Auth0
+Next, we will add the logic to add the Stripe Customer and Subscription ID’s to the Auth0 JWT token. To do this, we will execute the following steps.
+
+* In Auth0, from the left-side menu, navigate to __Actions__ > __Flows__ > __Login__
+* In the right-side panel on the __Login Flow__ screen, click __Add Action__ > __Build Custom__
+* Name the Custom Action `AddStripeDetailsToClaim`
+* Add the code from the __my-dev-portal-authorizer/auth0/AddStripeDetailsToClaim in the code editor.js__ file in the Moesif Developer Portal, overwriting the existing code.
+* Once the code is added, click __Save Draft__ and then __Deploy__.
+* Back in the __Flows__ screen, drag the __AddStripeDetailsToClaim__ action (in the right-side panel under __Custom__) in between the __Start__ and __Complete__ actions.
+* Click __Apply__ to update and activate the flow.
+
+##### Add Auth0 Environment Variables to API Project
+Lastly, we need to add in a few additional environment variables to our API project __.env__ file. In Auth0, go to __Applications__ > __APIs__ and select __Auth0 Management API__.
+
+From this screen, we will be able to get the values for the following values in the __my-dev-portal-api__ project’s __.env__ file:
+
+
+``` shell
+AUTH0_DOMAIN="your-domain.us.auth0.com"
+AUTH0_CLIENT_ID="yOurAuth0CliENtID"
+AUTH0_CLIENT_SECRET="abcd1234efgh5678"
+AUTH0_MANAGEMENT_API_AUDIENCE="https://{your-domain.us.auth0.com}/api/v2/"
+```
+
+​​for the __AUTH0_MANAGEMENT_API_AUDIENCE__ value, just swap out the `{your-domain.us.auth0.com}` for your domain but leave the `https://` and `/api/v2/` in place.
+
+Once the values are added, save the __.env__ file.
 
 ---
 
@@ -479,7 +570,7 @@ Once your products and prices are created, it's time to begin to integrate Strip
 
 This will bring up the Stripe configuration screen to walk you through the integration. From this screen, you can get all of the info needed to plug Stripe into Moesif. Each step for configuration is covered within the modal. The below sections go into more detail if required.
 
-#### ADd the Moesif Webhook to Stripe
+#### Add the Moesif Webhook to Stripe
 
 The first step in the integration is to add the Moesif webhook into the Moesif configuration for Stripe. Adding this allows Stripe to send subscription updates to Moesif.
 
@@ -623,8 +714,34 @@ In **Stripe**, on the **Customers** screen, you should also be able to see your 
 In **Kong**, under **Consumers**, you should also see your new user added. For this entry, you should also see the **custom_id** field with the Stripe customer ID as well (will resemble `cus_123abc`).
 
 ### AWS
+With the amount of moving parts in the AWS implementation for the Moesif Developer Portal, it’s important to ensure that everything functions as intended.
 
-TODO
+Log the current user out of the Moesif Developer Portal if you have one logged in. Execute the following steps to confirm that the flow is working as intended:
+
+* In the Moesif Developer Portal, log in with an existing user OR create a new user, log out, and log back in.
+* Next, go to the __Keys__ screen in the developer portal
+* From the __Keys__ screen, generate a new key and copy it onto your clipboard
+* Navigate to [www.jwt.io](www.jwt.io) and go to the __Debugger__ screen. Paste the key into the debugger and ensure that both the Stripe Customer and Subscription ID have been added to the token’s data under the __stripeCustomerId__ and __stripeSubscriptionId__ fields. For example, your payload data should look like this:
+
+``` shell
+{
+ "stripeCustomerId": "cus_OXDy3IqRlUfHOz",
+ "stripeSubscriptionId": "sub_1Nk9WyCUAiurhyBq9qUzE9w1",
+ "iss": "https://dev-zojlepeedyeleun3.us.auth0.com/",
+ "sub": "auth0|64ecdd7f90d5900e79704f1e",
+ "aud": [
+   "http://127.0.0.1:3030",
+   "https://dev-zojlepeedyeleun3.us.auth0.com/userinfo"
+ ],
+ "iat": 1693487303,
+ "exp": 1693573703,
+ "azp": "VFgqgySNsjhRJCl5DjsU6niftMDxIByT",
+ "scope": "openid profile email offline_access"
+}
+```
+
+Once the Stripe info is confirmed in the token, send a request to your AWS Gateway endpoint and confirm that the API call shows up in the __Live Event Log__ in Moesif. The API call should have the Stripe Customer and Subscription ID added in the Moesif User and Company fields, respectively.
+Lastly, add an invalid token (the easiest thing to do is remove a few characters from your existing token to invalidate it) and ensure that the AWS Lambda Authorizer we added also rejects any unauthorized calls.
 
 ### Tyk
 
