@@ -43,7 +43,7 @@ const Auth0Dashboard = (props) => {
         )
       }
       else {
-        fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=${user.email}`, {
+        fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=` + encodeURIComponent(user.email), {
           headers: {
             // 'Authorization': should be the auth0 access token when ready.
           }
