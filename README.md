@@ -132,7 +132,7 @@ Next, we will add the Authorizer by going to __Resources__ in the left-side menu
 * Under __Settings__ > __Authorizer__, click the __Edit__ (pencil) icon and select `Auth0_Authorizer`. Click the checkmark to save the setting.
 * Make sure that __API Key Required__ is set to `false`
 
-Lastly, select the appropriate stage from the list at __Stages__ in the left-side menu. In the __Stage Editor__ screen, click on the __Logs/Tracing__ tab. Under __Custom Access Logging__ > __Log Format__, paste in the log format from the __my-dev-portal-authorizer/aws-config/CustomAccessLogging_LogFormat.json__ file. The key here is that the ` "principalId": "$context.authorizer.principalId"` formatter is included to ensure that the Stripe data is correctly attributed to the request in Moesif.
+Lastly, select the appropriate stage from the list at __Stages__ in the left-side menu. In the __Stage Editor__ screen, click on the __Logs/Tracing__ tab. Under __Custom Access Logging__ > __Log Format__, paste in the log format from the __[my-dev-portal-authorizer/aws-config/CustomAccessLogging_LogFormat.json](https://github.com/Moesif/moesif-developer-portal/blob/main/my-dev-portal-authorizer/aws-config/CustomAccessLogging_LogFormat.json)__ file. The key here is that the ` "principalId": "$context.authorizer.principalId"` formatter is included to ensure that the Stripe data is correctly attributed to the request in Moesif.
 
 ---
 
