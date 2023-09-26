@@ -1,23 +1,21 @@
+button {
+  cursor: pointer;
+}
+
 .button {
   border: 0;
   border-radius: 0.8rem;
 
   font-family: var(--font-primary);
-  font-weight: 600;
+  font-size: 1.4rem;
   color: var(--white);
 
-  cursor: pointer;
   user-select: none;
 
   transition: background 0.3s ease-out, color 0.3s ease-out;
 
   /* responsive */
-
-  min-width: 10rem;
-  padding: 1.6rem 1.6rem;
-
-  font-size: 1.6rem;
-  line-height: 2.4rem;
+  padding: 0.8rem 1.2rem;
 }
 
 .button--compact {
@@ -44,6 +42,12 @@
 
 .button--secondary:hover {
   background: rgba(255, 255, 255, 0.85);
+}
+
+.button--outline-secondary {
+  border: 1px solid #aab4bd;
+  color: #5b676e;
+  background-color: white;
 }
 
 @media only screen and (max-width: 480px) {
@@ -94,6 +98,10 @@
   transition: background 0.3s ease-out, color 0.3s ease-out;
 }
 
+.button__purp {
+  width: 100%;
+}
+
 .button__sign-up {
   min-width: 8.4rem;
 
@@ -131,4 +139,13 @@
     font-size: 1.4rem;
     line-height: 1.6rem;
   }
+}
+
+.button__link {
+  border: none;
+  text-decoration: underline;
+  color: inherit;
+  padding-inline: 2px;
+  width: fit-content;
+  background-color: inherit;
 }

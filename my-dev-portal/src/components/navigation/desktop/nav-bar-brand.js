@@ -9,7 +9,6 @@ export const NavBarBrand = () => {
           className="nav-bar__logo"
           src="https://static.moesif.com/dist/302ffde161af22cc139df50c9845efac.svg"
           alt="Moesif Logo"
-          width="122"
           height="36"
         />
       </NavLink>

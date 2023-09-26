@@ -1,15 +1,12 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { PageLayout } from "../../page-layout";
-import { useEffect, useState } from 'react';
-import {
-  useNavigate,
-  useSearchParams
-} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { PageLoader } from "../../page-loader";
 import MoesifEmbeddedTemplate from "../../moesif/moesif-embedded-template";
 
 const Auth0Dashboard = (props) => {
-    const { user: auth0User, isLoading: auth0IsLoading } = useAuth0();
+  const { user: auth0User, isLoading: auth0IsLoading } = useAuth0();
 
     const { fetchEmbedInfo } = props;
 

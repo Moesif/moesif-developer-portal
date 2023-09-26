@@ -4,6 +4,10 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { PageLayout } from "../../page-layout";
 import { PageLoader } from "../../page-loader";
 
+import wfImage from "../../../images/assets/wf-diagram.svg";
+import { SignupButton } from "../../buttons/signup-button";
+import { LoginButton } from "../../buttons/login-button";
+
 function Auth0Login() {
   const { isLoading } = useAuth0();
 
@@ -13,12 +17,18 @@ function Auth0Login() {
 
   return (
     <PageLayout>
-      <>
-        <h1 className="white-text">Welcome to Your Custom Dev Portal!</h1>
-        <h3 className="white-text">Sign up or Log in to get started.</h3>
-      </>
+      <div className="login-page">
+        <h1>Welcome to Your Custom Dev Portal!</h1>
+        <h2>
+          <SignupButton isLink /> or <LoginButton isLink /> to get started.
+        </h2>
+
+        <div className="page-layout__focus">
+          <img src={wfImage} width="100%" alt="flow-diagram" />
+        </div>
+      </div>
     </PageLayout>
   );
 }
 
-export default Auth0Login
+export default Auth0Login;

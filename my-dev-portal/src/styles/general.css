@@ -8,11 +8,14 @@ html {
   font-size: 10px;
   text-rendering: geometricPrecision;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  color: #d9d9d9;
+  background-color: var(--moesif-black);
 }
 
 html,
 body {
-  height: 100%;
+  min-height: 100vh;
+  height: fit-content;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -21,8 +24,8 @@ body {
 body {
   background-color: var(--black);
 
-  color: var(--white);
   font-family: var(--font-primary);
+  font-size: 1.6rem;
 
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-font-smoothing: antialiased;
@@ -31,41 +34,39 @@ body {
   overflow-y: scroll;
 }
 
+label {
+  display: block;
+  color: #5b676e;
+  font-family: Roboto;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 0.07px;
+  margin-bottom: 6px;
+}
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-secondary);
-  font-weight: 600;
-  color: rgba(0, 0, 0, 0.86);
-}
-
-h1,
-h2,
-h3 {
-  margin-top: 3.2rem;
-  margin-bottom: 1.6rem;
-}
-
-h4,
-h5,
-h6 {
-  margin-top: 1.6rem;
-  margin-bottom: 1.6rem;
+  font-weight: 400;
+  margin: 0;
 }
 
 h1 {
   font-size: 3.2rem;
+  font-weight: 300;
 }
 
 h2 {
-  font-size: 2.8rem;
+  font-size: 2.4rem;
 }
 
 h3 {
-  font-size: 2.4rem;
+  font-size: 1.8rem;
 }
 
 h4 {
@@ -151,16 +152,18 @@ code {
   color: black;
 }
 
-.white-text {
-  color: white;
+.dashboards-wrapper {
+  display: flex;
+  justify-content: space-between;
 }
 
 .iframeWrapper {
   position: relative;
-  padding-bottom: 56.25%; /* 16:9 */
-  padding-top: 25px;
-  height: 0;
+  padding-bottom: 27%;
+  width: 0;
+  padding-right: 49%;
 }
+
 .iframeWrapper iframe {
   position: absolute;
   top: 0;
@@ -173,4 +176,14 @@ code {
   .mobile-scroll-lock {
     overflow: hidden;
   }
+}
+
+.stripe-pricing-table-container {
+  background-color: white;
+  padding-top: 82px;
+  padding-bottom: 95px;
+}
+
+.lowercase {
+  text-transform: lowercase;
 }

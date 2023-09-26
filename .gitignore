@@ -13,5 +13,4 @@ my-dev-portal/.env
 my-dev-portal-api/.env
 my-dev-portal-api/.env
 my-dev-portal-authorizer/.env
-my-dev-portal-authorizer/.DS_Store
 .DS_Store

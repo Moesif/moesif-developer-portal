@@ -8,9 +8,6 @@ const OktaNavBarTabs = () => {
 
   return (
     <div className="nav-bar__tabs">
-      {!isAuthenticated && (
-        <NavBarTab path="/" label="Home" />
-      )}
       {isAuthenticated && (
         <>
           <NavBarTab path="/settings" label="Settings" />

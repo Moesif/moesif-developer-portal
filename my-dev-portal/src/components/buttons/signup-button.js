@@ -1,22 +1,24 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-const SignupButtonWithOkta = () => {
+const SignupButtonWithOkta = ({ isLink }) => {
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
-    navigate('/signup');
+    navigate("/signup");
   };
 
+  const className = isLink ? " button__link" : "button__sign-up";
+
   return (
-    <button className="button__sign-up" onClick={handleSignUp}>
+    <button className={className} onClick={handleSignUp}>
       Sign Up
     </button>
   );
 };
 
-const SignupButtonWithAuth0 = () => {
+const SignupButtonWithAuth0 = ({ isLink }) => {
   const { loginWithRedirect } = useAuth0();
 
   const handleSignUp = async () => {
@@ -32,17 +34,19 @@ const SignupButtonWithAuth0 = () => {
     });
   };
 
+  const className = isLink ? " button__link" : "button__sign-up";
+
   return (
-    <button className="button__sign-up" onClick={handleSignUp}>
+    <button className={className} onClick={handleSignUp}>
       Sign Up
     </button>
   );
 };
 
-export const SignupButton = () => {
+export const SignupButton = ({ isLink }) => {
   if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
-    return <SignupButtonWithOkta />;
+    return <SignupButtonWithOkta isLink={isLink} />;
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
-    return <SignupButtonWithAuth0 />;
+    return <SignupButtonWithAuth0 isLink={isLink} />;
   }
 };

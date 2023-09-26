@@ -1,10 +1,7 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { PageLayout } from "../../page-layout";
-import { useEffect, useState } from 'react';
-import {
-  useNavigate,
-  useSearchParams
-} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { PageLoader } from "../../page-loader";
 import MoesifEmbeddedTemplate from "../../moesif/moesif-embedded-template";
 
@@ -68,11 +65,17 @@ const OktaDashboard = (props) => {
 
   return (
     <PageLayout>
+      <h1>Dashboard</h1>
+
       <>
-        <MoesifEmbeddedTemplate iFrameSrcLiveEvent={iFrameSrcLiveEvent} iFrameSrcTimeSeries={iFrameSrcTimeSeries} error={error} />
+        <MoesifEmbeddedTemplate
+          iFrameSrcLiveEvent={iFrameSrcLiveEvent}
+          iFrameSrcTimeSeries={iFrameSrcTimeSeries}
+          error={error}
+        />
       </>
     </PageLayout>
   );
-}
+};
 
-export default OktaDashboard
+export default OktaDashboard; 
