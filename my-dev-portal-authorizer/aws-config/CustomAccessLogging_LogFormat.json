@@ -1,0 +1,20 @@
+{
+  "apiId": "$context.apiId",
+  "requestId": "$context.requestId",
+  "requestTime": "$context.requestTime",
+  "protocol": "$context.protocol",
+  "httpMethod": "$context.httpMethod",
+  "resourcePath": "$context.path",
+  "requestHostHeader": "$context.domainName",
+  "requestUserAgentHeader": "$context.identity.userAgent",
+  "ip": "$context.identity.sourceIp",
+  "status": "$context.status",
+  "responseLength": "$context.responseLength",
+  "durationMs": "$context.responseLatency",
+  "caller": "$context.identity.caller",
+  "user": "$context.identity.cognitoIdentityId",
+  "principalId": "$context.authorizer.principalId",
+  "cognitoIdentityId": "$context.identity.cognitoIdentityId",
+  "userArn": "$context.identity.userArn",
+  "apiKey": "$context.identity.apiKey"
+}

@@ -12,6 +12,5 @@ npm-debug*
 my-dev-portal/.env
 my-dev-portal-api/.env
 my-dev-portal-api/.env
-.DS_Store
 my-dev-portal-authorizer/.env
-my-dev-portal/package-lock.json
+.DS_Store

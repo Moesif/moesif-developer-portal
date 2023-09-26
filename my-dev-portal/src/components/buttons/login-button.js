@@ -29,6 +29,7 @@ const LoginButtonWithAuth0 = ({isLink}) => {
       authorizationParams: {
         prompt: "login",
       },
+      scope: 'openid profile email offline_access',
     });
   };
   const className = isLink ? " button__link lowercase" : "button__login";
