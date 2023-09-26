@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { PageLayout } from "../../page-layout";
 import { PageLoader } from "../../page-loader";
 
-import wfImage from "../../../images/assets/wf-diagram.svg";
+import wfImage from "../../../images/assets/wf-diagram.png";
 import { SignupButton } from "../../buttons/signup-button";
 import { LoginButton } from "../../buttons/login-button";
 
