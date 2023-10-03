@@ -1,5 +1,6 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useAuthContext } from "@asgardeo/auth-react";
 import React from "react";
 
 const LoginButtonWithOkta = ({isLink}) => {
@@ -12,7 +13,7 @@ const LoginButtonWithOkta = ({isLink}) => {
   const className = isLink ? " button__link lowercase" : "button__login";
 
   return (
-    <button className="button__login" onClick={handleLogin}>
+    <button className={className} onClick={handleLogin}>
       Log In
     </button>
   );
@@ -41,11 +42,29 @@ const LoginButtonWithAuth0 = ({isLink}) => {
   );
 };
 
+const LoginButtonWithAsgardeo = ({isLink}) => {
+  const { signIn } = useAuthContext();
+
+  const handleLogin = async () => {
+    await signIn();
+  };
+
+  const className = isLink ? " button__link lowercase" : "button__login";
+
+  return (
+    <button className={className} onClick={handleLogin}>
+      Log In
+    </button>
+  );
+};
+
 export const LoginButton = ({isLink}) => {
   if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return <LoginButtonWithOkta isLink={isLink} />;
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     return <LoginButtonWithAuth0 isLink={isLink} />;
+  } else if (process.env.REACT_APP_AUTH_PROVIDER === "Asgardeo") {
+    return <LoginButtonWithAsgardeo isLink={isLink} />;
   } else {
     return null; // or some error message
   }

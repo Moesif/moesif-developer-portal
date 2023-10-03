@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@asgardeo/auth-react": "^2.0.5",
     "@auth0/auth0-react": "^2.0.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -48,6 +49,6 @@
     ]
   },
   "devDependencies": {
-    "react-router-dom": "^6.10.0"
+    "react-router-dom": "^6.16.0"
   }
 }
