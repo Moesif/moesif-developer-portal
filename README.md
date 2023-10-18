@@ -102,7 +102,7 @@ Lastly, to save our plugin configuration, scroll down to the bottom of the scree
 
 The Moesif Developer Portal can be used with a running instance of AWS API Gateway.
 
-To integrate Moesif and AWS API Gateway, you can follow our guide that covers [integrating Moesif and AWS API Gateway in detail](https://www.moesif.com/docs/guides/integrating-api-analytics-with-aws-api-gateway/). Alternatively, you can also check out [our integration documentation for Tyk](https://www.moesif.com/docs/server-integration/aws-api-gateway/) if you’re already an experienced AWS user. Once you have the integration set, you’ll be ready to move to the next step in the Moesif Developer Portal setup process.
+To integrate Moesif and AWS API Gateway, you can follow our guide that covers [integrating Moesif and AWS API Gateway in detail](https://www.moesif.com/docs/guides/guide-on-integrating-api-analytics-with-aws-api-gateway/). Alternatively, you can also check out [our integration documentation for Tyk](https://www.moesif.com/docs/server-integration/tyk-api-gateway/) if you’re already an experienced AWS user. Once you have the integration set, you’ll be ready to move to the next step in the Moesif Developer Portal setup process.
 
 Before proceeding, you'll also need to make sure that you've set up an API endpoint within AWS API Gateway and added the custom Authorizer covered below.
 
