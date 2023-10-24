@@ -9,7 +9,7 @@ const AsgardeoDashboard = (props) => {
 
     const { fetchEmbedInfo } = props;
 
-    let userEmail = state.email;
+    let userEmail = state.email || state.username;
 
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -41,7 +41,12 @@ const AsgardeoDashboard = (props) => {
         }).then(res => res.json())
         .then(
           (customer) => {
-            fetchEmbedInfo(customer.id, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError);
+            if(customer.id !== undefined) {
+              fetchEmbedInfo(customer.id, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError);
+            }
+            else {
+              navigate('/product-select');
+            }
           }
         );
       }

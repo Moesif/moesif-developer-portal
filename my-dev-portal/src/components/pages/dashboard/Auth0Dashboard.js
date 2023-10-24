@@ -47,7 +47,12 @@ const Auth0Dashboard = (props) => {
         }).then(res => res.json())
         .then(
           (customer) => {
-            fetchEmbedInfo(customer.id, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError);
+            if(customer.id !== undefined) {
+              fetchEmbedInfo(customer.id, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError);
+            }
+            else {
+              navigate('/product-select');
+            }
           }
         );
       }

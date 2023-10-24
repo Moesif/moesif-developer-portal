@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginCallback } from "@okta/okta-react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { SecureRoute as AsgardeoSecureRoute, useAuthContext } from "@asgardeo/auth-react";
 
 import Login from "./components/pages/login/Login";
 import Dashboard from "./components/pages/dashboard/Dashboard";
@@ -11,6 +10,7 @@ import { OktaProviderWithNavigate } from "./OktaProviderWithNavigate";
 import { Auth0ProviderWithNavigate } from "./Auth0ProviderWithNavigate";
 import Keys from "./components/pages/keys/Keys";
 import SecureRoute from "./components/okta/SecureRoute";
+import AsgardeoSecureRoute from "./components/asgardeo/SecureRoute";
 import { AuthenticationGuard } from "./components/authentication-guard";
 import SignUp from "./components/pages/signup/SignUp";
 import RedirectToSignIn from "./components/pages/signup/OktaPostCreate";
@@ -18,8 +18,7 @@ import { StripeProvider } from "./StripeProvider";
 import { AsgardeoProviderWithNavigate } from "./AsgardeoProviderWithNavigate";
 
 function App() {
-  const { isAuthenticated } = useAuth0();
-  const authContext = useAuthContext();
+  const { isAuthenticated, } = useAuth0();
 
   if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return (
@@ -110,18 +109,9 @@ function App() {
             <AsgardeoProviderWithNavigate>
               <StripeProvider>
                 <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      !authContext?.state?.isAuthenticated ? (
-                        <Login />
-                      ) : (
-                        <Navigate replace to={"dashboard"} />
-                      )
-                    }
-                  />
-                  <Route path="product-select" element={<StripeProducts />} />
-                  <Route
+                <Route path="/" element={<Login />} />
+                <Route path="product-select" element={<StripeProducts />} />
+                <Route
                   path="dashboard"
                   element={
                     <AsgardeoSecureRoute>

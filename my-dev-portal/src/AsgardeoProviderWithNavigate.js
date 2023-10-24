@@ -9,7 +9,6 @@ const config = {
   scope: [ "openid","profile","email" ]
 };
 
-
 export const AsgardeoProviderWithNavigate = ({ children }) => {
     return (
         <AuthProvider config={ config }>
