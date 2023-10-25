@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuthContext } from "@asgardeo/auth-react";
 import Modal from "react-modal";
 import SVG from "react-inlinesvg";
 import copy from "copy-to-clipboard";
@@ -22,55 +22,30 @@ const customStyles = {
 };
 
 const AsgardeoKeys = () => {
-  const { user: auth0User, isLoading: auth0IsLoading, getAccessTokenSilently } = useAuth0();
+  const { getIDToken, state } = useAuthContext();
   const [APIKey, setAPIKey] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
-  let isLoading = auth0IsLoading;
-  let userEmail = auth0User?.email;
+  let isLoading = state.isLoading;
 
   Modal.setAppElement("#root");
 
   async function createKey() {
-    let token;
     try {
-      token = await getAccessTokenSilently({
-        audience: `http://127.0.0.1:3030`, // replace with your API identifier
-        ignoreCache: true,
-      });
-
-      console.log(token);
-    } catch(e) {
-      console.error(e);
-      // handle error, return, or throw e
-    }
-
-    fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-key`, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` // Include the Auth0 access token in the Authorization header
-      },
-      body: JSON.stringify({
-        email: userEmail,
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to create key");
-        }
-        return res.json();
-      })
-      .then((result) => {
-        console.log(result);
-        setAPIKey(result.apikey);
+      await getIDToken().then((key) => {
+        console.log(key);
+        setAPIKey(key);
         openModal(setIsOpen);
       })
       .catch((error) => {
         setAPIKey("Error creating key:", error);
         openModal(setIsOpen);
-      });
+      });;
+    } catch(e) {
+      console.error(e);
+      // handle error, return, or throw e
+    }
   }
 
   function openModal() {
