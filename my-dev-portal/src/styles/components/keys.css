@@ -6,9 +6,11 @@
 
 .api-key-container {
   display: flex;
+  max-width: 1100px !important;
 }
 
 .api-key-presentation {
+  max-width: 1100px !important;
   background-color: black;
   display: flex;
   gap: 4px;
@@ -21,6 +23,7 @@
 
 .api-key {
   color: #fff;
+  max-width: 1100px !important;
   font-family: Menlo;
   font-size: 14px;
   font-style: normal;
