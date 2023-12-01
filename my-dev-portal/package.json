@@ -20,7 +20,7 @@
     "react-dom": "^18.2.0",
     "react-inlinesvg": "^3.0.2",
     "react-modal": "^3.16.1",
-    "react-scripts": "5.0.1",
+    "react-router-dom": "^6.10.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -33,7 +33,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "react/react-in-jsx-scope": "off"
+    }
   },
   "browserslist": {
     "production": [
@@ -48,6 +51,6 @@
     ]
   },
   "devDependencies": {
-    "react-router-dom": "^6.10.0"
+    "react-scripts": "5.0.1"
   }
 }
