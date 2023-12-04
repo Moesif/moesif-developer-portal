@@ -9,7 +9,6 @@ export const Auth0ProviderWithNavigate = ({ children }) => {
     navigate(appState?.returnTo || window.location.pathname);
     };
 
-
     return (
         <Auth0Provider
         domain={process.env.REACT_APP_AUTH0_DOMAIN}
@@ -19,7 +18,8 @@ export const Auth0ProviderWithNavigate = ({ children }) => {
         onRedirectCallback={onRedirectCallback}
         authorizationParams={{
           redirect_uri: window.location.origin,
-          audience: process.env.REACT_APP_DEV_PORTAL_API_SERVER,
+          // You may decide to set audience later on.
+          // audience: process.env.REACT_APP_DEV_PORTAL_API_SERVER,
           scope: 'openid profile email offline_access', // Request offline_access scope
         }}
         >
