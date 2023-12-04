@@ -20,7 +20,6 @@ export default function MoesifEmbeddedTemplate(props) {
             noresize="noresize"
           ></iframe>
         </div>
-        {props.error}
       </div>
     </div>
   );
