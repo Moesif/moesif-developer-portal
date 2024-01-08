@@ -21,5 +21,6 @@
 
 .ReactModal__Content {
   min-width: 612px !important;
+  max-width: 1200px !important;
   padding: 24px !important;
 }

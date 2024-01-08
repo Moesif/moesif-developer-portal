@@ -37,7 +37,9 @@ const Auth0Dashboard = (props) => {
           (result) => {
             fetchEmbedInfo(result.customer, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError)
           }
-        )
+        ).catch((err) => {
+          setError(err);
+        });
       }
       else {
         fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=` + encodeURIComponent(user.email), {
@@ -54,7 +56,9 @@ const Auth0Dashboard = (props) => {
               navigate('/product-select');
             }
           }
-        );
+        ).catch((err) => {
+          setError(err);
+        });
       }
     }, [isLoading, navigate, checkout_session_id, user, fetchEmbedInfo]);
 
