@@ -397,7 +397,7 @@ In the Developer Portal UI projects __.env__ file, we will add the following val
 REACT_APP_AUTH0_AUDIENCE="http://127.0.0.1:3030"
 ```
 
-The value here will be what you put in the __Identifier__ field when you create the API in Auth0. Alternatively, you can retrieve the value by going to the __APIs__ page again, locating your API, and copying the __API Audience__ field.	
+The value here will be what you put in the __Identifier__ field when you create the API in Auth0. Alternatively, you can retrieve the value by going to the __APIs__ page again, locating your API, and copying the __API Audience__ field.
 
 ##### Add Custom JWT Field Logic to Auth0
 Next, we will add the logic to add the Stripe Customer and Subscription ID’s to the Auth0 JWT token. To do this, we will execute the following steps.
@@ -546,19 +546,11 @@ REACT_APP_STRIPE_PUBLISHABLE_KEY="pk_test_123abc"
 
 Once added, save the `.env` file and move to the next step of adding the other Stripe configuration details to the Moesif Developer Portal.
 
-#### Adding Stripe to the Moesif Developer Portal
+#### Adding Stripe API key to the Moesif Developer Portal
 
-Adding Stripe to the Moesif Developer Portal will require adding some details to the .env files in both the UI and API projects within the developer portal.
+Adding Stripe to the Moesif Developer Portal will require adding some details to the .env API projects.
 
-In the `my-dev-portal/.env` file, you will need to add a value for the `REACT_APP_STRIPE_AUTH_KEY` entry. This key can be accessed by logging into Stripe and clicking on the **Developers** link in the top-right of the screen. On the **Developers** screen, click on **API Keys** in the left-side menu. You’ll then be able to see the private key for your API in either the **Secret key** or a generated **Restricted keys** field on the screen. Either key can be copied and used.
-
-```shell
-REACT_APP_STRIPE_AUTH_KEY="Bearer sk_test_123abc"
-```
-
-> It’s important that you preface the key with `Bearer` for the key to work correctly with the developer portal.
-
-In the `my-dev-portal-api/.env` file, you’ll also need to add the same value to the `STRIPE_API_KEY` entry.
+In the `my-dev-portal-api/.env` file, you will need to add a value for the `STRIPE_API_KEY` entry. This key can be accessed by logging into Stripe and clicking on the **Developers** link in the top-right of the screen. On the **Developers** screen, click on **API Keys** in the left-side menu. You’ll then be able to see the private key for your API in either the **Secret key** or a generated **Restricted keys** field on the screen. Either key can be copied and used.
 
 ```shell
 STRIPE_API_KEY="sk_test_123abc"
@@ -758,5 +750,8 @@ In **Moesif**, in the **Live Event Log**, you should see your API call logged. Y
 Within the next 15 minutes, you should also see in Stripe that API call usage has been attached to the user subscription. This can be done by going to the **Customers** screen, clicking on the customer, and on the customer profile screen that appears, clicking on the **Subscriptions** entry for the subscription where the usage will be billed. Inside the subscription details screen, you’ll see under the **Pricing** header an entry and a link for **View usage**. This should reflect the API call usage.
 
 A last step you can do is also do the [**Meter Test**](https://www.moesif.com/docs/metered-billing/testing-billing-meters/) to ensure that all parts of the billing meter setup are working correctly.
+
+Depends on how you deploy the my-dev-portal-api, weather you decides to use API gateway or not, you will want to make sure these
+APIs are protected also so that they can only be called by my-dev-portal UI.
 
 With all parts of the ecosystem working properly, the Moesif Developer Portal can be released to your users!

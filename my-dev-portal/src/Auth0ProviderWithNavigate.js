@@ -9,7 +9,6 @@ export const Auth0ProviderWithNavigate = ({ children }) => {
     navigate(appState?.returnTo || window.location.pathname);
     };
 
-
     return (
         <Auth0Provider
         domain={process.env.REACT_APP_AUTH0_DOMAIN}
