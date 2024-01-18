@@ -7,7 +7,6 @@ var cors = require("cors");
 const fetch = require("node-fetch");
 const { Client } = require("@okta/okta-sdk-nodejs");
 const { ManagementClient } = require('auth0');
-const { Console } = require("console");
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -32,6 +31,17 @@ const moesifMiddleware = moesif({
 });
 
 app.use(moesifMiddleware, cors());
+
+function updateMoesifSubscription(subscription) {
+  return fetch("https://api.moesif.net/v1/subscriptions", {
+    method: "POST",
+    headers: {
+      "X-Moesif-Application-Id": process.env.MOESIF_APPLICATION_ID,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(subscription)
+  });
+}
 
 app.post("/okta/register", jsonParser, async (req, res) => {
   try {
@@ -137,7 +147,8 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
             "subscription_id": stripe_subscription_id,
             "company_id": stripe_customer_id,
           }
-          moesifMiddleware.updateSubscription(subscription);
+
+          updateMoesifSubscription(subscription);
         }
         // V1 as fallback
         else {
@@ -208,7 +219,6 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
               headers: { "Content-Type": "application/json" },
             });
           }
-
         } else if (apimProvider === "AWS") {
           let url = `https://${process.env.AUTH0_DOMAIN}/oauth/token`;
           let auth0Token;
