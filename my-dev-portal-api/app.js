@@ -32,17 +32,6 @@ const moesifMiddleware = moesif({
 
 app.use(moesifMiddleware, cors());
 
-function updateMoesifSubscription(subscription) {
-  return fetch("https://api.moesif.net/v1/subscriptions", {
-    method: "POST",
-    headers: {
-      "X-Moesif-Application-Id": process.env.MOESIF_APPLICATION_ID,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(subscription)
-  });
-}
-
 app.post("/okta/register", jsonParser, async (req, res) => {
   try {
     const oktaClient = new Client({
@@ -144,11 +133,10 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
           moesifMiddleware.updateUser(user);
 
           var subscription = {
-            "subscription_id": stripe_subscription_id,
-            "company_id": stripe_customer_id,
+            subscription_id: stripe_subscription_id,
+            company_id: stripe_customer_id,
           }
-
-          updateMoesifSubscription(subscription);
+          moesifMiddleware.updateSubscription(subscription);
         }
         // V1 as fallback
         else {
