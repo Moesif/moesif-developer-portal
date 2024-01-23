@@ -119,7 +119,7 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
         const stripe_customer_id = result.customer;
         const stripe_subscription_id = result.subscription;
 
-        if (process.env.MOESIF_MONETIZATION_VERSION && process.env.MOESIF_MONETIZATION_VERSION === 'V2') {
+        if (process.env.MOESIF_MONETIZATION_VERSION && process.env.MOESIF_MONETIZATION_VERSION.toUpperCase === 'V2') {
           var company = { companyId: stripe_customer_id };
           moesifMiddleware.updateCompany(company);
 
