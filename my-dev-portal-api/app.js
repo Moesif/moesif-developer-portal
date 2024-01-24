@@ -112,46 +112,53 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
   }).then(res => res.json())
     .then(async (result) => {
       console.log("in register");
-      console.log(result);
       if (result.customer && result.subscription) {
         console.log("customer and subscription present");
         const email = result.customer_details.email;
         const stripe_customer_id = result.customer;
         const stripe_subscription_id = result.subscription;
+        try {
+          if (process.env.MOESIF_MONETIZATION_VERSION && process.env.MOESIF_MONETIZATION_VERSION.toUpperCase() === 'V2') {
+            console.log("updating company and user with V2")
+            var company = { companyId: stripe_customer_id };
+            moesifMiddleware.updateCompany(company);
 
-        if (process.env.MOESIF_MONETIZATION_VERSION && process.env.MOESIF_MONETIZATION_VERSION.toUpperCase === 'V2') {
-          var company = { companyId: stripe_customer_id };
-          moesifMiddleware.updateCompany(company);
+            var user = {
+              userId: stripe_customer_id,
+              companyId: stripe_customer_id,
+              metadata: {
+                email: email,
+              },
+            };
+            moesifMiddleware.updateUser(user);
 
-          var user = {
-            userId: stripe_customer_id,
-            companyId: stripe_customer_id,
-            metadata: {
-              email: email,
-            },
-          };
-          moesifMiddleware.updateUser(user);
-
-          var subscription = {
-            subscription_id: stripe_subscription_id,
-            company_id: stripe_customer_id,
+            var subscription = {
+              subscriptionId: stripe_subscription_id,
+              companyId: stripe_customer_id,
+              status: "active",
+            }
+            moesifMiddleware.updateSubscription(subscription).then((result) => { 
+              console.log("subscription updated successfully");
+            }).catch((err) => {
+              console.error("Error updating subscription", err);
+            } );
           }
-          moesifMiddleware.updateSubscription(subscription);
-        }
-        // V1 as fallback
-        else {
-          var company = { companyId: stripe_subscription_id };
-          moesifMiddleware.updateCompany(company);
+          // V1 as fallback
+          else {
+            console.log("updating company and user with V1");
+            var company = { companyId: stripe_subscription_id };
+            moesifMiddleware.updateCompany(company);
 
-          var user = {
-            userId: stripe_customer_id,
-            companyId: stripe_subscription_id,
-            metadata: {
-              email: email,
-            },
-          };
-          moesifMiddleware.updateUser(user);
-        }
+            var user = {
+              userId: stripe_customer_id,
+              companyId: stripe_subscription_id,
+              metadata: {
+                email: email,
+              },
+            };
+            moesifMiddleware.updateUser(user);
+          }
+        } catch (error) { console.error("Error updating user/company/sub:", error); }
 
         if (apimProvider === "Kong") {
 
