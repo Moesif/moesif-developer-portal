@@ -1,17 +1,15 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuthContext } from "@asgardeo/auth-react";
 import { PageLayout } from "../../page-layout";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { PageLoader } from "../../page-loader";
 import MoesifEmbeddedTemplate from "../../moesif/moesif-embedded-template";
 
-const Auth0Dashboard = (props) => {
-  const { user: auth0User, isLoading: auth0IsLoading } = useAuth0();
+const AsgardeoDashboard = (props) => {
+  const { state } = useAuthContext();
 
     const { fetchEmbedInfo } = props;
 
-    let isLoading = auth0IsLoading;
-    let user = auth0User;
+    let userEmail = state.email || state.username;
 
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -21,10 +19,6 @@ const Auth0Dashboard = (props) => {
     const [iFrameSrcTimeSeries, setIFrameSrcTimeSeries] = useState();
 
     useEffect(() => {
-      if (isLoading) {
-        return <PageLoader />;
-      }
-
       if(checkout_session_id) {
         fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${checkout_session_id}`, {
           method: 'POST',
@@ -37,12 +31,10 @@ const Auth0Dashboard = (props) => {
           (result) => {
             fetchEmbedInfo(result.customer, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError)
           }
-        ).catch((err) => {
-          setError(err);
-        });
+        )
       }
       else {
-        fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=` + encodeURIComponent(user.email), {
+        fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=` + encodeURIComponent(userEmail), {
           headers: {
             // 'Authorization': should be the auth0 access token when ready.
           }
@@ -56,11 +48,9 @@ const Auth0Dashboard = (props) => {
               navigate('/product-select');
             }
           }
-        ).catch((err) => {
-          setError(err);
-        });
+        );
       }
-    }, [isLoading, navigate, checkout_session_id, user, fetchEmbedInfo]);
+    }, [navigate, checkout_session_id, userEmail, fetchEmbedInfo]);
 
     return (
       <PageLayout>
@@ -71,4 +61,4 @@ const Auth0Dashboard = (props) => {
     );
   }
 
-  export default Auth0Dashboard
+  export default AsgardeoDashboard;

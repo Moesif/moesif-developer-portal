@@ -10,13 +10,15 @@ import { OktaProviderWithNavigate } from "./OktaProviderWithNavigate";
 import { Auth0ProviderWithNavigate } from "./Auth0ProviderWithNavigate";
 import Keys from "./components/pages/keys/Keys";
 import SecureRoute from "./components/okta/SecureRoute";
+import AsgardeoSecureRoute from "./components/asgardeo/SecureRoute";
 import { AuthenticationGuard } from "./components/authentication-guard";
 import SignUp from "./components/pages/signup/SignUp";
 import RedirectToSignIn from "./components/pages/signup/OktaPostCreate";
 import { StripeProvider } from "./StripeProvider";
+import { AsgardeoProviderWithNavigate } from "./AsgardeoProviderWithNavigate";
 
 function App() {
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated, } = useAuth0();
 
   if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return (
@@ -94,6 +96,48 @@ function App() {
                 </Routes>
               </StripeProvider>
             </Auth0ProviderWithNavigate>
+          </BrowserRouter>
+        </header>
+      </div>
+    );
+  }
+  else if (process.env.REACT_APP_AUTH_PROVIDER === "Asgardeo") {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <BrowserRouter>
+            <AsgardeoProviderWithNavigate>
+              <StripeProvider>
+                <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="product-select" element={<StripeProducts />} />
+                <Route
+                  path="dashboard"
+                  element={
+                    <AsgardeoSecureRoute>
+                      <Dashboard />
+                    </AsgardeoSecureRoute>
+                  }
+                />
+                <Route
+                  path="settings"
+                  element={
+                    <AsgardeoSecureRoute>
+                      <Settings />
+                    </AsgardeoSecureRoute>
+                  }
+                />
+                <Route
+                  path="keys"
+                  element={
+                    <AsgardeoSecureRoute>
+                      <Keys />
+                    </AsgardeoSecureRoute>
+                  }
+                />
+                </Routes>
+              </StripeProvider>
+            </AsgardeoProviderWithNavigate>
           </BrowserRouter>
         </header>
       </div>

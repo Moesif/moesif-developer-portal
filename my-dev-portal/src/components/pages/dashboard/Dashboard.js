@@ -1,5 +1,6 @@
 import OktaDashboard from "./OktaDashboard";
 import Auth0Dashboard from "./Auth0Dashboard";
+import AsgardeoDashboard from "./AsgardeoDashboard";
 
 function fetchEmbedInfo(userId, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError) {
   fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/embed-dash-live-event/` + encodeURIComponent(userId))
@@ -42,9 +43,12 @@ function fetchEmbedInfo(userId, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, s
 }
 
 export default function Dashboard() {
+  console.log("in dashboard");
   if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return <OktaDashboard fetchEmbedInfo={fetchEmbedInfo} />;
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     return <Auth0Dashboard fetchEmbedInfo={fetchEmbedInfo} />;
+  } else if (process.env.REACT_APP_AUTH_PROVIDER === "Asgardeo") {
+    return <AsgardeoDashboard fetchEmbedInfo={fetchEmbedInfo} />;
   }
 }
