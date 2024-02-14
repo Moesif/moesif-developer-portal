@@ -263,6 +263,11 @@ AWS_INVOKE_URL="https://123abc.execute-api.region.amazonaws.com"
 
 # Kong envars
 KONG_URL="http://localhost:8001"
+## Kong Konnect Settings
+KONNECT_API_URL="https://us.api.konghq.com"
+KONNECT_API_VERSION="v2"
+KONNECT_RUNTIME_GROUP_NAME="default"
+KONNECT_PAT=""
 
 # Tyk envars
 TYK_GATEWAY_URL="http://localhost:8080"
@@ -285,6 +290,40 @@ The only values we need set in this `.env` file currently will be your Gateway U
 #### Kong
 
 For the `KONG_URL`, If you’re running a local instance of Kong, by default this should be running on `http://localhost:8001`. If this is the case, you can leave the value as is. If it is different or running remotely, you can change the value to point to your Kong gateway.
+
+##### With Kong Konnect
+For Kong Konnect, the setup also requires you to add a few additional environment variables to the `my-dev-portal-api/.env` file. You'll want to add in the following key-values to the file:
+
+``` conf
+KONNECT_API_URL="https://us.api.konghq.com"
+KONNECT_API_VERSION="v2"
+KONNECT_RUNTIME_GROUP_NAME="default"
+KONNECT_PAT=""
+```
+for the `KONNECT_API_URL` and `KONNECT_API_VERSION` values, you'll want to log into your Kong Konnect control plane and retrieve this. You can get this value by going to the __Gateway Manager__ screen and selecting your control plane. In the next screen, you can grab the __Admin API__ value (located in near the top of the screen) and truncate anything we don't need.
+
+The raw value will look like this: https://us.api.konghq.com/v2/control-planes/123-asd-etc
+
+From this, we can populate our values like so:
+
+``` conf
+KONNECT_API_URL="https://us.api.konghq.com"
+KONNECT_API_VERSION="v2"
+```
+
+For the `KONNECT_RUNTIME_GROUP_NAME`, you'll use your __Control Plane__ name. By default, this will be fittingly named `default`.
+
+``` conf
+KONNECT_RUNTIME_GROUP_NAME="default"
+```
+
+Lastly, we will generate a Konnect Personal Access Token. This can be done through the Konnect UI by going to your initials in the top-right of the screen and from the dropdown, selecting __Personal Access Tokens__. 
+
+From here, click __Generate Token__, give the token a __Name__ and __Expiration__, then click __Generate__. Paste the returned value into the `KONNECT_PAT` value.
+
+```conf
+KONNECT_PAT="kpat_FIZqQxICG6aEpA10nQ1TesTtEStTEST"
+```
 
 #### AWS
 
