@@ -36,7 +36,7 @@ const Auth0Keys = () => {
     let token;
     try {
       token = await getAccessTokenSilently({
-        audience: `http://127.0.0.1:3030`, // replace with your API identifier
+        audience: process.env.REACT_APP_AUTH0_AUDIENCE,
         ignoreCache: true,
       });
 
