@@ -317,7 +317,7 @@ For the `KONNECT_RUNTIME_GROUP_NAME`, you'll use your __Control Plane__ name. By
 KONNECT_RUNTIME_GROUP_NAME="default"
 ```
 
-Lastly, we will generate a Konnect Personal Access Token. This can be done through the Konnect UI by going to your initials in the top-right of the screen and from the dropdown, selecting __Personal Access Tokens__. 
+Lastly, we will generate a Konnect Personal Access Token. This can be done through the Konnect UI by going to your initials in the top-right of the screen and from the dropdown, selecting __Personal Access Tokens__.
 
 From here, click __Generate Token__, give the token a __Name__ and __Expiration__, then click __Generate__. Paste the returned value into the `KONNECT_PAT` value.
 
@@ -790,7 +790,7 @@ Within the next 15 minutes, you should also see in Stripe that API call usage ha
 
 A last step you can do is also do the [**Meter Test**](https://www.moesif.com/docs/metered-billing/testing-billing-meters/) to ensure that all parts of the billing meter setup are working correctly.
 
-Depends on how you deploy the my-dev-portal-api, weather you decides to use API gateway or not, you will want to make sure these
-APIs are protected also so that they can only be called by my-dev-portal UI.
+Depends on how you deploy the `my-dev-portal-api`, weather you decides to use API gateway or not, you will want to make sure these
+APIs are protected so that they can only be called by `my-dev-portal` UI.
 
 With all parts of the ecosystem working properly, the Moesif Developer Portal can be released to your users!
