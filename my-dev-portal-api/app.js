@@ -7,6 +7,7 @@ var cors = require("cors");
 const fetch = require("node-fetch");
 const { Client } = require("@okta/okta-sdk-nodejs");
 const { ManagementClient } = require('auth0');
+const { verifyStripeSession, getStripeCustomer } = require('./stripeApis');
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -105,11 +106,7 @@ app.post("/okta/register", jsonParser, async (req, res) => {
 app.post('/register/stripe/:checkout_session_id', function (req, res) {
   const checkout_session_id = req.params.checkout_session_id;
 
-  fetch(`https://api.stripe.com/v1/checkout/sessions/${checkout_session_id}`, {
-    headers: {
-      'Authorization': `bearer ${process.env.STRIPE_API_KEY}`,
-    }
-  }).then(res => res.json())
+  verifyStripeSession(checkout_session_id)
     .then(async (result) => {
       console.log("in register");
       if (result.customer && result.subscription) {
@@ -137,7 +134,7 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
               companyId: stripe_customer_id,
               status: "active",
             }
-            moesifMiddleware.updateSubscription(subscription).then((result) => { 
+            moesifMiddleware.updateSubscription(subscription).then((result) => {
               console.log("subscription updated successfully");
             }).catch((err) => {
               console.error("Error updating subscription", err);
@@ -276,12 +273,8 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
 });
 
 app.get('/stripe/customer', function (req, res) {
-  const email = req.query.email
-  fetch(`https://api.stripe.com/v1/customers/search?query=email:"${encodeURIComponent(email)}"`, {
-    headers: {
-      'Authorization': `bearer ${process.env.STRIPE_API_KEY}`,
-    }
-  }).then(res => res.json()).then((result) => {
+  const email = req.query.email;
+  getStripeCustomer(email).then((result) => {
     if (result.data && result.data[0]) {
       res.status(200).json(result.data[0]);
     } else {
