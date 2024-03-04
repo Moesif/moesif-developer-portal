@@ -7,7 +7,7 @@ var cors = require("cors");
 const fetch = require("node-fetch");
 const { Client } = require("@okta/okta-sdk-nodejs");
 const { ManagementClient } = require('auth0');
-const { verifyStripeSession, getStripeCustomer } = require('./stripeApis');
+const { verifyStripeSession, getStripeCustomer } = require('./services/stripeApis');
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -274,6 +274,7 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
 
 app.get('/stripe/customer', function (req, res) {
   const email = req.query.email;
+  console.log('get stripe customer ' + typeof getStripeCustomer);
   getStripeCustomer(email).then((result) => {
     if (result.data && result.data[0]) {
       res.status(200).json(result.data[0]);

@@ -1,4 +1,4 @@
-export function verifyStripeSession(checkout_session_id) {
+function verifyStripeSession(checkout_session_id) {
   return fetch(
     `https://api.stripe.com/v1/checkout/sessions/${checkout_session_id}`,
     {
@@ -9,7 +9,7 @@ export function verifyStripeSession(checkout_session_id) {
   ).then((res) => res.json());
 }
 
-export function getStripeCustomer(email) {
+function getStripeCustomer(email) {
   return fetch(
     `https://api.stripe.com/v1/customers/search?query=email:"${encodeURIComponent(
       email
@@ -22,4 +22,9 @@ export function getStripeCustomer(email) {
   ).then((res) => res.json());
 }
 
+
+module.exports = {
+  verifyStripeSession,
+  getStripeCustomer,
+};
 
