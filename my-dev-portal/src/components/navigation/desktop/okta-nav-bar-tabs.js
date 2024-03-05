@@ -19,4 +19,4 @@ const OktaNavBarTabs = () => {
   );
 };
 
-export default OktaNavBarTabs
+export default OktaNavBarTabs;

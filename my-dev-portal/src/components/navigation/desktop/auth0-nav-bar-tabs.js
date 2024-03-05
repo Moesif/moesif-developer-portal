@@ -16,6 +16,6 @@ function Auth0NavBarTabs() {
       )}
     </div>
   );
-};
+}
 
-export default Auth0NavBarTabs
+export default Auth0NavBarTabs;

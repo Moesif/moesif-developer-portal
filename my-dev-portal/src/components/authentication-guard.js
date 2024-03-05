@@ -1,6 +1,6 @@
-import React from 'react';
-import SecureRoute from './okta/SecureRoute';
-import { PageLoader } from './page-loader';
+import React from "react";
+import SecureRoute from "./okta/SecureRoute";
+import { PageLoader } from "./page-loader";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 
 export const AuthenticationGuard = ({ children, component }) => {
@@ -20,5 +20,5 @@ export const AuthenticationGuard = ({ children, component }) => {
     });
 
     return <Component />;
-  } 
+  }
 };

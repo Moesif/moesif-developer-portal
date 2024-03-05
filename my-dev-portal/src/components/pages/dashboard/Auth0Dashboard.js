@@ -8,62 +8,81 @@ import MoesifEmbeddedTemplate from "../../moesif/moesif-embedded-template";
 const Auth0Dashboard = (props) => {
   const { user: auth0User, isLoading: auth0IsLoading } = useAuth0();
 
-    const { fetchEmbedInfo } = props;
+  const { fetchEmbedInfo } = props;
 
-    let isLoading = auth0IsLoading;
-    let user = auth0User;
+  let isLoading = auth0IsLoading;
+  let user = auth0User;
 
-    const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
-    const checkout_session_id = searchParams.get("checkout-session");
-    const [error, setError] = useState();
-    const [iFrameSrcLiveEvent, setIFrameSrcLiveEvent] = useState();
-    const [iFrameSrcTimeSeries, setIFrameSrcTimeSeries] = useState();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const checkout_session_id = searchParams.get("checkout-session");
+  const [error, setError] = useState();
+  const [iFrameSrcLiveEvent, setIFrameSrcLiveEvent] = useState();
+  const [iFrameSrcTimeSeries, setIFrameSrcTimeSeries] = useState();
 
-    useEffect(() => {
-      if (isLoading) {
-        return <PageLoader />;
-      }
+  useEffect(() => {
+    if (isLoading) {
+      return <PageLoader />;
+    }
 
-      if(checkout_session_id) {
-        fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${checkout_session_id}`, {
-          method: 'POST',
+    if (checkout_session_id) {
+      fetch(
+        `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${checkout_session_id}`,
+        {
+          method: "POST",
           headers: {
             // 'Authorization': should be the auth0 access token.
-          }
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          fetchEmbedInfo(
+            result.customer,
+            setIFrameSrcLiveEvent,
+            setIFrameSrcTimeSeries,
+            setError
+          );
         })
-        .then(res => res.json())
-        .then(
-          (result) => {
-            fetchEmbedInfo(result.customer, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError)
-          }
-        ).catch((err) => {
+        .catch((err) => {
           setError(err);
         });
-      }
-      else {
-        fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=` + encodeURIComponent(user.email), {
+    } else {
+      fetch(
+        `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=` +
+          encodeURIComponent(user.email),
+        {
           headers: {
             // 'Authorization': should be the auth0 access token when ready.
-          }
-        }).then(res => res.json())
-        .then(
-          (customer) => {
-            fetchEmbedInfo(customer.id, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError);
-          }
-        ).catch((err) => {
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((customer) => {
+          fetchEmbedInfo(
+            customer.id,
+            setIFrameSrcLiveEvent,
+            setIFrameSrcTimeSeries,
+            setError
+          );
+        })
+        .catch((err) => {
           setError(err);
         });
-      }
-    }, [isLoading, navigate, checkout_session_id, user, fetchEmbedInfo]);
+    }
+  }, [isLoading, navigate, checkout_session_id, user, fetchEmbedInfo]);
 
-    return (
-      <PageLayout>
-        <>
-          <MoesifEmbeddedTemplate iFrameSrcLiveEvent={iFrameSrcLiveEvent} iFrameSrcTimeSeries={iFrameSrcTimeSeries} error={error} />
-        </>
-      </PageLayout>
-    );
-  }
+  return (
+    <PageLayout>
+      <>
+        <MoesifEmbeddedTemplate
+          iFrameSrcLiveEvent={iFrameSrcLiveEvent}
+          iFrameSrcTimeSeries={iFrameSrcTimeSeries}
+          error={error}
+        />
+      </>
+    </PageLayout>
+  );
+};
 
-  export default Auth0Dashboard
+export default Auth0Dashboard;

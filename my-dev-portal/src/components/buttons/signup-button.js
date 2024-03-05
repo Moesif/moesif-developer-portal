@@ -30,7 +30,7 @@ const SignupButtonWithAuth0 = ({ isLink }) => {
         prompt: "login",
         screen_hint: "signup",
       },
-      scope: 'openid profile email offline_access',
+      scope: "openid profile email offline_access",
     });
   };
 

@@ -3,8 +3,8 @@ function verifyStripeSession(checkout_session_id) {
     `https://api.stripe.com/v1/checkout/sessions/${checkout_session_id}`,
     {
       headers: {
-        Authorization: `bearer ${process.env.STRIPE_API_KEY}`
-      }
+        Authorization: `bearer ${process.env.STRIPE_API_KEY}`,
+      },
     }
   ).then((res) => res.json());
 }
@@ -16,15 +16,13 @@ function getStripeCustomer(email) {
     )}"`,
     {
       headers: {
-        Authorization: `bearer ${process.env.STRIPE_API_KEY}`
-      }
+        Authorization: `bearer ${process.env.STRIPE_API_KEY}`,
+      },
     }
   ).then((res) => res.json());
 }
-
 
 module.exports = {
   verifyStripeSession,
   getStripeCustomer,
 };
-

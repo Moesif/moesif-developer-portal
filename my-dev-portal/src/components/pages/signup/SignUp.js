@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
 
   const handleSignup = async () => {
@@ -17,21 +17,29 @@ const SignUp = () => {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/okta/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ firstName, lastName, email: email.toLowerCase(), password }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/okta/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email: email.toLowerCase(),
+            password,
+          }),
+        }
+      );
 
       if (response.ok) {
-        console.log('User created successfully');
-        navigate('/login/oktapostcreate');
+        console.log("User created successfully");
+        navigate("/login/oktapostcreate");
       } else {
-        console.error('Failed to create user');
+        console.error("Failed to create user");
         // Handle error creating user
       }
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error("Error creating user:", error);
       // Handle error creating user
     }
   };
@@ -40,23 +48,23 @@ const SignUp = () => {
     const errors = {};
 
     if (!firstName.trim()) {
-      errors.firstName = 'First name is required';
+      errors.firstName = "First name is required";
     }
 
     if (!lastName.trim()) {
-      errors.lastName = 'Last name is required';
+      errors.lastName = "Last name is required";
     }
 
     if (!email.trim()) {
-      errors.email = 'Email is required';
+      errors.email = "Email is required";
     } else if (!isValidEmail(email)) {
-      errors.email = 'Invalid email address';
+      errors.email = "Invalid email address";
     }
 
     if (!password.trim()) {
-      errors.password = 'Password is required';
+      errors.password = "Password is required";
     } else if (password.length < 6) {
-      errors.password = 'Password should be at least 6 characters long';
+      errors.password = "Password should be at least 6 characters long";
     }
 
     return errors;
@@ -85,7 +93,9 @@ const SignUp = () => {
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
         />
-        {errors.firstName && <span className="signup-error">{errors.firstName}</span>}
+        {errors.firstName && (
+          <span className="signup-error">{errors.firstName}</span>
+        )}
       </div>
       <div>
         <label>Last Name:</label>
@@ -95,7 +105,9 @@ const SignUp = () => {
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
         />
-        {errors.lastName && <span className="signup-error">{errors.lastName}</span>}
+        {errors.lastName && (
+          <span className="signup-error">{errors.lastName}</span>
+        )}
       </div>
       <div>
         <label>Email:</label>
@@ -116,7 +128,9 @@ const SignUp = () => {
           onChange={(e) => setPassword(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        {errors.password && <span className="signup-error">{errors.password}</span>}
+        {errors.password && (
+          <span className="signup-error">{errors.password}</span>
+        )}
       </div>
       <button className="signup-form-button" onClick={handleSignup}>
         Sign up

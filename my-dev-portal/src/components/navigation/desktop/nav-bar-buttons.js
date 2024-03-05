@@ -7,5 +7,5 @@ export const NavBarButtons = () => {
     return <OktaNavBarButtons />;
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     return <Auth0NavBarButtons />;
-  } 
+  }
 };

@@ -7,5 +7,5 @@ export default function Login() {
     return <OktaLogin />;
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     return <Auth0Login />;
-  } 
+  }
 }

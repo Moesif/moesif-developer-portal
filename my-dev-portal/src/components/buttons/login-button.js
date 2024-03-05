@@ -2,7 +2,7 @@ import { useOktaAuth } from "@okta/okta-react";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 
-const LoginButtonWithOkta = ({isLink}) => {
+const LoginButtonWithOkta = ({ isLink }) => {
   const { oktaAuth } = useOktaAuth();
 
   const handleLogin = async () => {
@@ -18,7 +18,7 @@ const LoginButtonWithOkta = ({isLink}) => {
   );
 };
 
-const LoginButtonWithAuth0 = ({isLink}) => {
+const LoginButtonWithAuth0 = ({ isLink }) => {
   const { loginWithRedirect } = useAuth0();
 
   const handleLogin = async () => {
@@ -29,7 +29,7 @@ const LoginButtonWithAuth0 = ({isLink}) => {
       authorizationParams: {
         prompt: "login",
       },
-      scope: 'openid profile email offline_access',
+      scope: "openid profile email offline_access",
     });
   };
   const className = isLink ? " button__link lowercase" : "button__login";
@@ -41,7 +41,7 @@ const LoginButtonWithAuth0 = ({isLink}) => {
   );
 };
 
-export const LoginButton = ({isLink}) => {
+export const LoginButton = ({ isLink }) => {
   if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return <LoginButtonWithOkta isLink={isLink} />;
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
@@ -50,6 +50,3 @@ export const LoginButton = ({isLink}) => {
     return null; // or some error message
   }
 };
-
-
-

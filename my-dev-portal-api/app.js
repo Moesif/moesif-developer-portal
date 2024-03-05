@@ -11,7 +11,7 @@ const {
   verifyStripeSession,
   getStripeCustomer,
 } = require("./services/stripeApis");
-const { syncToMoesif } = require('./services/moesifApis');
+const { syncToMoesif } = require("./services/moesifApis");
 
 const app = express();
 app.use(express.static(path.join(__dirname)));

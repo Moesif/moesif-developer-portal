@@ -25,41 +25,53 @@ const OktaDashboard = (props) => {
       return <PageLoader />;
     }
 
-    if(checkout_session_id) {
-      fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${checkout_session_id}`, {
-        method: 'POST',
-        headers: {
-          // 'Authorization': should be the okta access token.
-        }
-      })
-      .then(res => res.json())
-      .then(
-        (result) => {
-          fetchEmbedInfo(result.customer, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError)
+    if (checkout_session_id) {
+      fetch(
+        `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${checkout_session_id}`,
+        {
+          method: "POST",
+          headers: {
+            // 'Authorization': should be the okta access token.
+          },
         }
       )
-    }
-    else {
-      fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=` + encodeURIComponent(user.email), {
-        headers: {
-          // 'Authorization': should be the okta access token
-        }
-      }).then(res => {
-        if (res.status === '404') {
-          return null;
-        }
-        return res.json()
-      })
-      .then(
-        (customer) => {
-          if(!customer) {
-            navigate('/product-select');
-          }
-          else {
-            fetchEmbedInfo(customer.id, setIFrameSrcLiveEvent, setIFrameSrcTimeSeries, setError);
-          }
+        .then((res) => res.json())
+        .then((result) => {
+          fetchEmbedInfo(
+            result.customer,
+            setIFrameSrcLiveEvent,
+            setIFrameSrcTimeSeries,
+            setError
+          );
+        });
+    } else {
+      fetch(
+        `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=` +
+          encodeURIComponent(user.email),
+        {
+          headers: {
+            // 'Authorization': should be the okta access token
+          },
         }
       )
+        .then((res) => {
+          if (res.status === "404") {
+            return null;
+          }
+          return res.json();
+        })
+        .then((customer) => {
+          if (!customer) {
+            navigate("/product-select");
+          } else {
+            fetchEmbedInfo(
+              customer.id,
+              setIFrameSrcLiveEvent,
+              setIFrameSrcTimeSeries,
+              setError
+            );
+          }
+        });
     }
   }, [isLoading, navigate, checkout_session_id, user, fetchEmbedInfo]);
 
