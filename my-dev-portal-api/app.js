@@ -6,8 +6,11 @@ const moesif = require("moesif-nodejs");
 var cors = require("cors");
 const fetch = require("node-fetch");
 const { Client } = require("@okta/okta-sdk-nodejs");
-const { ManagementClient } = require('auth0');
-const { verifyStripeSession, getStripeCustomer } = require('./services/stripeApis');
+const { ManagementClient } = require("auth0");
+const {
+  verifyStripeSession,
+  getStripeCustomer,
+} = require("./services/stripeApis");
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -103,7 +106,7 @@ app.post("/okta/register", jsonParser, async (req, res) => {
   }
 });
 
-app.post('/register/stripe/:checkout_session_id', function (req, res) {
+app.post("/register/stripe/:checkout_session_id", function (req, res) {
   const checkout_session_id = req.params.checkout_session_id;
 
   verifyStripeSession(checkout_session_id)
@@ -115,8 +118,11 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
         const stripe_customer_id = result.customer;
         const stripe_subscription_id = result.subscription;
         try {
-          if (process.env.MOESIF_MONETIZATION_VERSION && process.env.MOESIF_MONETIZATION_VERSION.toUpperCase() === 'V2') {
-            console.log("updating company and user with V2")
+          if (
+            process.env.MOESIF_MONETIZATION_VERSION &&
+            process.env.MOESIF_MONETIZATION_VERSION.toUpperCase() === "V2"
+          ) {
+            console.log("updating company and user with V2");
             var company = { companyId: stripe_customer_id };
             moesifMiddleware.updateCompany(company);
 
@@ -133,12 +139,15 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
               subscriptionId: stripe_subscription_id,
               companyId: stripe_customer_id,
               status: "active",
-            }
-            moesifMiddleware.updateSubscription(subscription).then((result) => {
-              console.log("subscription updated successfully");
-            }).catch((err) => {
-              console.error("Error updating subscription", err);
-            } );
+            };
+            moesifMiddleware
+              .updateSubscription(subscription)
+              .then((result) => {
+                console.log("subscription updated successfully");
+              })
+              .catch((err) => {
+                console.error("Error updating subscription", err);
+              });
           }
           // V1 as fallback
           else {
@@ -155,53 +164,68 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
             };
             moesifMiddleware.updateUser(user);
           }
-        } catch (error) { console.error("Error updating user/company/sub:", error); }
+        } catch (error) {
+          console.error("Error updating user/company/sub:", error);
+        }
 
         if (apimProvider === "Kong") {
-
           // Konnect
-          if (typeof process.env.KONNECT_PAT !== 'undefined' && process.env.KONNECT_PAT !== "") {
-
-            console.log('Kong Konnect, collecting runtime group ID')
-            const konnectURL = `${process.env.KONNECT_API_URL}/${process.env.KONNECT_API_VERSION}`
+          if (
+            typeof process.env.KONNECT_PAT !== "undefined" &&
+            process.env.KONNECT_PAT !== ""
+          ) {
+            console.log("Kong Konnect, collecting runtime group ID");
+            const konnectURL = `${process.env.KONNECT_API_URL}/${process.env.KONNECT_API_VERSION}`;
             // get Konnect Runtime Group ID
-            console.log('Kong Konnect, collecting runtime group ID')
-            const rtgResponse = await
-              fetch(`${konnectURL}/runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`, {
+            console.log("Kong Konnect, collecting runtime group ID");
+            const rtgResponse = await fetch(
+              `${konnectURL}/runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`,
+              {
                 method: "GET",
                 headers: {
-                  "Authorization": `Bearer ${process.env.KONNECT_PAT}`,
+                  Authorization: `Bearer ${process.env.KONNECT_PAT}`,
                   "Content-Type": "application/json",
-                  "Accept": "application/json"
-                }
-              });
+                  Accept: "application/json",
+                },
+              }
+            );
 
             if (!rtgResponse.ok) {
-              console.log(`Failed GET Konnect API for runtime group: ${rtgResponse.status}, ${rtgResponse.statusText}`);
-              console.log(`${konnectURL}/runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`);
+              console.log(
+                `Failed GET Konnect API for runtime group: ${rtgResponse.status}, ${rtgResponse.statusText}`
+              );
+              console.log(
+                `${konnectURL}/runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`
+              );
               throw new Error("Failed GET Konnect API for runtime group");
             }
 
             const rtgResult = await rtgResponse.json();
 
-            console.log(`Got Konnect runtime group ID: ${rtgResult.data[0].id}`)
-            const konnectRtgId = rtgResult.data[0].id
+            console.log(
+              `Got Konnect runtime group ID: ${rtgResult.data[0].id}`
+            );
+            const konnectRtgId = rtgResult.data[0].id;
 
             // create Konnect Consumer
-            var kongConsumer = { username: email, custom_id: stripe_customer_id };
+            var kongConsumer = {
+              username: email,
+              custom_id: stripe_customer_id,
+            };
 
-            console.log('Kong Konnect, ensuring a consumer exists')
-            const consumerResponse = await
-              fetch(`${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/`, {
+            console.log("Kong Konnect, ensuring a consumer exists");
+            const consumerResponse = await fetch(
+              `${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/`,
+              {
                 method: "POST",
                 headers: {
-                  "Authorization": `Bearer ${process.env.KONNECT_PAT}`,
+                  Authorization: `Bearer ${process.env.KONNECT_PAT}`,
                   "Content-Type": "application/json",
-                  "Accept": "application/json"
+                  Accept: "application/json",
                 },
-                body: JSON.stringify(kongConsumer)
-              });
-
+                body: JSON.stringify(kongConsumer),
+              }
+            );
           } else {
             // Kong Enterprise
             var body = { username: email, custom_id: stripe_customer_id };
@@ -216,21 +240,23 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
           let auth0Token;
 
           let options = {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
+            method: "POST",
+            headers: { "content-type": "application/json" },
             body: JSON.stringify({
               client_id: process.env.AUTH0_CLIENT_ID,
               client_secret: process.env.AUTH0_CLIENT_SECRET,
               audience: process.env.AUTH0_MANAGEMENT_API_AUDIENCE,
-              grant_type: "client_credentials"
-            })
+              grant_type: "client_credentials",
+            }),
           };
 
           fetch(url, options)
-            .then(response => response.json())
-            .then(result => { console.log(result); auth0Token = result.access_token; })
-            .catch(error => console.error('Error:', error));
-
+            .then((response) => response.json())
+            .then((result) => {
+              console.log(result);
+              auth0Token = result.access_token;
+            })
+            .catch((error) => console.error("Error:", error));
 
           const auth0 = new ManagementClient({
             clientId: process.env.AUTH0_CLIENT_ID,
@@ -243,50 +269,57 @@ app.post('/register/stripe/:checkout_session_id', function (req, res) {
           const users = await auth0.getUsersByEmail(email);
           const user = users[0];
 
-          console.log(`setting Auth0 variables for ${user.email}`)
+          console.log(`setting Auth0 variables for ${user.email}`);
 
           // Update the user's app_metadata with the stripe customer ID
-          await auth0.updateUser({
-            id: user.user_id
-          }, {
-            app_metadata: {
-              stripeCustomerId: stripe_customer_id,
-              stripeSubscriptionId: stripe_subscription_id
+          await auth0.updateUser(
+            {
+              id: user.user_id,
+            },
+            {
+              app_metadata: {
+                stripeCustomerId: stripe_customer_id,
+                stripeSubscriptionId: stripe_subscription_id,
+              },
+            },
+            function (err, user) {
+              if (err) {
+                console.log(err);
+              }
+              console.log(user);
             }
-          }, function (err, user) {
-            if (err) {
-              console.log(err);
-            }
-            console.log(user);
-          });
+          );
         }
       }
       // we still pass on result.
       console.log(JSON.stringify(result));
       res.status(201).json(result);
-    }).catch((err) => {
+    })
+    .catch((err) => {
       console.error("Error registering user", err);
       res.status(500).json({
-        message: "Failed to register user. Contact support for assistance"
-      })
+        message: "Failed to register user. Contact support for assistance",
+      });
     });
 });
 
-app.get('/stripe/customer', function (req, res) {
+app.get("/stripe/customer", function (req, res) {
   const email = req.query.email;
-  console.log('get stripe customer ' + typeof getStripeCustomer);
-  getStripeCustomer(email).then((result) => {
-    if (result.data && result.data[0]) {
-      res.status(200).json(result.data[0]);
-    } else {
-      res.status(404).json('stripe customer not found');
-    }
-  }).catch((err) => {
-    console.error("Error getting customer info from stripe", err);
-    res.status(500).json({
-      message: "Failed to retrieve customer info from stripe"
+  console.log("get stripe customer " + typeof getStripeCustomer);
+  getStripeCustomer(email)
+    .then((result) => {
+      if (result.data && result.data[0]) {
+        res.status(200).json(result.data[0]);
+      } else {
+        res.status(404).json("stripe customer not found");
+      }
     })
-  });
+    .catch((err) => {
+      console.error("Error getting customer info from stripe", err);
+      res.status(500).json({
+        message: "Failed to retrieve customer info from stripe",
+      });
+    });
 });
 
 app.post("/create-key", jsonParser, async function (req, res) {
@@ -297,21 +330,25 @@ app.post("/create-key", jsonParser, async function (req, res) {
 
     if (apimProvider === "Kong") {
       // Konnect
-      if (typeof process.env.KONNECT_PAT !== 'undefined' && process.env.KONNECT_PAT !== "") {
-
-        console.log('Kong Konnect, collecting runtime group ID')
-        const konnectURL = `${process.env.KONNECT_API_URL}/${process.env.KONNECT_API_VERSION}`
+      if (
+        typeof process.env.KONNECT_PAT !== "undefined" &&
+        process.env.KONNECT_PAT !== ""
+      ) {
+        console.log("Kong Konnect, collecting runtime group ID");
+        const konnectURL = `${process.env.KONNECT_API_URL}/${process.env.KONNECT_API_VERSION}`;
         // get Konnect Runtime Group ID
-        console.log('Kong Konnect, collecting runtime group ID')
-        const rtgResponse = await
-          fetch(`${konnectURL}/runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`, {
+        console.log("Kong Konnect, collecting runtime group ID");
+        const rtgResponse = await fetch(
+          `${konnectURL}/runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`,
+          {
             method: "GET",
             headers: {
-              "Authorization": `Bearer ${process.env.KONNECT_PAT}`,
+              Authorization: `Bearer ${process.env.KONNECT_PAT}`,
               "Content-Type": "application/json",
-              "Accept": "application/json"
-            }
-          });
+              Accept: "application/json",
+            },
+          }
+        );
 
         if (!rtgResponse.ok) {
           throw new Error("Failed GET Konnect API for runtime group");
@@ -319,41 +356,53 @@ app.post("/create-key", jsonParser, async function (req, res) {
 
         const rtgResult = await rtgResponse.json();
 
-        console.log(`Got Konnect runtime group ID: ${rtgResult.data[0].id}`)
-        const konnectRtgId = rtgResult.data[0].id
+        console.log(`Got Konnect runtime group ID: ${rtgResult.data[0].id}`);
+        const konnectRtgId = rtgResult.data[0].id;
 
         //get kong consumer
-        const consumerResponse = await
-          fetch(`${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/${encodeURIComponent(email)}`, {
+        const consumerResponse = await fetch(
+          `${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/${encodeURIComponent(
+            email
+          )}`,
+          {
             method: "GET",
             headers: {
-              "Authorization": `Bearer ${process.env.KONNECT_PAT}`,
+              Authorization: `Bearer ${process.env.KONNECT_PAT}`,
               "Content-Type": "application/json",
-              "Accept": "application/json"
-            }
-          });
+              Accept: "application/json",
+            },
+          }
+        );
 
         if (!consumerResponse.ok) {
-          console.log(`Failed GET Konnect consumer : ${consumerResponse.status}, ${consumerResponse.statusText}`);
+          console.log(
+            `Failed GET Konnect consumer : ${consumerResponse.status}, ${consumerResponse.statusText}`
+          );
           throw new Error("Failed GET Konnect API for runtime group");
         }
 
         const consumerResult = await consumerResponse.json();
 
         // create Konnect Consumer Key-Auth
-        const konnectKeyResponse = await
-          fetch(`${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/${consumerResult.id}/key-auth`, {
+        const konnectKeyResponse = await fetch(
+          `${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/${consumerResult.id}/key-auth`,
+          {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${process.env.KONNECT_PAT}`,
+              Authorization: `Bearer ${process.env.KONNECT_PAT}`,
               "Content-Type": "application/json",
-              "Accept": "application/json"
+              Accept: "application/json",
             },
-          });
+          }
+        );
 
         if (!konnectKeyResponse.ok) {
-          console.log(`${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/${consumerResult.id}/key-auth`);
-          console.log(`Failed POST Konnect API for key-auth: ${konnectKeyResponse.status}, ${konnectKeyResponse.statusText}`);
+          console.log(
+            `${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/${consumerResult.id}/key-auth`
+          );
+          console.log(
+            `Failed POST Konnect API for key-auth: ${konnectKeyResponse.status}, ${konnectKeyResponse.statusText}`
+          );
           throw new Error("Failed POST Konnect API for key-auth");
         }
         const konnectKeyResult = await konnectKeyResponse.json();
@@ -361,13 +410,18 @@ app.post("/create-key", jsonParser, async function (req, res) {
         apiKey = konnectKeyResult.key;
         res.status(200);
         res.send({ apikey: apiKey });
-
       } else {
         // Kong Enterprise
         //TODO: Add admin api token for Kong Enterprise
-        console.log(`${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`);
+        console.log(
+          `${process.env.KONG_URL}/consumers/${encodeURIComponent(
+            email
+          )}/key-auth`
+        );
         const response = await fetch(
-          `${process.env.KONG_URL}/consumers/${encodeURIComponent(email)}/key-auth`,
+          `${process.env.KONG_URL}/consumers/${encodeURIComponent(
+            email
+          )}/key-auth`,
           {
             method: "POST",
           }
@@ -379,20 +433,18 @@ app.post("/create-key", jsonParser, async function (req, res) {
         res.send({ apikey: apiKey });
       }
     } else if (apimProvider === "AWS") {
-
       var auth0Jwt = req.headers.authorization; // Get the Auth0 JWT from the request
 
       if (!auth0Jwt) {
-        throw new Error('No authorization header provided');
+        throw new Error("No authorization header provided");
       }
 
-      if (!auth0Jwt.startsWith('Bearer ')) {
-        throw new Error('Invalid authorization header');
+      if (!auth0Jwt.startsWith("Bearer ")) {
+        throw new Error("Invalid authorization header");
       }
 
       auth0Jwt = auth0Jwt.slice(7);
       res.status(200).send({ apikey: auth0Jwt });
-
     } else if (apimProvider === "Tyk") {
       var stripe_customer_id = "";
 
@@ -421,7 +473,9 @@ app.post("/create-key", jsonParser, async function (req, res) {
         }
       } else {
         // Handle non-2xx HTTP response from Stripe
-        throw new Error(`(Tyk) Stripe API returned status: ${stripeResponse.status}`);
+        throw new Error(
+          `(Tyk) Stripe API returned status: ${stripeResponse.status}`
+        );
       }
 
       // Create the request body for Tyk API
@@ -456,7 +510,6 @@ app.post("/create-key", jsonParser, async function (req, res) {
     res.status(500).json({ message: "Failed to create key" });
   }
 });
-
 
 if (!moesifManagementToken) {
   console.error(
