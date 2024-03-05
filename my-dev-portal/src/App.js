@@ -28,7 +28,10 @@ function App() {
                 <Route path="/" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="login/callback" element={<LoginCallback />} />
-                <Route path="login/oktapostcreate" element={<RedirectToSignIn />} />
+                <Route
+                  path="login/oktapostcreate"
+                  element={<RedirectToSignIn />}
+                />
                 <Route path="product-select" element={<StripeProducts />} />
                 <Route
                   path="dashboard"
@@ -96,6 +99,13 @@ function App() {
             </Auth0ProviderWithNavigate>
           </BrowserRouter>
         </header>
+      </div>
+    );
+  } else {
+    return (
+      <div className="App">
+        Please check your env files, the REACT_APP_AUTH_PROVIDER variable must
+        be provided.
       </div>
     );
   }
