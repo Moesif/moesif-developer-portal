@@ -11,6 +11,7 @@ const {
   verifyStripeSession,
   getStripeCustomer,
 } = require("./services/stripeApis");
+const { syncToMoesif } = require('./services/moesifApis');
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -123,46 +124,27 @@ app.post("/register/stripe/:checkout_session_id", function (req, res) {
             process.env.MOESIF_MONETIZATION_VERSION.toUpperCase() === "V2"
           ) {
             console.log("updating company and user with V2");
-            var company = { companyId: stripe_customer_id };
-            moesifMiddleware.updateCompany(company);
 
-            var user = {
-              userId: stripe_customer_id,
+            // assume you have one user per subscription
+            // but if you have multiple users per each subscription
+            // please check out https://www.moesif.com/docs/getting-started/overview/
+            // for the different entities how they are related to each other.
+            syncToMoesif({
               companyId: stripe_customer_id,
-              metadata: {
-                email: email,
-              },
-            };
-            moesifMiddleware.updateUser(user);
-
-            var subscription = {
               subscriptionId: stripe_subscription_id,
-              companyId: stripe_customer_id,
-              status: "active",
-            };
-            moesifMiddleware
-              .updateSubscription(subscription)
-              .then((result) => {
-                console.log("subscription updated successfully");
-              })
-              .catch((err) => {
-                console.error("Error updating subscription", err);
-              });
+              userId: stripe_customer_id,
+              email: email,
+            });
           }
           // V1 as fallback
           else {
-            console.log("updating company and user with V1");
-            var company = { companyId: stripe_subscription_id };
-            moesifMiddleware.updateCompany(company);
-
-            var user = {
-              userId: stripe_customer_id,
+            // in v1, companyId and subscription id is one to one mapping.
+            syncToMoesif({
               companyId: stripe_subscription_id,
-              metadata: {
-                email: email,
-              },
-            };
-            moesifMiddleware.updateUser(user);
+              subscriptionId: stripe_subscription_id,
+              userId: stripe_customer_id,
+              email: email,
+            });
           }
         } catch (error) {
           console.error("Error updating user/company/sub:", error);

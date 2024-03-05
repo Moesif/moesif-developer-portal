@@ -8,6 +8,35 @@ const moesifMiddleware = moesif({
   },
 });
 
-export function syncToMoesif({}) {
-  moesifMiddleware.updateCompany(company);
+export function syncToMoesif({ companyId, userId, email, subscriptionId }) {
+  if (companyId) {
+    var company = { companyId: companyId };
+    moesifMiddleware.updateCompany(company);
+  }
+  if (userId) {
+    var user = {
+      userId: userId,
+      companyId: companyId,
+      metadata: {
+        email: email,
+      },
+    };
+    moesifMiddleware.updateUser(user);
+  }
+
+  if (subscriptionId) {
+    var subscription = {
+      subscriptionId,
+      companyId: companyId,
+      status: "active",
+    };
+    moesifMiddleware
+      .updateSubscription(subscription)
+      .then((result) => {
+        console.log("subscription updated successfully");
+      })
+      .catch((err) => {
+        console.error("Error updating subscription", err);
+      });
+  }
 }
