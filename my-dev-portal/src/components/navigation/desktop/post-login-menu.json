@@ -1,0 +1,5 @@
+[
+  { "path": "/settings", "label": "Settings"},
+  { "path": "/plans", "label": "Plans"},
+  { "path": "/subscription", "label": "Subscription"}
+]

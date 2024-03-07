@@ -9,7 +9,7 @@ export const NavBar = ({ hideNavTabs }) => {
       <nav className="nav-bar">
         <NavBarBrand />
         <div className="nav-bar__actions">
-          {!hideNavTabs && <NavBarTabs />}
+          <NavBarTabs />
           <NavBarButtons />
         </div>
       </nav>
