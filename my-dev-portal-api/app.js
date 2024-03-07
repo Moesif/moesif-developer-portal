@@ -14,6 +14,7 @@ const {
 const {
   syncToMoesif,
   getInfoForEmbeddedWorkspaces,
+  getPlansFromMoesif,
 } = require("./services/moesifApis");
 
 const app = express();
@@ -26,9 +27,26 @@ const templateWorkspaceIdLiveEvent =
   process.env.MOESIF_TEMPLATE_WORKSPACE_ID_LIVE_EVENT_LOG;
 const templateWorkspaceIdTimeSeries =
   process.env.MOESIF_TEMPLATE_WORKSPACE_ID_TIME_SERIES;
-const moesifApiEndPoint = "https://api.moesif.com";
 
 var jsonParser = bodyParser.json();
+
+if (!moesifManagementToken) {
+  console.error(
+    "No MOESIF_MANAGEMENT_TOKEN found. Please create an .env file with MOESIF_MANAGEMENT_TOKEN & MOESIF_TEMPLATE_WORKSPACE_ID."
+  );
+}
+
+if (!templateWorkspaceIdLiveEvent) {
+  console.error(
+    "No MOESIF_TEMPLATE_WORKSPACE_ID found. Please create an .env file with MOESIF_MANAGEMENT_TOKEN & MOESIF_TEMPLATE_WORKSPACE_ID."
+  );
+}
+
+if (apimProvider) {
+  console.error(
+    "No APIM_PROVIDER found. Please create an .env file with APIM_PROVIDER one of the supported API management providers or edit the code to connect to your API Management."
+  );
+}
 
 const moesifMiddleware = moesif({
   applicationId: process.env.MOESIF_APPLICATION_ID,
@@ -39,6 +57,19 @@ const moesifMiddleware = moesif({
 });
 
 app.use(moesifMiddleware, cors());
+
+app.get("/plans", jsonParser, async (req, res) => {
+  // if you created your "stripe" or "zoura" plans through moesif.
+  // it is better
+  getPlansFromMoesif()
+    .then((res) => {
+      res.status(200).json(res);
+    })
+    .catch((err) => {
+      console.error("Error getting plans from Moesif", error);
+      res.status(500).json({ message: "Error getting plans from Moesif" });
+    });
+});
 
 app.post("/okta/register", jsonParser, async (req, res) => {
   try {
@@ -495,18 +526,6 @@ app.post("/create-key", jsonParser, async function (req, res) {
     res.status(500).json({ message: "Failed to create key" });
   }
 });
-
-if (!moesifManagementToken) {
-  console.error(
-    "No MOESIF_MANAGEMENT_TOKEN found. Please create an .env file with MOESIF_MANAGEMENT_TOKEN & MOESIF_TEMPLATE_WORKSPACE_ID."
-  );
-}
-
-if (!templateWorkspaceIdLiveEvent) {
-  console.error(
-    "No MOESIF_TEMPLATE_WORKSPACE_ID found. Please create an .env file with MOESIF_MANAGEMENT_TOKEN & MOESIF_TEMPLATE_WORKSPACE_ID."
-  );
-}
 
 app.get("/embed-dash-time-series(/:userId)", function (req, res) {
   try {
