@@ -11,7 +11,10 @@ const {
   verifyStripeSession,
   getStripeCustomer,
 } = require("./services/stripeApis");
-const { syncToMoesif } = require("./services/moesifApis");
+const {
+  syncToMoesif,
+  getInfoForEmbeddedWorkspaces,
+} = require("./services/moesifApis");
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -508,42 +511,11 @@ if (!templateWorkspaceIdLiveEvent) {
 app.get("/embed-dash-time-series(/:userId)", function (req, res) {
   try {
     const userId = req.params.userId;
-    const templateData = {
-      template: {
-        values: {
-          user_id: userId,
-        },
-      },
-    };
 
-    // Set your desired expiration for the generated workspace token.
-    // Moesif's recommendation is to match or be larger than your user's session time while keeping time period less than 30 days.
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 7);
-    const expiration = tomorrow.toISOString();
-
-    const moesif_url_time_series = `${moesifApiEndPoint}/v1/portal/~/workspaces/${templateWorkspaceIdTimeSeries}/access_token?expiration=${expiration}`;
-
-    fetch(moesif_url_time_series, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${moesifManagementToken}`,
-      },
-      body: JSON.stringify(templateData),
+    getInfoForEmbeddedWorkspaces({
+      workspaceId: templateWorkspaceIdTimeSeries,
+      userId,
     })
-      .then((response) => {
-        if (response.ok) {
-          return response;
-        } else {
-          console.log("Api call to moesif not successful. server response is:");
-          console.error(response.statusText);
-          throw Error(response.statusText);
-        }
-      })
-      .then((response) => {
-        return response.json();
-      })
       .then((info) => {
         res.json(info);
       })
@@ -562,42 +534,10 @@ app.get("/embed-dash-time-series(/:userId)", function (req, res) {
 app.get("/embed-dash-live-event(/:userId)", function (req, res) {
   try {
     const userId = req.params.userId;
-    const templateData = {
-      template: {
-        values: {
-          user_id: userId,
-        },
-      },
-    };
-
-    // Set your desired expiration for the generated workspace token.
-    // Moesif's recommendation is to match or be larger than your user's session time while keeping time period less than 30 days.
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 7);
-    const expiration = tomorrow.toISOString();
-
-    const moesif_url_live_event = `${moesifApiEndPoint}/v1/portal/~/workspaces/${templateWorkspaceIdLiveEvent}/access_token?expiration=${expiration}`;
-
-    fetch(moesif_url_live_event, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${moesifManagementToken}`,
-      },
-      body: JSON.stringify(templateData),
+    getInfoForEmbeddedWorkspaces({
+      workspaceId: templateWorkspaceIdLiveEvent,
+      userId,
     })
-      .then((response) => {
-        if (response.ok) {
-          return response;
-        } else {
-          console.log("Api call to moesif not successful. server response is:");
-          console.error(response.statusText);
-          throw Error(response.statusText);
-        }
-      })
-      .then((response) => {
-        return response.json();
-      })
       .then((info) => {
         res.json(info);
       })

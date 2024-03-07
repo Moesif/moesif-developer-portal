@@ -1,5 +1,8 @@
 const moesif = require("moesif-nodejs");
 
+const moesifManagementToken = process.env.MOESIF_MANAGEMENT_TOKEN;
+const moesifApiEndPoint = "https://api.moesif.com";
+
 const moesifMiddleware = moesif({
   applicationId: process.env.MOESIF_APPLICATION_ID,
 
@@ -10,7 +13,12 @@ const moesifMiddleware = moesif({
 
 function syncToMoesif({ companyId, userId, email, subscriptionId }) {
   if (companyId) {
-    var company = { companyId: companyId };
+    var company = {
+      companyId: companyId,
+      metadata: {
+        // feel free to add additonal profile data here.
+      },
+    };
     moesifMiddleware.updateCompany(company);
   }
   if (userId) {
@@ -18,6 +26,7 @@ function syncToMoesif({ companyId, userId, email, subscriptionId }) {
       userId: userId,
       companyId: companyId,
       metadata: {
+        // feel free to add additional profile data here.
         email: email,
       },
     };
@@ -41,6 +50,58 @@ function syncToMoesif({ companyId, userId, email, subscriptionId }) {
   }
 }
 
+function getPlansFromMoesif() {
+  return fetch(
+    `https://api.moesif.com/v1/~/billing/catalog/plans?includes=prices&provider=${process.ENV.APP_PAYMENT_PROVIDER}`,
+    {
+      headers: {
+        Authorization: `bearer ${process.env.STRIPE_API_KEY}`,
+      },
+    }
+  ).then(json);
+}
+
+function getInfoForEmbeddedWorkspaces({ userId, workspaceId }) {
+  const templateData = {
+    template: {
+      values: {
+        user_id: userId,
+      },
+    },
+  };
+
+  // Set your desired expiration for the generated workspace token.
+  // Moesif's recommendation is to match or be larger than your user's session time while keeping time period less than 30 days.
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 7);
+  const expiration = tomorrow.toISOString();
+
+  const moesif_url_live_event = `${moesifApiEndPoint}/v1/portal/~/workspaces/${workspaceId}/access_token?expiration=${expiration}`;
+
+  return fetch(moesif_url_live_event, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${moesifManagementToken}`,
+    },
+    body: JSON.stringify(templateData),
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response;
+      } else {
+        console.log("Api call to moesif not successful. server response is:");
+        console.error(response.statusText);
+        throw Error(response.statusText);
+      }
+    })
+    .then((response) => {
+      return response.json();
+    });
+}
+
 module.exports = {
   syncToMoesif,
+  getPlansFromMoesif,
+  getInfoForEmbeddedWorkspaces,
 };
