@@ -8,7 +8,7 @@ const moesifMiddleware = moesif({
   },
 });
 
-export function syncToMoesif({ companyId, userId, email, subscriptionId }) {
+function syncToMoesif({ companyId, userId, email, subscriptionId }) {
   if (companyId) {
     var company = { companyId: companyId };
     moesifMiddleware.updateCompany(company);
@@ -40,3 +40,7 @@ export function syncToMoesif({ companyId, userId, email, subscriptionId }) {
       });
   }
 }
+
+module.exports = {
+  syncToMoesif,
+};
