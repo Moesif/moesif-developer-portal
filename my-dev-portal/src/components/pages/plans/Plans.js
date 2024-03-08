@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { PageLayout } from "../../page-layout";
-import { PageLoader } from "../../page-loader";
-
-import wfImage from "../../../images/assets/wf-diagram.png";
-import { SignupButton } from "../../buttons/signup-button";
-import { LoginButton } from "../../buttons/login-button";
-
+import MoesifPlans from './MoesifPlans';
 function Plans(props) {
   const planSource = process.env.REACT_PLAN_SOURCE;
+
+  if (planSource === 'moesif') {
+    return <MoesifPlans />;
+  }
 
   return (
     <PageLayout>

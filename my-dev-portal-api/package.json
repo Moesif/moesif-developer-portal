@@ -27,6 +27,6 @@
     "moesif-nodejs": "^3.5.8",
     "node-fetch": "^2.6.5",
     "path": "^0.12.7",
-    "stripe": "^8.219.0"
+    "stripe": "^8.222.0"
   }
 }
