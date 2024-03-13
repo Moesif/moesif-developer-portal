@@ -3,7 +3,10 @@ import React, { useState, useEffect } from "react";
 import { PageLayout } from "../../page-layout";
 import MoesifPlans from './MoesifPlans';
 function Plans(props) {
-  const planSource = process.env.REACT_PLAN_SOURCE;
+  const planSource = process.env.REACT_APP_PLAN_SOURCE;
+
+
+  console.log(process.env);
 
   if (planSource === 'moesif') {
     return <MoesifPlans />;

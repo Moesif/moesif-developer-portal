@@ -88,11 +88,11 @@ app.get("/plans", jsonParser, async (req, res) => {
   // if you created your "stripe" or "zoura" plans through moesif.
   // it is better
   getPlansFromMoesif()
-    .then((res) => {
-      res.status(200).json(res);
+    .then((result) => {
+      res.status(200).json(result);
     })
     .catch((err) => {
-      console.error("Error getting plans from Moesif", error);
+      console.error("Error getting plans from Moesif", err);
       res.status(500).json({ message: "Error getting plans from Moesif" });
     });
 });

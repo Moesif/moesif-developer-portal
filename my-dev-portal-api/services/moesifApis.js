@@ -52,13 +52,13 @@ function syncToMoesif({ companyId, userId, email, subscriptionId }) {
 
 function getPlansFromMoesif() {
   return fetch(
-    `https://api.moesif.com/v1/~/billing/catalog/plans?includes=prices&provider=${process.ENV.APP_PAYMENT_PROVIDER}`,
+    `https://api.moesif.com/v1/~/billing/catalog/plans?includes=prices&provider=${process.env.APP_PAYMENT_PROVIDER}`,
     {
       headers: {
-        Authorization: `bearer ${process.env.STRIPE_API_KEY}`,
+        Authorization: `Bearer ${process.env.MOESIF_MANAGEMENT_TOKEN}`,
       },
     }
-  ).then(json);
+  ).then(res => res.json());
 }
 
 function getInfoForEmbeddedWorkspaces({ userId, workspaceId }) {

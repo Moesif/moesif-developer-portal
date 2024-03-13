@@ -7,6 +7,7 @@ import wfImage from "../../../images/assets/wf-diagram.png";
 import { SignupButton } from "../../buttons/signup-button";
 import { LoginButton } from "../../buttons/login-button";
 import SinglePlan from "./SinglePlan";
+import CheckoutForm from './CheckoutForm';
 
 const fakeData = {
   hits: [
@@ -103,17 +104,19 @@ const fakeData = {
   failures: [],
 };
 
-
 function MoesifPlans(props) {
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState(null);
   const [error, setError] = useState();
 
+  const [priceToPurchase, setPriceToPurchase] = useState(null);
+
   useEffect(() => {
     fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/plans`)
       .then((res) => res.json())
       .then((result) => {
-        setPlans(result);
+        console.log(result);
+        setPlans(result?.hits || []);
         setLoading(false);
       })
       .catch((err) => {
@@ -135,9 +138,9 @@ function MoesifPlans(props) {
             stripe.
           </p>
         )}
-        {plans && plans.map((item) => <SinglePlan plan={item} />)}
-
+        {plans && plans.map((item) => <SinglePlan plan={item} onPurchase={setPriceToPurchase} />)}
       </div>
+      <CheckoutForm price={priceToPurchase} />
     </PageLayout>
   );
 }
