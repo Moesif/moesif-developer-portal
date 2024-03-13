@@ -17,6 +17,8 @@ const {
   getPlansFromMoesif,
 } = require("./services/moesifApis");
 
+const StripeSDK = require('stripe');
+
 const app = express();
 app.use(express.static(path.join(__dirname)));
 const port = 3030;
@@ -57,6 +59,30 @@ const moesifMiddleware = moesif({
 });
 
 app.use(moesifMiddleware, cors());
+
+
+app.post('/create-stripe-checkout-session', async (req, res) => {
+
+  const stripe = StripeSDK(process.env.STRIPE_API_KEY);
+  const priceId = req.query?.price_id;
+
+  // https://docs.stripe.com/checkout/quickstart?client=react
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+        price: priceId,
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `${process.env.FRONT_END_DOMAIN}/return?success=true`,
+    cancel_url: `${process.env.FRONT_END_DOMAIN}/return?canceled=true`,
+  });
+
+  res.redirect(303, session.url);
+});
 
 app.get("/plans", jsonParser, async (req, res) => {
   // if you created your "stripe" or "zoura" plans through moesif.

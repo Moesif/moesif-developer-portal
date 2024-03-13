@@ -14,6 +14,7 @@ import { AuthenticationGuard } from "./components/authentication-guard";
 import SignUp from "./components/pages/signup/SignUp";
 import RedirectToSignIn from "./components/pages/signup/OktaPostCreate";
 import { StripeProvider } from "./StripeProvider";
+import Return from './components/pages/return/Return';
 
 function App() {
   const { isAuthenticated } = useAuth0();
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="login/callback" element={<LoginCallback />} />
+                <Route path="/return" element={<Return />} />
                 <Route
                   path="login/oktapostcreate"
                   element={<RedirectToSignIn />}
@@ -81,6 +83,7 @@ function App() {
                       )
                     }
                   />
+                  <Route path="/return" element={<Return />} />
                   <Route path="product-select" element={<StripeProducts />} />
                   <Route
                     path="dashboard"
