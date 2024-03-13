@@ -7,7 +7,7 @@ import wfImage from "../../../images/assets/wf-diagram.png";
 import { SignupButton } from "../../buttons/signup-button";
 import { LoginButton } from "../../buttons/login-button";
 import SinglePlan from "./SinglePlan";
-import CheckoutForm from './CheckoutForm';
+import CheckoutForm from "./CheckoutForm";
 
 const fakeData = {
   hits: [
@@ -138,9 +138,16 @@ function MoesifPlans(props) {
             stripe.
           </p>
         )}
-        {plans && plans.map((item) => <SinglePlan plan={item} onPurchase={setPriceToPurchase} />)}
+        {plans &&
+          plans.map((item) => (
+            <SinglePlan
+              key={item.id}
+              plan={item}
+              onPurchase={setPriceToPurchase}
+            />
+          ))}
       </div>
-      <CheckoutForm price={priceToPurchase} />
+      {priceToPurchase && <CheckoutForm price={priceToPurchase} />}
     </PageLayout>
   );
 }

@@ -72,13 +72,12 @@ app.post('/create-stripe-checkout-session', async (req, res) => {
     line_items: [
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price: priceId,
-        quantity: 1,
+        price: priceId
       },
     ],
     mode: 'payment',
-    success_url: `${process.env.FRONT_END_DOMAIN}/return?success=true`,
-    cancel_url: `${process.env.FRONT_END_DOMAIN}/return?canceled=true`,
+    success_url: `http://${process.env.FRONT_END_DOMAIN}/return?success=true`,
+    cancel_url: `http://${process.env.FRONT_END_DOMAIN}/return?canceled=true`,
   });
 
   res.redirect(303, session.url);
