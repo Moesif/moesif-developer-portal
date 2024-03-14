@@ -14,7 +14,7 @@ export default function useAuthCombined() {
     let isLoading = !authState || authState?.isPending;
     let user = authState?.idToken?.claims;
 
-    const handleSignUp = async (returnTo) => {
+    const handleSignUp = async ({ returnTo }) => {
       navigate(`/signup?return_to=${encodeURIComponent(returnTo)}`);
     };
 
@@ -23,6 +23,7 @@ export default function useAuthCombined() {
       isLoading,
       user,
       oktaAuthState: authState,
+      handleSignUp
     };
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     const {
@@ -35,10 +36,10 @@ export default function useAuthCombined() {
     let isLoading = auth0IsLoading;
     let user = auth0User;
 
-    const handleSignUp = async (returnTo) => {
+    const handleSignUp = async ({ returnTo }) => {
       await loginWithRedirect({
         appState: {
-          returnTo: "/product-select",
+          returnTo: returnTo || "/product-select",
         },
         authorizationParams: {
           prompt: "login",
@@ -52,6 +53,7 @@ export default function useAuthCombined() {
       isAuthenticated,
       user,
       isLoading,
+      handleSignUp
     };
   }
 
