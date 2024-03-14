@@ -67,8 +67,10 @@ app.post('/create-stripe-checkout-session', async (req, res) => {
   const priceId = req.query?.price_id;
 
   // https://docs.stripe.com/checkout/quickstart?client=react
+  // for embedded checkout.
 
   const session = await stripe.checkout.sessions.create({
+    ui_mode: 'embedded',
     line_items: [
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
@@ -76,9 +78,11 @@ app.post('/create-stripe-checkout-session', async (req, res) => {
       },
     ],
     mode: 'subscription',
-    success_url: `http://${process.env.FRONT_END_DOMAIN}/return?success=true`,
-    cancel_url: `http://${process.env.FRONT_END_DOMAIN}/return?canceled=true`,
+    return_url: `http://${process.env.FRONT_END_DOMAIN}/return`
   });
+
+  console.log('got session back from stripe session');
+  console.log(JSON.stringify(session));
 
   res.send({clientSecret: session.client_secret});
 });
