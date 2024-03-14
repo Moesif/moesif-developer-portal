@@ -30,7 +30,7 @@ const exampleStripePlan = {
 };
 
 function SinglePlan(props) {
-  const { plan, onPurchase } = props;
+  const { plan, onSelectPrice } = props;
   const prices = plan?.prices || [];
 
   return (
@@ -46,7 +46,7 @@ function SinglePlan(props) {
             <div>
               {price.price_in_decimal} {price.per_unit}
             </div>
-            <button onClick={() => onPurchase(price, plan)}>Select</button>
+            <button onClick={() => onSelectPrice(price, plan)}>Select</button>
           </div>
         ))}
       </div>

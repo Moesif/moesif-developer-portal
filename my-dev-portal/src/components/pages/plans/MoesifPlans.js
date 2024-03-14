@@ -3,9 +3,6 @@ import React, { useState, useEffect } from "react";
 import { PageLayout } from "../../page-layout";
 import { PageLoader } from "../../page-loader";
 
-import wfImage from "../../../images/assets/wf-diagram.png";
-import { SignupButton } from "../../buttons/signup-button";
-import { LoginButton } from "../../buttons/login-button";
 import SinglePlan from "./SinglePlan";
 import CheckoutForm from "./CheckoutForm";
 
@@ -105,6 +102,8 @@ const fakeData = {
 };
 
 function MoesifPlans(props) {
+  const { isAuthenticated, isLoading, user } = props;
+
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState(null);
   const [error, setError] = useState();
@@ -121,13 +120,25 @@ function MoesifPlans(props) {
       })
       .catch((err) => {
         console.log("failed to load plans", err);
+        setLoading(false);
         setError(err);
       });
   }, []);
 
+  useEffect(() => {}, []);
+
   if (loading) {
     return <PageLoader />;
   }
+
+  const onSelectPrice = (price, plan) => {
+    if (isAuthenticated) {
+      setPriceToPurchase(price);
+    } else {
+      // we have to initiate login process and return back to continue
+
+    }
+  };
 
   return (
     <PageLayout>
@@ -143,11 +154,13 @@ function MoesifPlans(props) {
             <SinglePlan
               key={item.id}
               plan={item}
-              onPurchase={setPriceToPurchase}
+              onSelectPrice={onSelectPrice}
             />
           ))}
       </div>
-      {priceToPurchase && <CheckoutForm price={priceToPurchase} />}
+      {priceToPurchase && isAuthenticated && (
+        <CheckoutForm price={priceToPurchase} user={user} />
+      )}
     </PageLayout>
   );
 }

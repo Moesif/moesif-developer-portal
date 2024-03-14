@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 
 import { PageLayout } from "../../page-layout";
 import MoesifPlans from './MoesifPlans';
+import useAuthCombined from '../../../hooks/useAuthCombined';
 function Plans(props) {
   const planSource = process.env.REACT_APP_PLAN_SOURCE;
 
-
-  console.log(process.env);
+  const { isAuthenticated, isLoading, user } = useAuthCombined();
 
   if (planSource === 'moesif') {
-    return <MoesifPlans />;
+    return <MoesifPlans isAuthenticated={isAuthenticated} user={user} />;
   }
 
   return (
