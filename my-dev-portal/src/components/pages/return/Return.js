@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from "react";
 import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate
+  Navigate,
 } from "react-router-dom";
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
 
-function Return() {
+function Return(props) {
   const [status, setStatus] = useState(null);
   const [customerEmail, setCustomerEmail] = useState("");
 
-  useEffect(() => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const sessionId = urlParams.get("session_id");
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const sessionId = urlParams.get("session_id");
+  const priceId = urlParams.get("price_id");
 
+  useEffect(() => {
     fetch(`/session-status?session_id=${sessionId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -26,7 +24,7 @@ function Return() {
   }, []);
 
   if (status === "open") {
-    return <Navigate to="/checkout" />;
+    return <Navigate to={`/plan?checkout_price_id=${priceId}`} />;
   }
 
   if (status === "complete") {

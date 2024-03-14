@@ -41,7 +41,7 @@ function SinglePlan(props) {
       </div>
       <div>
         {prices.map((price) => (
-          <div>
+          <div key={price.id}>
             <h5>{price.name}</h5>
             <div>
               {price.price_in_decimal} {price.per_unit}
