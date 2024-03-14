@@ -75,12 +75,12 @@ app.post('/create-stripe-checkout-session', async (req, res) => {
         price: priceId
       },
     ],
-    mode: 'payment',
+    mode: 'subscription',
     success_url: `http://${process.env.FRONT_END_DOMAIN}/return?success=true`,
     cancel_url: `http://${process.env.FRONT_END_DOMAIN}/return?canceled=true`,
   });
 
-  res.redirect(303, session.url);
+  res.send({clientSecret: session.client_secret});
 });
 
 app.get("/plans", jsonParser, async (req, res) => {
