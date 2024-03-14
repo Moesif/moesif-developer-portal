@@ -1,5 +1,6 @@
 [
-  { "path": "/settings", "label": "Settings"},
+  { "path": "/dashboard", "label": "Dashboards"},
   { "path": "/plans", "label": "Plans"},
+  { "path": "/settings", "label": "Settings"},
   { "path": "/subscription", "label": "Subscription"}
 ]
