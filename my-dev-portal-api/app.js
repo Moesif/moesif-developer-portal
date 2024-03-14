@@ -78,7 +78,7 @@ app.post('/create-stripe-checkout-session', async (req, res) => {
       },
     ],
     mode: 'subscription',
-    return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${price_id}`
+    return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`
   });
 
   console.log('got session back from stripe session');
