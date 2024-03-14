@@ -190,7 +190,7 @@ function MoesifPlans(props) {
           ))}
       </div>
       {priceToPurchase && isAuthenticated && (
-        <CheckoutForm price={priceToPurchase} user={user} />
+        <CheckoutForm key={priceToPurchase?.id} price={priceToPurchase} user={user} />
       )}
     </PageLayout>
   );
