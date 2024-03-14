@@ -103,7 +103,7 @@ const fakeData = {
 };
 
 function MoesifPlans(props) {
-  const { isAuthenticated, isLoading, user, handleSignUp } = useAuthCombined;
+  const { isAuthenticated, isLoading, user, handleSignUp } = useAuthCombined();
 
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState(null);
