@@ -25,23 +25,20 @@ function CheckoutForm({ price, plan }) {
       .then((res) => res.json())
       .then((data) => {
         console.log(JSON.stringify(data));
-        setClientSecret(data.clientSecret)
+        setClientSecret(data.clientSecret);
       });
   }, [price]);
 
   return (
-    <div>
-      {clientSecret}
-      <div id="checkout">
-        {clientSecret && (
-          <EmbeddedCheckoutProvider
-            stripe={stripePromise}
-            options={{ clientSecret }}
-          >
-            <EmbeddedCheckout />
-          </EmbeddedCheckoutProvider>
-        )}
-      </div>
+    <div id="checkout">
+      {clientSecret && (
+        <EmbeddedCheckoutProvider
+          stripe={stripePromise}
+          options={{ clientSecret }}
+        >
+          <EmbeddedCheckout />
+        </EmbeddedCheckoutProvider>
+      )}
     </div>
   );
 }
