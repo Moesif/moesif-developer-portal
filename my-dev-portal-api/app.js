@@ -103,6 +103,15 @@ app.get("/plans", jsonParser, async (req, res) => {
     });
 });
 
+app.get("subscriptions", jsonParser, async (req, res) => {
+  // !IMPORTANT, depends on your authentication scheme
+  // you may want to authenticate your user first.
+
+  const email = req.params.email;
+
+
+});
+
 app.post("/okta/register", jsonParser, async (req, res) => {
   try {
     const oktaClient = new Client({

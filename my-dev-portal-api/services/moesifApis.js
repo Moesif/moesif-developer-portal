@@ -61,6 +61,20 @@ function getPlansFromMoesif() {
   ).then(res => res.json());
 }
 
+
+function getSubscriptionsForCompanyId({ companyId }) {
+
+
+}
+
+function getSubscriptionsForUserId({ userId }) {
+
+}
+
+function getSubscriptionForUser({ email }) {
+
+}
+
 function getInfoForEmbeddedWorkspaces({ userId, workspaceId }) {
   const templateData = {
     template: {
@@ -100,8 +114,12 @@ function getInfoForEmbeddedWorkspaces({ userId, workspaceId }) {
     });
 }
 
+
+
 module.exports = {
   syncToMoesif,
   getPlansFromMoesif,
   getInfoForEmbeddedWorkspaces,
+  getSubscriptionsForCompanyId,
+  getSubscriptionsForUserId,
 };
