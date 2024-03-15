@@ -25,11 +25,6 @@ function getStripeCustomer(email) {
   ).then((res) => res.json());
 }
 
-async function getStripeSubscriptionsForStripeCustomer(email) {
-
-
-}
-
 module.exports = {
   verifyStripeSession,
   getStripeCustomer,

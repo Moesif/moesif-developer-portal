@@ -15,6 +15,7 @@ const {
   syncToMoesif,
   getInfoForEmbeddedWorkspaces,
   getPlansFromMoesif,
+  getSubscriptionForUserEmail,
 } = require("./services/moesifApis");
 
 const StripeSDK = require("stripe");
@@ -105,11 +106,23 @@ app.get("/plans", jsonParser, async (req, res) => {
 
 app.get("subscriptions", jsonParser, async (req, res) => {
   // !IMPORTANT, depends on your authentication scheme
-  // you may want to authenticate your user first.
+  // you may want to authenticate your user first
+
+  // - you can get subscription from moesif or stripe
+  // since they are synced
+  // - from moesif, you can get a list of associated subscriptions
+  //   using companyId, userId or email as in this example
+  // - It all can vary depends on your profile.
 
   const email = req.params.email;
 
-
+  try {
+    const subscriptions = await getSubscriptionForUserEmail({ email });
+    res.status(200).json(subscriptions);
+  } catch (err) {
+    console.error("Error getting subscription from moesif for " + email, err);
+    res.status(404).json({ message: "Error" });
+  }
 });
 
 app.post("/okta/register", jsonParser, async (req, res) => {

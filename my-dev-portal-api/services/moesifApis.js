@@ -58,21 +58,161 @@ function getPlansFromMoesif() {
         Authorization: `Bearer ${process.env.MOESIF_MANAGEMENT_TOKEN}`,
       },
     }
-  ).then(res => res.json());
+  ).then((res) => res.json());
 }
 
+function getCompany({ companyId }) {
+  return fetch(
+    `https://api.moesif.com/v1/search/~/companies/${encodeURIComponent(
+      companyId
+    )}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.MOESIF_MANAGEMENT_TOKEN}`,
+      },
+    }
+  ).then((res) => res.json());
+}
+
+function getUser({ userId }) {
+  return fetch(
+    `https://api.moesif.com/v1/search/~/users/${encodeURIComponent(userId)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.MOESIF_MANAGEMENT_TOKEN}`,
+      },
+    }
+  ).then((res) => res.json());
+}
 
 function getSubscriptionsForCompanyId({ companyId }) {
-
-
+  return getCompany({ companyId }).then((companyObject) => {
+    return companyObject?.subscriptions;
+  });
 }
 
+// it simply gets the userObject from Moesif.
+// subscriptions are under "company.subscriptions"
 function getSubscriptionsForUserId({ userId }) {
-
+  return getUser({ userId }).then((userObject) => {
+    return userObject?.company?.subscriptions;
+  });
 }
 
-function getSubscriptionForUser({ email }) {
+function getSubscriptionForUserEmail({ email }) {
+  const query = {
+    query: { term: { "email.raw": email } },
+    size: 50,
+    _source: [
+      "user_id",
+      "identified_user_id",
+      "email",
+      "company_id",
+      "company.subscriptions",
+      "name",
+    ],
+  };
+  return fetch(`https://api.moesif.com/v1/search/~/search/users`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.MOESIF_MANAGEMENT_TOKEN}`,
+    },
+    body: JSON.stringify(query),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      // const exampleReturnValue = {
+      //   "hits": {
+      //     "hits": [
+      //       {
+      //         "_source": {
+      //           "company_id": "sub_1OUHDjKjbeAxuumJy6ko1gXu",
+      //           "name": "Foo Bar",
+      //           "company": {
+      //             "subscriptions": [
+      //               {
+      //                 "cancel_time": null,
+      //                 "metadata": {},
+      //                 "company_id": "sub_1OUHDjKjbeAxuumJy6ko1gXu",
+      //                 "items": [
+      //                   {
+      //                     "subscription_item_id": "si_PIszPQaPC3zIZL",
+      //                     "price": {
+      //                       "tax_behavior": "unspecified",
+      //                       "period": 1,
+      //                       "metadata": {},
+      //                       "created_at": "2024-01-02T18:55:23.000",
+      //                       "price_in_decimal": 50,
+      //                       "provider": "stripe",
+      //                       "pricing_model": "flat",
+      //                       "usage_aggregator": null,
+      //                       "currency": "USD",
+      //                       "period_units": "M",
+      //                       "id": "price_1OUD7XKjbeAxuumJwK5agr87",
+      //                       "plan_id": "prod_PIolHSJQuNP5Wm",
+      //                       "status": "active"
+      //                     },
+      //                     "price_id": "price_1OUD7XKjbeAxuumJwK5agr87",
+      //                     "created_at": "2024-01-02T23:18:03.000Z",
+      //                     "plan": {
+      //                       "metadata": {},
+      //                       "provider": "stripe",
+      //                       "created_at": "2024-01-02T18:55:23.000",
+      //                       "id": "prod_PIolHSJQuNP5Wm",
+      //                       "status": "active"
+      //                     },
+      //                     "plan_id": "prod_PIolHSJQuNP5Wm",
+      //                     "status": "active"
+      //                   },
+      //                   {
+      //                     "subscription_item_id": "si_PIwfDNLxCl3oxz",
+      //                     "price": {
+      //                       "tax_behavior": "unspecified",
+      //                       "period": 1,
+      //                       "metadata": {},
+      //                       "created_at": "2024-01-02T22:03:55.000",
+      //                       "price_in_decimal": 1,
+      //                       "provider": "stripe",
+      //                       "pricing_model": "per_unit",
+      //                       "usage_aggregator": "sum",
+      //                       "currency": "USD",
+      //                       "period_units": "M",
+      //                       "id": "price_1OUG3zKjbeAxuumJ3Zmidpum",
+      //                       "plan_id": "prod_PIolHSJQuNP5Wm",
+      //                       "status": "active"
+      //                     },
+      //                     "price_id": "price_1OUG3zKjbeAxuumJ3Zmidpum",
+      //                     "created_at": "2024-01-03T03:06:09.000Z",
+      //                     "plan": {
+      //                       "metadata": {},
+      //                       "provider": "stripe",
+      //                       "created_at": "2024-01-02T22:03:55.000",
+      //                       "id": "prod_PIolHSJQuNP5Wm",
+      //                       "status": "active"
+      //                     },
+      //                     "plan_id": "prod_PIolHSJQuNP5Wm",
+      //                     "status": "active"
+      //                   }
+      //                 ],
+      //                 "app_id": "660:387",
+      //                 "current_period_start": "2024-03-02T23:18:03.000Z",
+      //                 "status": "active",
+      //                 "start_date": "2024-01-02T23:18:03.000Z"
+      //               }
+      //             ]
+      //           },
+      //           "identified_user_id": "cus_PIsz7TqLLrheqX",
+      //           "email": "foo_bar@moesif.com"
+      //         },
+      //         "_id": "cus_PIsz7TqLLrheqX"
+      //       }
+      //     ],
+      //     "total": 1
+      //   },
+      // }
 
+      return data?.hits?.hits?.[0]?._source?.company?.subscriptions;
+    });
 }
 
 function getInfoForEmbeddedWorkspaces({ userId, workspaceId }) {
@@ -114,12 +254,11 @@ function getInfoForEmbeddedWorkspaces({ userId, workspaceId }) {
     });
 }
 
-
-
 module.exports = {
   syncToMoesif,
   getPlansFromMoesif,
   getInfoForEmbeddedWorkspaces,
   getSubscriptionsForCompanyId,
   getSubscriptionsForUserId,
+  getSubscriptionForUserEmail,
 };
