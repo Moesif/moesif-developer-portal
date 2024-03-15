@@ -21,10 +21,10 @@ function Return(props) {
         setStatus(data.status);
         setCustomerEmail(data.customer_email);
       });
-  }, []);
+  }, [sessionId]);
 
   if (status === "open") {
-    return <Navigate to={`/plan?checkout_price_id=${priceId}`} />;
+    return <Navigate to={`/checkout?price_id_to_purchase=${priceId}`} />;
   }
 
   if (status === "complete") {

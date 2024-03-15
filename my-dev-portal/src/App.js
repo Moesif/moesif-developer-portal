@@ -14,7 +14,7 @@ import { AuthenticationGuard } from "./components/authentication-guard";
 import SignUp from "./components/pages/signup/SignUp";
 import RedirectToSignIn from "./components/pages/signup/OktaPostCreate";
 import { StripeProvider } from "./StripeProvider";
-import Return from "./components/pages/return/Return";
+import Return from "./components/pages/checkout/Return";
 import Setup from "./components/pages/setup/Setup";
 import Plans from "./components/pages/plans/Plans";
 import Home from "./components/pages/home/Home";
@@ -46,6 +46,14 @@ function App() {
                   element={
                     <SecureRoute>
                       <Checkout />
+                    </SecureRoute>
+                  }
+                />
+                <Route
+                  path="/return"
+                  element={
+                    <SecureRoute>
+                      <Return />
                     </SecureRoute>
                   }
                 />
@@ -104,6 +112,10 @@ function App() {
                   <Route
                     path="/checkout"
                     element={<AuthenticationGuard component={Checkout} />}
+                  />
+                  <Route
+                    path="/return"
+                    element={<AuthenticationGuard component={Return} />}
                   />
                   <Route
                     path="dashboard"

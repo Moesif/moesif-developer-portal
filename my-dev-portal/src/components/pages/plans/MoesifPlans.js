@@ -115,10 +115,6 @@ function MoesifPlans(props) {
         const loadedPlans = result?.hits || [];
         setPlans(loadedPlans);
         setLoading(false);
-
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const urlPriceIdToPurchase = urlParams.get("price_id_to_purchase");
       })
       .catch((err) => {
         console.log("failed to load plans", err);
@@ -134,6 +130,7 @@ function MoesifPlans(props) {
   return (
     <>
       <div className="page-layout__focus">
+        {error && <p>Error landing plans</p>}
         {!loading && !error && !plans && (
           <p>
             No Plans set up in Moesif. Please set create Plan in Moesif to
