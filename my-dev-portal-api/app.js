@@ -17,7 +17,11 @@ const {
   getPlansFromMoesif,
 } = require("./services/moesifApis");
 
-const StripeSDK = require('stripe');
+const StripeSDK = require("stripe");
+const {
+  createKongConnectCustomer,
+  createKongEnterpriseCustomer,
+} = require("./services/kongAPIMServices");
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -60,9 +64,7 @@ const moesifMiddleware = moesif({
 
 app.use(moesifMiddleware, cors());
 
-
-app.post('/create-stripe-checkout-session', async (req, res) => {
-
+app.post("/create-stripe-checkout-session", async (req, res) => {
   const stripe = StripeSDK(process.env.STRIPE_API_KEY);
   const priceId = req.query?.price_id;
 
@@ -70,21 +72,21 @@ app.post('/create-stripe-checkout-session', async (req, res) => {
   // for embedded checkout.
 
   const session = await stripe.checkout.sessions.create({
-    ui_mode: 'embedded',
+    ui_mode: "embedded",
     line_items: [
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price: priceId
+        price: priceId,
       },
     ],
-    mode: 'subscription',
-    return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`
+    mode: "subscription",
+    return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`,
   });
 
-  console.log('got session back from stripe session');
+  console.log("got session back from stripe session");
   console.log(JSON.stringify(session));
 
-  res.send({clientSecret: session.client_secret});
+  res.send({ clientSecret: session.client_secret });
 });
 
 app.get("/plans", jsonParser, async (req, res) => {
@@ -219,65 +221,15 @@ app.post("/register/stripe/:checkout_session_id", function (req, res) {
             typeof process.env.KONNECT_PAT !== "undefined" &&
             process.env.KONNECT_PAT !== ""
           ) {
-            console.log("Kong Konnect, collecting runtime group ID");
-            const konnectURL = `${process.env.KONNECT_API_URL}/${process.env.KONNECT_API_VERSION}`;
-            // get Konnect Runtime Group ID
-            console.log("Kong Konnect, collecting runtime group ID");
-            const rtgResponse = await fetch(
-              `${konnectURL}/runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`,
-              {
-                method: "GET",
-                headers: {
-                  Authorization: `Bearer ${process.env.KONNECT_PAT}`,
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                },
-              }
-            );
-
-            if (!rtgResponse.ok) {
-              console.log(
-                `Failed GET Konnect API for runtime group: ${rtgResponse.status}, ${rtgResponse.statusText}`
-              );
-              console.log(
-                `${konnectURL}/runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`
-              );
-              throw new Error("Failed GET Konnect API for runtime group");
-            }
-
-            const rtgResult = await rtgResponse.json();
-
-            console.log(
-              `Got Konnect runtime group ID: ${rtgResult.data[0].id}`
-            );
-            const konnectRtgId = rtgResult.data[0].id;
-
-            // create Konnect Consumer
-            var kongConsumer = {
+            const kongConsumerResponse = await createKongConnectCustomer({
               username: email,
-              custom_id: stripe_customer_id,
-            };
-
-            console.log("Kong Konnect, ensuring a consumer exists");
-            const consumerResponse = await fetch(
-              `${konnectURL}/runtime-groups/${konnectRtgId}/core-entities/consumers/`,
-              {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${process.env.KONNECT_PAT}`,
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                },
-                body: JSON.stringify(kongConsumer),
-              }
-            );
+              customId: stripe_customer_id,
+            });
           } else {
             // Kong Enterprise
-            var body = { username: email, custom_id: stripe_customer_id };
-            await fetch(`${process.env.KONG_URL}/consumers/`, {
-              method: "POST",
-              body: JSON.stringify(body),
-              headers: { "Content-Type": "application/json" },
+            const KongConsumerResponse = await createKongEnterpriseCustomer({
+              username: email,
+              customId: stripe_customer_id,
             });
           }
         } else if (apimProvider === "AWS") {
