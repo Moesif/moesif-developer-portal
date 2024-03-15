@@ -103,13 +103,9 @@ const fakeData = {
 };
 
 function MoesifPlans(props) {
-  const { isAuthenticated, isLoading, user, handleSignUp } = useAuthCombined();
-
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState(null);
   const [error, setError] = useState();
-
-  const [priceToPurchase, setPriceToPurchase] = useState(null);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/plans`)
@@ -123,25 +119,6 @@ function MoesifPlans(props) {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const urlPriceIdToPurchase = urlParams.get("price_id_to_purchase");
-
-        if (urlPriceIdToPurchase) {
-          // lets find the price
-          // so we can continue the purchase experience
-          let foundPrice = null;
-          loadedPlans.forEach(plan => {
-            const innerPrices = plan?.prices || [];
-            const found = innerPrices.find(pr=> pr.id === urlPriceIdToPurchase);
-            if (found) {
-              foundPrice = found;
-            }
-          });
-
-          if (foundPrice) {
-            // so we can continue the purchase flow
-            // for the price that customer already select
-            setPriceToPurchase(foundPrice);
-          }
-        }
       })
       .catch((err) => {
         console.log("failed to load plans", err);
@@ -153,23 +130,6 @@ function MoesifPlans(props) {
   if (loading) {
     return <PageLoader />;
   }
-
-  const onSelectPrice = (price, plan) => {
-    // for purchases of this example
-    // for onboard flow, if user is not registered,
-    // we ask user to register/signin/signup first
-    // then comeback and continue purchase.
-    // For your specific business requirements,
-    // your onboarding steps and flow may be different.
-    if (isAuthenticated) {
-      setPriceToPurchase(price);
-    } else {
-      // we have to initiate login process and return back to continue
-      handleSignUp({
-        returnTo: `/plans?price_id_to_purchase=${encodeURIComponent(price.id)}`,
-      });
-    }
-  };
 
   return (
     <>
@@ -185,13 +145,9 @@ function MoesifPlans(props) {
             <SinglePlan
               key={item.id}
               plan={item}
-              onSelectPrice={onSelectPrice}
             />
           ))}
       </div>
-      {priceToPurchase && isAuthenticated && (
-        <CheckoutForm key={priceToPurchase?.id} priceId={priceToPurchase?.id} user={user} />
-      )}
     </>
   );
 }
