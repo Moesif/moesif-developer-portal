@@ -178,6 +178,7 @@ app.post("/register/stripe/:checkout_session_id", function (req, res) {
 
   verifyStripeSession(checkout_session_id)
     .then(async (result) => {
+      const stripeCheckOutSessionInfo = result;
       console.log("in register");
       if (result.customer && result.subscription) {
         console.log("customer and subscription present");
@@ -290,8 +291,8 @@ app.post("/register/stripe/:checkout_session_id", function (req, res) {
         }
       }
       // we still pass on result.
-      console.log(JSON.stringify(result));
-      res.status(201).json(result);
+      console.log(JSON.stringify(stripeCheckOutSessionInfo));
+      res.status(201).json(stripeCheckOutSessionInfo);
     })
     .catch((err) => {
       console.error("Error registering user", err);
