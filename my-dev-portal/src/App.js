@@ -19,6 +19,7 @@ import Setup from "./components/pages/setup/Setup";
 import Plans from "./components/pages/plans/Plans";
 import Home from "./components/pages/home/Home";
 import Checkout from "./components/pages/checkout/Checkout";
+import Subscription from "./components/pages/subscription/Subscription";
 
 function App() {
   const { isAuthenticated } = useAuth0();
@@ -81,6 +82,14 @@ function App() {
                     </SecureRoute>
                   }
                 />
+                <Route
+                  path="subscriptions"
+                  element={
+                    <SecureRoute>
+                      <Subscription />
+                    </SecureRoute>
+                  }
+                />
               </Routes>
             </OktaProviderWithNavigate>
           </BrowserRouter>
@@ -128,6 +137,10 @@ function App() {
                   <Route
                     path="keys"
                     element={<AuthenticationGuard component={Keys} />}
+                  />
+                  <Route
+                    path="subscription"
+                    element={<AuthenticationGuard component={Subscription} />}
                   />
                 </Routes>
               </StripeProvider>

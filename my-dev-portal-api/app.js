@@ -109,7 +109,8 @@ app.get("subscriptions", jsonParser, async (req, res) => {
   // you may want to authenticate your user first
 
   // - you can get subscription from moesif or stripe
-  // since they are synced
+  // since they are synced. But in this example, we get from Moesif, because
+  // Moesif syncs subscriptions from several billing providers.
   // - from moesif, you can get a list of associated subscriptions
   //   using companyId, userId or email as in this example
   // - It all can vary depends on your profile.

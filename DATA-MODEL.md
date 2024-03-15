@@ -10,20 +10,20 @@ For the purpose of this project, the data model is passed this way
 - Company
   - A company represent an organization that may have many users, and it may have one more subscription
 - Subscription
-  - The subscription is associated with the Company.
+  - The subscription is associated with the Company. In Moesif, the subscription objects is usually synced from Billing Providers.
 - Plans
-  - Same definition as Stripe
+  - Same definition as Stripe, and synced with billing provider
 - Price
-  - Same definition as Stripe and mapped the same way.
+  - Same definition as Stripe, and synced with billing provider
 
-## Stripe
+## Stripe (one of the most popular billing providers)
 
 - Plans
   - Plans define the base price, currency, and billing cycle for recurring purchases of products.
 - Price
-  -
+  - Defines a specific price or rate for a usage.
 - Subscription
-  - The subscription is associated with a customer.
+  - The subscription is associated with a customer. Synced to Moesif Subscription object above.
 - Customer
   - A customer can have multiple subscription.
   - For this project, the `stripe_customer_id` mapped to Moesif `company_id`, and Moesif `user_id` because it is an simplification. And most use cases is only one user anyways.
@@ -46,5 +46,4 @@ Evaluate object mapping and adjust for your use case:
 
   - You may have different entity mapping needs, for example, you may have concept of company and users in your system. And they each may have an id.
   - It is important to be be aware of the data model in different systems, and how you want to map them together.
-
 
