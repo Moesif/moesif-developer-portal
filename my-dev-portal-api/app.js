@@ -67,7 +67,7 @@ app.use(moesifMiddleware, cors());
 app.post("/create-stripe-checkout-session", async (req, res) => {
   const stripe = StripeSDK(process.env.STRIPE_API_KEY);
   const priceId = req.query?.price_id;
-
+  const email = req.query?.email;
   // https://docs.stripe.com/checkout/quickstart?client=react
   // for embedded checkout.
 
@@ -79,6 +79,7 @@ app.post("/create-stripe-checkout-session", async (req, res) => {
         price: priceId,
       },
     ],
+    customer_email: email || undefined,
     mode: "subscription",
     return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`,
   });

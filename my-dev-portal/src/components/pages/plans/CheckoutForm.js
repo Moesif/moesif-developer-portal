@@ -11,13 +11,13 @@ const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
 
-function CheckoutForm({ price, plan }) {
+function CheckoutForm({ priceId, user }) {
   const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
     // Create a Checkout Session as soon as the page loads
     fetch(
-      `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-stripe-checkout-session?price_id=${price.id}`,
+      `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-stripe-checkout-session?price_id=${priceId}&email=${user?.email}`,
       {
         method: "POST",
       }
@@ -27,7 +27,7 @@ function CheckoutForm({ price, plan }) {
         console.log(JSON.stringify(data));
         setClientSecret(data.clientSecret);
       });
-  }, [price]);
+  }, [priceId, user]);
 
   return (
     <div id="checkout">

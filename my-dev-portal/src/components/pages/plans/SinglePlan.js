@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const exampleStripePlan = {
   provider: "stripe",
@@ -46,7 +47,9 @@ function SinglePlan(props) {
             <div>
               {price.price_in_decimal} {price.per_unit}
             </div>
-            <button onClick={() => onSelectPrice(price, plan)}>Select</button>
+            <Link to={`/checkout?price_id_to_purchase=${price.id}`}>
+              <button>Select</button>
+            </Link>
           </div>
         ))}
       </div>

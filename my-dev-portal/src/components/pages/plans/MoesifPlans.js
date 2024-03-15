@@ -172,7 +172,7 @@ function MoesifPlans(props) {
   };
 
   return (
-    <PageLayout>
+    <>
       <div className="page-layout__focus">
         {!loading && !error && !plans && (
           <p>
@@ -190,9 +190,9 @@ function MoesifPlans(props) {
           ))}
       </div>
       {priceToPurchase && isAuthenticated && (
-        <CheckoutForm key={priceToPurchase?.id} price={priceToPurchase} user={user} />
+        <CheckoutForm key={priceToPurchase?.id} priceId={priceToPurchase?.id} user={user} />
       )}
-    </PageLayout>
+    </>
   );
 }
 

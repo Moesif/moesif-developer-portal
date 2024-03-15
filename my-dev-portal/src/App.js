@@ -17,6 +17,8 @@ import { StripeProvider } from "./StripeProvider";
 import Return from "./components/pages/return/Return";
 import Setup from "./components/pages/setup/Setup";
 import Plans from "./components/pages/plans/Plans";
+import Home from "./components/pages/home/Home";
+import Checkout from "./components/pages/checkout/Checkout";
 
 function App() {
   const { isAuthenticated } = useAuth0();
@@ -28,7 +30,7 @@ function App() {
           <BrowserRouter>
             <OktaProviderWithNavigate>
               <Routes>
-                <Route path="/" element={<Login />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="login/callback" element={<LoginCallback />} />
                 <Route path="/return" element={<Return />} />
@@ -39,6 +41,14 @@ function App() {
                   element={<RedirectToSignIn />}
                 />
                 <Route path="product-select" element={<StripeProducts />} />
+                <Route
+                  path="/checkout"
+                  element={
+                    <SecureRoute>
+                      <Checkout />
+                    </SecureRoute>
+                  }
+                />
                 <Route
                   path="dashboard"
                   element={
@@ -81,7 +91,7 @@ function App() {
                     path="/"
                     element={
                       !isAuthenticated ? (
-                        <Login />
+                        <Home />
                       ) : (
                         <Navigate replace to={"dashboard"} />
                       )
@@ -91,6 +101,10 @@ function App() {
                   <Route path="/setup" element={<Setup />} />
                   <Route path="/plans" element={<Plans />} />
                   <Route path="product-select" element={<StripeProducts />} />
+                  <Route
+                    path="/checkout"
+                    element={<AuthenticationGuard component={Checkout} />}
+                  />
                   <Route
                     path="dashboard"
                     element={<AuthenticationGuard component={Dashboard} />}
