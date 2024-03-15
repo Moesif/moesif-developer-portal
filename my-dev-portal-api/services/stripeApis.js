@@ -1,3 +1,6 @@
+const StripeSDK = require('stripe');
+const stripe = StripeSDK(process.env.STRIPE_API_KEY);
+
 function verifyStripeSession(checkout_session_id) {
   return fetch(
     `https://api.stripe.com/v1/checkout/sessions/${checkout_session_id}`,
@@ -20,6 +23,11 @@ function getStripeCustomer(email) {
       },
     }
   ).then((res) => res.json());
+}
+
+async function getStripeSubscriptionsForStripeCustomer(email) {
+
+
 }
 
 module.exports = {
