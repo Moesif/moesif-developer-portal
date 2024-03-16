@@ -26,6 +26,7 @@ function Home() {
         https://github.com/Moesif/moesif-developer-portal for set up
         instructions. Or see <Link to="/setup">Set up</Link> page
       </h3>
+      <div style={{height: '30' }} />
     </PageLayout>
   );
 }
