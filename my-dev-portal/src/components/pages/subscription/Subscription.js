@@ -146,8 +146,8 @@ function Subscription(props) {
           </p>
           <p>
             For developers, if you want subscriptions to sync faster, you can
-            locally catch the subscription in your system. In this example
-            project, there is no local data base or storage.
+            locally cache the subscription in your system. In this example
+            project, there is no local database or storage.
           </p>
         </div>
       )}
