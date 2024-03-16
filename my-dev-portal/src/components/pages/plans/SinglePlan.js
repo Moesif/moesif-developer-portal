@@ -35,7 +35,7 @@ function SinglePlan(props) {
   const prices = plan?.prices || [];
 
   return (
-    <div>
+    <div className="plan--single">
       <div>
         <h3>{plan.name}</h3>
         <div>{plan.description}</div>

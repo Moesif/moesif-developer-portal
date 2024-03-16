@@ -24,7 +24,7 @@ const SignupButtonWithAuth0 = ({ isLink }) => {
   const handleSignUp = async () => {
     await loginWithRedirect({
       appState: {
-        returnTo: "/product-select",
+        returnTo: "/plans",
       },
       authorizationParams: {
         prompt: "login",

@@ -137,13 +137,10 @@ function MoesifPlans(props) {
             stripe.
           </p>
         )}
-        {plans &&
-          plans.map((item) => (
-            <SinglePlan
-              key={item.id}
-              plan={item}
-            />
-          ))}
+        <div className="plans--container">
+          {plans &&
+            plans.map((item) => <SinglePlan key={item.id} plan={item} />)}
+        </div>
       </div>
     </>
   );

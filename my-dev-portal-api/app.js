@@ -6,7 +6,7 @@ const moesif = require("moesif-nodejs");
 var cors = require("cors");
 const fetch = require("node-fetch");
 const { Client } = require("@okta/okta-sdk-nodejs");
-const { ManagementClient } = require("auth0");
+
 const {
   verifyStripeSession,
   getStripeCustomer,
