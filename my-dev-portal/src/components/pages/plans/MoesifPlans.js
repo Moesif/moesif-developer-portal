@@ -114,7 +114,10 @@ function MoesifPlans(props) {
       .then((result) => {
         console.log(result);
         const loadedPlans = result?.hits || [];
-        setPlans(loadedPlans);
+        const activePlans = loadedPlans.filter(
+          (item) => item.status === "active"
+        );
+        setPlans(activePlans);
         setLoading(false);
       })
       .catch((err) => {
@@ -131,7 +134,7 @@ function MoesifPlans(props) {
   return (
     <div className="page-layout__focus">
       {error && <p>Error landing plans</p>}
-      {!loading && !error && !plans && (
+      {!loading && !error && (!plans || plans.length === 0) && (
         <div>
           <p>
             <strong>No Plans found</strong>, please use{" "}
