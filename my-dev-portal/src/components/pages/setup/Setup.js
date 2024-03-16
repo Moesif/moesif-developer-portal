@@ -20,6 +20,7 @@ function Setup(props) {
           README and our github repo.
         </a>
       </p>
+      <div style={{height: '50' }} />
     </PageLayout>
   );
 }
