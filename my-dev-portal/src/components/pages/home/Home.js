@@ -6,6 +6,7 @@ import MoesifPlans from "../plans/MoesifPlans";
 import { SignupButton } from "../../buttons/signup-button";
 import { LoginButton } from "../../buttons/login-button";
 import { Link } from "react-router-dom";
+import heroImage from '../../../images/assets/hero-image.png';
 
 function Home() {
   return (
@@ -15,7 +16,7 @@ function Home() {
         <h2>
           <SignupButton isLink /> or <LoginButton isLink /> to get started.
         </h2>
-        <p>Hero Image goes here</p>
+        <img src={heroImage} width="100%" alt="flow-diagram" />
       </div>
       <hr />
       <MoesifPlans />
