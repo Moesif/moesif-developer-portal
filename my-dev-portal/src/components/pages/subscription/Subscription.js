@@ -135,10 +135,21 @@ function Subscription(props) {
     <PageLayout>
       <h3>Subscriptions</h3>
       {(!subscriptions || subscriptions.length <= 0) && (
-        <p>
-          No Subscriptions found. Please go to{" "}
-          <Link to="/plans">Plans page </Link> and select a plan
-        </p>
+        <div>
+          <p>
+            No Subscriptions found. Please go to{" "}
+            <Link to="/plans">Plans page </Link> and select a plan
+          </p>
+          <p>
+            If you just purchased a plan, please wait at least 10 to 15 minutes
+            for the systems to sync.
+          </p>
+          <p>
+            For developers, if you want subscriptions to sync faster, you can
+            locally catch the subscription in your system. In this example
+            project, there is no local data base or storage.
+          </p>
+        </div>
       )}
       {subscriptions?.length > 0 && (
         <>
