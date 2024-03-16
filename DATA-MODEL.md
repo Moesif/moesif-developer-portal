@@ -1,7 +1,7 @@
 
 # Data Model
 
-For the purpose of this project, the data model is passed this way
+For the purpose of this project, the data model is based on below:
 
 ## Moesif
 
@@ -42,8 +42,8 @@ For the purpose of this project, the data model is passed this way
 
 ## Your Company
 
-Evaluate object mapping and adjust for your use case:
+Evaluate object mapping and adjust for your use case and your business:
 
-  - You may have different entity mapping needs, for example, you may have concept of company and users in your system. And they each may have an id.
+  - You may have different entity mapping needs, for example, you may have concept of company and users in your system. And they each may already an id. Sometimes those id are better suited for mapping than in this repo.
   - It is important to be be aware of the data model in different systems, and how you want to map them together.
 

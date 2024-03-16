@@ -133,7 +133,7 @@ function Subscription(props) {
 
   return (
     <PageLayout>
-      <h3>Subscriptions</h3>
+      <h3>Your Current Subscriptions</h3>
       {(!subscriptions || subscriptions.length <= 0) && (
         <div>
           <p>
