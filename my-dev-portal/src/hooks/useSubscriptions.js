@@ -10,7 +10,7 @@ export default function useSubscriptions(user) {
   useEffect(() => {
     if (user?.email) {
       fetch(
-        `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/subscriptions?email${user.email}`,
+        `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/subscriptions?email=${encodeURIComponent(user.email)}`,
         {
           headers: {},
         }

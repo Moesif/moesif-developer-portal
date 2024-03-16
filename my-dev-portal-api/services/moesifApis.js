@@ -116,11 +116,14 @@ function getSubscriptionForUserEmail({ email }) {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.MOESIF_MANAGEMENT_TOKEN}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(query),
   })
     .then((res) => res.json())
     .then((data) => {
+      console.log(`got moesif user object for ${email}`);
+      console.log(JSON.stringify(data));
       // const exampleReturnValue = {
       //   "hits": {
       //     "hits": [

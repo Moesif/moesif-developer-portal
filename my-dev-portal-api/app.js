@@ -72,23 +72,28 @@ app.post("/create-stripe-checkout-session", async (req, res) => {
   // https://docs.stripe.com/checkout/quickstart?client=react
   // for embedded checkout.
 
-  const session = await stripe.checkout.sessions.create({
-    ui_mode: "embedded",
-    line_items: [
-      {
-        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price: priceId,
-      },
-    ],
-    customer_email: email || undefined,
-    mode: "subscription",
-    return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`,
-  });
+  try {
+    const session = await stripe.checkout.sessions.create({
+      ui_mode: "embedded",
+      line_items: [
+        {
+          // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+          price: priceId,
+        },
+      ],
+      customer_email: email || undefined,
+      mode: "subscription",
+      return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`,
+    });
 
-  console.log("got session back from stripe session");
-  console.log(JSON.stringify(session));
+    console.log("got session back from stripe session");
+    console.log(JSON.stringify(session));
 
-  res.send({ clientSecret: session.client_secret });
+    res.send({ clientSecret: session.client_secret });
+  } catch (err) {
+    console.error("Failed to create stripe checkout session", err);
+    res.status(400).json({ message: "Error creating check out session" });
+  }
 });
 
 app.get("/plans", jsonParser, async (req, res) => {
@@ -104,7 +109,7 @@ app.get("/plans", jsonParser, async (req, res) => {
     });
 });
 
-app.get("subscriptions", jsonParser, async (req, res) => {
+app.get("/subscriptions", jsonParser, async (req, res) => {
   // !IMPORTANT, depends on your authentication scheme
   // you may want to authenticate your user first
 
@@ -115,10 +120,11 @@ app.get("subscriptions", jsonParser, async (req, res) => {
   //   using companyId, userId or email as in this example
   // - It all can vary depends on your profile.
 
-  const email = req.params.email;
+  const email = req.query.email;
 
   try {
     const subscriptions = await getSubscriptionForUserEmail({ email });
+    console.log('got subscriptions from moesif ' + JSON.stringify(subscriptions));
     res.status(200).json(subscriptions);
   } catch (err) {
     console.error("Error getting subscription from moesif for " + email, err);
@@ -258,59 +264,13 @@ app.post("/register/stripe/:checkout_session_id", function (req, res) {
             });
           }
         } else if (apimProvider === "AWS") {
-          let url = `https://${process.env.AUTH0_DOMAIN}/oauth/token`;
-          let auth0Token;
-
-          let options = {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({
-              client_id: process.env.AUTH0_CLIENT_ID,
-              client_secret: process.env.AUTH0_CLIENT_SECRET,
-              audience: process.env.AUTH0_MANAGEMENT_API_AUDIENCE,
-              grant_type: "client_credentials",
-            }),
-          };
-
-          fetch(url, options)
-            .then((response) => response.json())
-            .then((result) => {
-              console.log(result);
-              auth0Token = result.access_token;
-            })
-            .catch((error) => console.error("Error:", error));
-
-          const auth0 = new ManagementClient({
-            clientId: process.env.AUTH0_CLIENT_ID,
-            clientSecret: process.env.AUTH0_CLIENT_SECRET,
-            token: auth0Token,
-            domain: process.env.AUTH0_DOMAIN,
+          // for AWS, we are using the appMeta info from
+          // in Auth0 determine service level.
+          updateAuth0UserAppWithStripeInfo({
+            email,
+            stripe_customer_id,
+            stripe_subscription_id,
           });
-
-          // Find the user in Auth0 by their email
-          const users = await auth0.getUsersByEmail(email);
-          const user = users[0];
-
-          console.log(`setting Auth0 variables for ${user.email}`);
-
-          // Update the user's app_metadata with the stripe customer ID
-          await auth0.updateUser(
-            {
-              id: user.user_id,
-            },
-            {
-              app_metadata: {
-                stripeCustomerId: stripe_customer_id,
-                stripeSubscriptionId: stripe_subscription_id,
-              },
-            },
-            function (err, user) {
-              if (err) {
-                console.log(err);
-              }
-              console.log(user);
-            }
-          );
         }
       }
       // we still pass on result.

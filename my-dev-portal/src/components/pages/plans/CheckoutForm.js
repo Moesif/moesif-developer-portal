@@ -17,7 +17,7 @@ function CheckoutForm({ priceId, user }) {
   useEffect(() => {
     // Create a Checkout Session as soon as the page loads
     fetch(
-      `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-stripe-checkout-session?price_id=${priceId}&email=${user?.email}`,
+      `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-stripe-checkout-session?price_id=${priceId}&email=${encodeURIComponent(user?.email)}`,
       {
         method: "POST",
       }
