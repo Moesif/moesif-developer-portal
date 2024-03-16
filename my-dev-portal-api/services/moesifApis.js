@@ -85,9 +85,21 @@ function getUser({ userId }) {
   ).then((res) => res.json());
 }
 
+function extractSubscriptionsFromCompanyObject(companyObject) {
+  // for MOESIF_MONETIZATION_VERSION V2, subscriptions are directly under companyObject
+  if (companyObject?.subscriptions) {
+    return companyObject?.subscriptions;
+  } else if (companyObject?.metadata?.stripe?.subscription) {
+    // for MOESIF_MONETIZATION_VERSION V2, the subscription is under metadata billing provider
+    return [companyObject?.metadata?.stripe?.subscription]
+  }
+  return null;
+}
+
+
 function getSubscriptionsForCompanyId({ companyId }) {
   return getCompany({ companyId }).then((companyObject) => {
-    return companyObject?.subscriptions;
+    return extractSubscriptionsFromCompanyObject(companyObject);
   });
 }
 
@@ -95,9 +107,10 @@ function getSubscriptionsForCompanyId({ companyId }) {
 // subscriptions are under "company.subscriptions"
 function getSubscriptionsForUserId({ userId }) {
   return getUser({ userId }).then((userObject) => {
-    return userObject?.company?.subscriptions;
+    return extractSubscriptionsFromCompanyObject(userObject?.company);
   });
 }
+
 
 function getSubscriptionForUserEmail({ email }) {
   const query = {
@@ -214,7 +227,8 @@ function getSubscriptionForUserEmail({ email }) {
       //   },
       // }
 
-      return data?.hits?.hits?.[0]?._source?.company?.subscriptions;
+      const firstUserObject = data?.hits?.hits?.[0]?._source;
+      return extractSubscriptionsFromCompanyObject(firstUserObject?.company);
     });
 }
 
