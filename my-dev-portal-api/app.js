@@ -124,7 +124,9 @@ app.get("/subscriptions", jsonParser, async (req, res) => {
 
   try {
     const subscriptions = await getSubscriptionForUserEmail({ email });
-    console.log('got subscriptions from moesif ' + JSON.stringify(subscriptions));
+    console.log(
+      "got subscriptions from moesif " + JSON.stringify(subscriptions)
+    );
     res.status(200).json(subscriptions);
   } catch (err) {
     console.error("Error getting subscription from moesif for " + email, err);
@@ -217,8 +219,19 @@ app.post("/register/stripe/:checkout_session_id", function (req, res) {
         try {
           if (
             process.env.MOESIF_MONETIZATION_VERSION &&
-            process.env.MOESIF_MONETIZATION_VERSION.toUpperCase() === "V2"
+            process.env.MOESIF_MONETIZATION_VERSION.toUpperCase() === "V1"
           ) {
+            console.log("updating company and user with V1");
+            // in v1, companyId and subscription id is one to one mapping.
+            syncToMoesif({
+              companyId: stripe_subscription_id,
+              subscriptionId: stripe_subscription_id,
+              userId: stripe_customer_id,
+              email: email,
+            });
+          }
+          // V1 as fallback
+          else {
             console.log("updating company and user with V2");
 
             // assume you have one user per subscription
@@ -227,16 +240,6 @@ app.post("/register/stripe/:checkout_session_id", function (req, res) {
             // for the different entities how they are related to each other.
             syncToMoesif({
               companyId: stripe_customer_id,
-              subscriptionId: stripe_subscription_id,
-              userId: stripe_customer_id,
-              email: email,
-            });
-          }
-          // V1 as fallback
-          else {
-            // in v1, companyId and subscription id is one to one mapping.
-            syncToMoesif({
-              companyId: stripe_subscription_id,
               subscriptionId: stripe_subscription_id,
               userId: stripe_customer_id,
               email: email,

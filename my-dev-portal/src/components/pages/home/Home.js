@@ -5,6 +5,7 @@ import { PageLoader } from "../../page-loader";
 import MoesifPlans from "../plans/MoesifPlans";
 import { SignupButton } from "../../buttons/signup-button";
 import { LoginButton } from "../../buttons/login-button";
+import { Link } from "react-router-dom";
 
 function Home() {
   return (
@@ -16,12 +17,13 @@ function Home() {
         </h2>
         <p>Hero Image goes here</p>
       </div>
+      <hr />
       <MoesifPlans />
       <hr />
       <h3>
         For Developer please See Read me of the repo
         https://github.com/Moesif/moesif-developer-portal for set up
-        instructions
+        instructions. Or see <Link to="/setup">Set up</Link> page
       </h3>
     </PageLayout>
   );

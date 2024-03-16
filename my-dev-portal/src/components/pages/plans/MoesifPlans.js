@@ -4,8 +4,9 @@ import { PageLayout } from "../../page-layout";
 import { PageLoader } from "../../page-loader";
 
 import SinglePlan from "./SinglePlan";
-import CheckoutForm from "./CheckoutForm";
-import useAuthCombined from "../../../hooks/useAuthCombined";
+
+import productCatalogImage from "../../../images/assets/product-catalog-nav.png";
+import { LineLoader } from "../../line-loader";
 
 const fakeData = {
   hits: [
@@ -124,25 +125,36 @@ function MoesifPlans(props) {
   }, []);
 
   if (loading) {
-    return <PageLoader />;
+    return <LineLoader />;
   }
 
   return (
-    <>
-      <div className="page-layout__focus">
-        {error && <p>Error landing plans</p>}
-        {!loading && !error && !plans && (
+    <div className="page-layout__focus">
+      {error && <p>Error landing plans</p>}
+      {!loading && !error && !plans && (
+        <div>
           <p>
-            No Plans set up in Moesif. Please set create Plan in Moesif to
-            stripe.
+            <strong>No Plans found</strong>, please use{" "}
+            <a
+              href="https://www.moesif.com/docs/product-catalog/"
+              target="_blank"
+            >
+              Moesif product catalog tool
+            </a>{" "}
+            to create compatible plans and prices for your Billing Provider.
           </p>
-        )}
-        <div className="plans--container">
-          {plans &&
-            plans.map((item) => <SinglePlan key={item.id} plan={item} />)}
+          <a
+            href="https://www.moesif.com/docs/product-catalog/"
+            target="_blank"
+          >
+            <img src={productCatalogImage} width="100%" alt="flow-diagram" />
+          </a>
         </div>
+      )}
+      <div className="plans--container">
+        {plans && plans.map((item) => <SinglePlan key={item.id} plan={item} />)}
       </div>
-    </>
+    </div>
   );
 }
 
