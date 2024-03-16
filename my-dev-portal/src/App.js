@@ -2,10 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginCallback } from "@okta/okta-react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import Login from "./components/pages/login/Login";
 import Dashboard from "./components/pages/dashboard/Dashboard";
 import Settings from "./components/pages/settings/Settings";
-import StripeProducts from "./components/stripe/StripeProducts";
 import { OktaProviderWithNavigate } from "./OktaProviderWithNavigate";
 import { Auth0ProviderWithNavigate } from "./Auth0ProviderWithNavigate";
 import Keys from "./components/pages/keys/Keys";
@@ -41,7 +39,6 @@ function App() {
                   path="login/oktapostcreate"
                   element={<RedirectToSignIn />}
                 />
-                <Route path="product-select" element={<StripeProducts />} />
                 <Route
                   path="/checkout"
                   element={
@@ -117,7 +114,6 @@ function App() {
                   <Route path="/return" element={<Return />} />
                   <Route path="/setup" element={<Setup />} />
                   <Route path="/plans" element={<Plans />} />
-                  <Route path="product-select" element={<StripeProducts />} />
                   <Route
                     path="/checkout"
                     element={<AuthenticationGuard component={Checkout} />}

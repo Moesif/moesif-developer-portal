@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import useAuthCombined from "../../../hooks/useAuthCombined";
 import { PageLoader } from "../../page-loader";
 import { PageLayout } from "../../page-layout";
-import CheckoutForm from "../plans/CheckoutForm";
+import CheckoutForm from "./CheckoutForm";
 import { Navigate } from "react-router-dom";
 
 function Checkout(props) {

@@ -508,95 +508,7 @@ Once all three values are added, save the file to make sure the updated values a
 
 ### Stripe
 
-The next step we will take is to create a product and price in Stripe. It’s best to do this step before you integrate Stripe into Moesif so you’ll already have some pricing plans for Moesif to pull in. A pricing plan can then be associated with specific billing criteria set up within a Billing Meter in Moesif.
-
-To create a product and price, log into Stripe and proceed to the **Products** page from the header menu in the Stripe UI. Once on the **Products** page, click on the **Add Product** button in the top right corner.
-
-In the **Add a Product** modal that appears, you’ll be able to add the details for your product and the price(s) for it. The form for your product will have a few fields to fill out. Some of these fields include:
-
-- **Name**
-
-  - This is the name of your product. In the example below, we use the name “My API”.
-
-- **Description**
-
-  - This field is optional but you could put a brief description of the product here. In the example below, we use a description of “This is a monetized API”.
-
-- **Pricing model**
-
-  - A few different pricing models can be set up in Stripe. These pricing models include:
-
-    - _Standard pricing_
-      - use this if you want to charge the same price for each API call.
-    - _Package_
-      - use this if you charge for API usage by the package or a group of units. For example, you could set it up to charge $10 for every 1000 API calls. Every time the user goes over the 1000 API call threshold, they are charged another $10.
-    - _Graduated_
-      - use graduated pricing tiers that may result in a different price for some units in an order. For example, you might charge $10.00 per unit for the first 100 units and then $5.00 per unit for the next 50. Today, this is only available for recurring prices.
-    - _Volume_
-      - use if you charge the same price for each unit based on the total number of units sold. For example, you might charge $10.00 per unit for 50 units, and $7.00 per unit for 100 units.
-
-- **Price**
-
-  - Depending on the pricing model selected, prices can be set in this field.
-
-- **Billing period**
-
-  - The billing period can be set as:
-
-    - Daily
-    - Weekly
-    - Monthly
-    - Every 3 months
-    - Every 6 months
-    - Yearly
-    - Customer
-
-  - For your configuration with Moesif, we recommend setting the billing period as Monthly. You’ll also need to check the **Usage is metered** box as well.
-
-- **Charge for metered usage by**
-
-  - Once the **Usage is metered** checkbox is selected, the option for **charge for metered usage by** will appear. This field lets you choose how metered usage will be calculated and charged for. Values available for this field are:
-
-    - _Sum of usage values during period_
-      - Users are charged for their usage recorded throughout the billing cycle
-    - _Most recent usage value during period_
-      - Users are charged based on the last usage recorded before the billing period ended
-    - _Most recent usage value_
-      - Users are charged for the last usage recorded throughout the subscription’s life at the end of each billing cycle
-    - _Maximum usage value during period_
-      - Users are charged for the highest amount recorded during the billing cycle
-
-  - The optimal setup for a Moesif Billing Meter is to set this value as **Sum of usage values during period** since usage is reported hourly by Moesif to Stripe
-
-- **Price description**
-  - This is an optional field but recommended. Here you can put a brief description of your price. This will allow you to more easily decipher which price you are selecting in the billing meter in Moesif, especially if you have multiple prices for a single product.
-
-Once you’ve input all of the details for your product and price, you can click **Save product** in the top right corner of the screen. This product and price will now be saved. Follow this same procedure to create more products as needed. As you create products, you will be able to view and edit them on the **products** screen.
-
-#### Creating the Stripe Pricing Table
-
-During the sign-up flow in the Developer Portal, the user will be prompted for which subscription/product they would like to subscribe to. In order to make this easy to manage, the Moesif Developer Portal uses a Stripe Pricing Table to display the available options and handle the checkout.
-
-To set up the Pricing Table, navigate to the **Products** page within Stripe. Once on the **Products** page, in the tabs available below the main menu, select **Pricing tables**. Once on the **Pricing tables** tab, click on the **Create pricing table** button in the top-right.
-
-For the next steps, follow the Stripe documentation on [how to create a pricing table](https://stripe.com/docs/payments/checkout/pricing-table#Create). For each of the entries added to the **Pricing Table**, on the **Payment settings** page under the **Confirmation page** section, select `Don’t show confirmation page` and fill in the URL with `http://127.0.0.1:4000/dashboard?checkout-session={CHECKOUT_SESSION_ID}`. By doing this, when payments are completed, the user will be redirected back to the developer portal, and the `CHECKOUT_SESSION_ID` will be used to retrieve Stripe account details upon redirect.
-
-After the pricing table is created, you’ll get an embeddable snippet of code. This code will look similar to this:
-
-```javascript
-<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-<stripe-pricing-table pricing-table-id="prctbl_123abc" publishable-key="pk_test_abc123">
-</stripe-pricing-table>
-```
-
-In the `my-dev-portal/.env` file, we will add the values from the code including the `pricing-table-id` and `publishable-key` values. To do this, take these values and add them to the values in the `.env` file.
-
-```shell
-REACT_APP_STRIPE_PRICING_TABLE_ID="prctbl_123abc"
-REACT_APP_STRIPE_PUBLISHABLE_KEY="pk_test_123abc"
-```
-
-Once added, save the `.env` file and move to the next step of adding the other Stripe configuration details to the Moesif Developer Portal.
+While you can create plans and prices directly in Stripe, we recommend you use the <a href="https://www.moesif.com/docs/product-catalog/" target="_blank">Moesif Product Catalog Tool</a> to create usage billing compatible plans.
 
 #### Adding Stripe API key to the Moesif Developer Portal
 
@@ -606,6 +518,12 @@ In the `my-dev-portal-api/.env` file, you will need to add a value for the `STRI
 
 ```shell
 STRIPE_API_KEY="sk_test_123abc"
+```
+
+In the `my-dev-portal/.env` file, we will add `publishable-key` values. To do this, take these values and add them to the values in the `.env` file.
+
+```shell
+REACT_APP_STRIPE_PUBLISHABLE_KEY="pk_test_123abc"
 ```
 
 Once the values are added, save the `.env` files and move to the next step in the developer portal configuration.
@@ -633,6 +551,11 @@ For Moesif to add usage quantities to subscriptions in Stripe, we need to add th
 For the **Stripe API Key** field in **Stripe**, you’ll need to retrieve the API key from Stripe to plug it in. In Stripe, from the **Developers** screen click on **API Keys** in the left-side menu. You’ll then be able to see the private key for your API in either the **Secret key** or a generated **Restricted keys** field on the screen. Either key can be copied and used.
 
 After copying the key from Stripe, paste the key into the **Stripe API Key** field on the **Stripe Configuration** screen in Moesif. After setting the API key value, scroll down to the bottom of the screen and click **Save** to save the configuration in Moesif. At this point, your Stripe integration is complete in Moesif and you can begin to use it.
+
+## Use Moesif Product Catalog Tool to Create Plans and Price in Stripe
+
+Please <a href="https://www.moesif.com/docs/product-catalog/" target="_blank">Moesif Product Catalog Tool</a> to create usage billing compatible plans. These plans will actually reside in Stripe,
+the Moesif product catalog tool ensures they are compatible with usage based billing type.
 
 ## Setting up a Billing Meter in Moesif
 

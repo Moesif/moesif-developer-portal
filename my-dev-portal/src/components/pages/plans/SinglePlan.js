@@ -31,7 +31,7 @@ const exampleStripePlan = {
 };
 
 function SinglePlan(props) {
-  const { plan, onSelectPrice } = props;
+  const { plan } = props;
   const prices = plan?.prices || [];
 
   return (
