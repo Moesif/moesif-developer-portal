@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
-
-import { PageLayout } from "../../page-layout";
-import { PageLoader } from "../../page-loader";
-
 import SinglePlan from "./SinglePlan";
 
 import productCatalogImage from "../../../images/assets/product-catalog-nav.png";
 import { LineLoader } from "../../line-loader";
 
-const fakeData = {
+const examplePlansReturnedFromApi = {
   hits: [
     {
       provider: "stripe",

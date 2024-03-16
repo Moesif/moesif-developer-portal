@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import { PageLayout } from '../../page-layout';
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
 
@@ -39,6 +40,7 @@ function Return(props) {
 
   if (status === "complete" && sessionId) {
     return (
+      <PageLayout>
       <section id="success">
         <p>
           We appreciate your business! A confirmation email will be sent to{" "}
@@ -50,6 +52,7 @@ function Return(props) {
           get your API keys.
         </p>
       </section>
+      </PageLayout>
     );
   }
 

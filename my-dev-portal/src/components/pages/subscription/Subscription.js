@@ -109,7 +109,7 @@ function SubDisplay({ sub }) {
             {sub.current_period_start} to {sub.current_period_end}
           </td>
         </tr>
-        {sub.item?.map((item) => (
+        {sub.items?.map((item) => (
           <tr key={item.subscription_item_id + item.price_id + item.plan_id}>
             <td>plan id: {item.plan_id}</td>
             <td>
