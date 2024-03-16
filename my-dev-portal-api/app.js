@@ -267,8 +267,9 @@ app.post("/register/stripe/:checkout_session_id", function (req, res) {
             });
           }
         } else if (apimProvider === "AWS") {
-          // for AWS, we are using the appMeta info from
+          // for AWS, we are using the appMeta info
           // in Auth0 determine service level.
+          // which will update the credentials
           updateAuth0UserAppWithStripeInfo({
             email,
             stripe_customer_id,
