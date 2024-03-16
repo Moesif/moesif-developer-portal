@@ -95,8 +95,9 @@ const exampleSubs = [
 ];
 
 function SubDisplay({ sub }) {
+  // return <pre>{JSON.stringify(sub, null, "  ")}</pre>;
   return (
-    <div>
+    <div className="sub-table">
       <table>
         <tr>
           <td>Provider</td>
