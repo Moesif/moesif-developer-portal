@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { PageLayout } from '../../page-layout';
+
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
+// Purpose of this page is to
+// - Confirmation for customer
+// - receive the returned sessionId from Stripe and call backend API to provision services.
 
 function Return(props) {
   const [status, setStatus] = useState(null);
