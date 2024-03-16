@@ -227,7 +227,7 @@ PORT="4000"
 # Stripe envars
 REACT_APP_STRIPE_PRICING_TABLE_ID="prctbl_123abc"
 REACT_APP_STRIPE_PUBLISHABLE_KEY="pk_test_123abc"
-REACT_APP_STRIPE_AUTH_KEY='Bearer sk_test_123abc'
+
 REACT_APP_STRIPE_MANAGEMENT_URL="https://billing.stripe.com/p/login/test_123abc"
 
 # API server envars
@@ -620,7 +620,17 @@ In Moesif, click the **New** button in the top corner of the left-side menu and 
 
 After everything is filled out, click **Get Embed Code**. You’ll then be presented with some embed code that you will need to plug into the `.env` file.
 
-In the `my-dev-portal-api/.env` file, you’ll need to add values for `MOESIF_MANAGEMENT_TOKEN` and `MOESIF_TEMPLATE_WORKSPACE_ID_LIVE_EVENT_LOG`. The `MOESIF_MANAGEMENT_TOKEN` comes from the large token highlighted in the example above. The `MOESIF_TEMPLATE_WORKSPACE_ID_LIVE_EVENT_LOG` value is the shorter string, the **workspace id**, highlighted at the top of the above image.
+In the `my-dev-portal-api/.env` file, you’ll need to add values for `MOESIF_MANAGEMENT_TOKEN` and `MOESIF_TEMPLATE_WORKSPACE_ID_LIVE_EVENT_LOG`. The `MOESIF_TEMPLATE_WORKSPACE_ID_LIVE_EVENT_LOG` value is the shorter string, the **workspace id**, highlighted at the top of the above image.
+
+But, instead of using `MOESIF_MANAGEMENT_TOKEN` comes from the large token highlighted in the example image above, we need to create a custom Moesif Management Token with some additional permissions. Please to go Moesif Menu API Keys and select these permissions:
+
+- workspaces: read
+- public_workspaces: read
+- companies: read,
+- users: read,
+- plans: read,
+- prices: read,
+- subscriptions: read,
 
 ```shell
 MOESIF_MANAGEMENT_TOKEN="your Moesif management token"
