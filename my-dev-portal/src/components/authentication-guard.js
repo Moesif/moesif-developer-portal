@@ -1,9 +1,9 @@
-import React from 'react';
-import SecureRoute from './okta/SecureRoute';
-import { PageLoader } from './page-loader';
+import React from "react";
+import SecureRoute from "./okta/SecureRoute";
+import { PageLoader } from "./page-loader";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 
-export const AuthenticationGuard = ({ children, component }) => {
+export const AuthenticationGuard = ({ children, component, options={} }) => {
   if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return (
       <React.Suspense fallback={<PageLoader />}>
@@ -12,6 +12,7 @@ export const AuthenticationGuard = ({ children, component }) => {
     );
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     const Component = withAuthenticationRequired(component, {
+      ...options,
       onRedirecting: () => (
         <div className="page-layout">
           <PageLoader />
@@ -20,5 +21,5 @@ export const AuthenticationGuard = ({ children, component }) => {
     });
 
     return <Component />;
-  } 
+  }
 };

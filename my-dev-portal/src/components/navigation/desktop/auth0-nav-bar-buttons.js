@@ -22,6 +22,6 @@ function Auth0NavBarButtons() {
       )}
     </div>
   );
-};
+}
 
-export default Auth0NavBarButtons
+export default Auth0NavBarButtons;

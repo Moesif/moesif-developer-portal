@@ -1,10 +1,10 @@
-import { useOktaAuth } from '@okta/okta-react';
-import { useLocation } from 'react-router-dom';
-import { toRelativeUrl } from '@okta/okta-auth-js';
-import OktaError from './OktaError';
-import React, { useEffect, useRef, useState } from 'react';
+import { useOktaAuth } from "@okta/okta-react";
+import { useLocation } from "react-router-dom";
+import { toRelativeUrl } from "@okta/okta-auth-js";
+import OktaError from "./OktaError";
+import React, { useEffect, useRef, useState } from "react";
 
-const SecureRoute = ({ children, onAuthRequired, errorComponent }) => { 
+const SecureRoute = ({ children, onAuthRequired, errorComponent }) => {
   const { oktaAuth, authState, _onAuthRequired } = useOktaAuth();
   const location = useLocation();
   const pendingLogin = useRef(false);
@@ -19,7 +19,10 @@ const SecureRoute = ({ children, onAuthRequired, errorComponent }) => {
 
       pendingLogin.current = true;
 
-      const originalUri = toRelativeUrl(window.location.href, window.location.origin);
+      const originalUri = toRelativeUrl(
+        window.location.href,
+        window.location.origin
+      );
       oktaAuth.setOriginalUri(originalUri);
       const onAuthRequiredFn = onAuthRequired || _onAuthRequired;
       if (onAuthRequiredFn) {
@@ -42,18 +45,12 @@ const SecureRoute = ({ children, onAuthRequired, errorComponent }) => {
       return;
     }
 
-    if(!authState?.isAuthenticated) { 
-      handleLogin().catch(err => {
+    if (!authState?.isAuthenticated) {
+      handleLogin().catch((err) => {
         setHandleLoginError(err);
       });
-    }  
-  }, [
-    authState,
-    oktaAuth, 
-    location, 
-    onAuthRequired, 
-    _onAuthRequired
-  ]);
+    }
+  }, [authState, oktaAuth, location, onAuthRequired, _onAuthRequired]);
 
   if (handleLoginError) {
     return <ErrorReporter error={handleLoginError} />;

@@ -24,13 +24,13 @@ const SignupButtonWithAuth0 = ({ isLink }) => {
   const handleSignUp = async () => {
     await loginWithRedirect({
       appState: {
-        returnTo: "/product-select",
+        returnTo: "/plans",
       },
       authorizationParams: {
         prompt: "login",
         screen_hint: "signup",
       },
-      scope: 'openid profile email offline_access',
+      scope: "openid profile email offline_access",
     });
   };
 

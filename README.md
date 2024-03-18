@@ -107,34 +107,37 @@ To integrate Moesif and AWS API Gateway, you can follow our guide that covers [i
 Before proceeding, you'll also need to make sure that you've set up an API endpoint within AWS API Gateway and added the custom Authorizer covered below.
 
 #### Add The Auth0 Authorizer to AWS API Gateway
-We will add a custom Lambda Authorizer to our AWS API Gateway endpoint. Our first step is to enter the __dev-portal-authorizer__ project in the Moesif Developer Portal. Once you have the project opened in a terminal pointing to the __dev-portal-authorizer__ directory, do the following:
+
+We will add a custom Lambda Authorizer to our AWS API Gateway endpoint. Our first step is to enter the **dev-portal-authorizer** project in the Moesif Developer Portal. Once you have the project opened in a terminal pointing to the **dev-portal-authorizer** directory, do the following:
 
 Run `npm install` to install the project's dependencies.
-After the dependencies are installed, zip up the project using `npm run zip`. From this command, an __authorizer.zip__ file will be created in the root directory of the __authorizer__ project.
+After the dependencies are installed, zip up the project using `npm run zip`. From this command, an **authorizer.zip** file will be created in the root directory of the **authorizer** project.
 
-* Next, log into AWS Lambda and from the main page click __Create function__ in the top-right corner. From here, you’ll do the following:
-* On the __Create function__ screen:
-* Select __Author from scratch__
-* Set the __Function name__ field as `Auth0Authorizer`
-* Choose `Node.js 18.x` as the __Runtime__ and `x86_64` as the __Architecture__
-* Everything else can stay as the default and then you’ll click __Create function__
-* On the __Auth0Authorizer__ screen, under __Code source__, click the __Upload from__ dropdown and select __.zip file__.
-* In the modal that appears, either drop your __.zip__ file onto it or select it from the file explorer by clicking the __Upload__ button. Then click __Save__ to load the .zip code.
+- Next, log into AWS Lambda and from the main page click **Create function** in the top-right corner. From here, you’ll do the following:
+- On the **Create function** screen:
+- Select **Author from scratch**
+- Set the **Function name** field as `Auth0Authorizer`
+- Choose `Node.js 18.x` as the **Runtime** and `x86_64` as the **Architecture**
+- Everything else can stay as the default and then you’ll click **Create function**
+- On the **Auth0Authorizer** screen, under **Code source**, click the **Upload from** dropdown and select **.zip file**.
+- In the modal that appears, either drop your **.zip** file onto it or select it from the file explorer by clicking the **Upload** button. Then click **Save** to load the .zip code.
 
-In AWS API Gateway, we will create the Authorizer by clicking on __Authorizers__ in the left-side menu. On the __Authorizers__ screen, we will do the following:
-* Click __Create New Authorizer__
-* Add our __Name__ as `Auth0_Authorizer`
-* Select the type as `Lambda`
-* Set the __Lambda Event Payload__ as `Token`
-* Set the __Token Source__ as `Authorization`
-* The rest of the fields can be left as their defaults, and you can click __Create__ to create the Authorizer.
+In AWS API Gateway, we will create the Authorizer by clicking on **Authorizers** in the left-side menu. On the **Authorizers** screen, we will do the following:
 
-Next, we will add the Authorizer by going to __Resources__ in the left-side menu, clicking on our endpoint, and bringing up the __Method Execution__ screen. On this screen, do the following:
-* Click on __Method Request__
-* Under __Settings__ > __Authorizer__, click the __Edit__ (pencil) icon and select `Auth0_Authorizer`. Click the checkmark to save the setting.
-* Make sure that __API Key Required__ is set to `false`
+- Click **Create New Authorizer**
+- Add our **Name** as `Auth0_Authorizer`
+- Select the type as `Lambda`
+- Set the **Lambda Event Payload** as `Token`
+- Set the **Token Source** as `Authorization`
+- The rest of the fields can be left as their defaults, and you can click **Create** to create the Authorizer.
 
-Lastly, select the appropriate stage from the list at __Stages__ in the left-side menu. In the __Stage Editor__ screen, click on the __Logs/Tracing__ tab. Under __Custom Access Logging__ > __Log Format__, paste in the log format from the __[my-dev-portal-authorizer/aws-config/CustomAccessLogging_LogFormat.json](https://github.com/Moesif/moesif-developer-portal/blob/main/my-dev-portal-authorizer/aws-config/CustomAccessLogging_LogFormat.json)__ file. The key here is that the ` "principalId": "$context.authorizer.principalId"` formatter is included to ensure that the Stripe data is correctly attributed to the request in Moesif.
+Next, we will add the Authorizer by going to **Resources** in the left-side menu, clicking on our endpoint, and bringing up the **Method Execution** screen. On this screen, do the following:
+
+- Click on **Method Request**
+- Under **Settings** > **Authorizer**, click the **Edit** (pencil) icon and select `Auth0_Authorizer`. Click the checkmark to save the setting.
+- Make sure that **API Key Required** is set to `false`
+
+Lastly, select the appropriate stage from the list at **Stages** in the left-side menu. In the **Stage Editor** screen, click on the **Logs/Tracing** tab. Under **Custom Access Logging** > **Log Format**, paste in the log format from the **[my-dev-portal-authorizer/aws-config/CustomAccessLogging_LogFormat.json](https://github.com/Moesif/moesif-developer-portal/blob/main/my-dev-portal-authorizer/aws-config/CustomAccessLogging_LogFormat.json)** file. The key here is that the ` "principalId": "$context.authorizer.principalId"` formatter is included to ensure that the Stripe data is correctly attributed to the request in Moesif.
 
 ---
 
@@ -224,7 +227,7 @@ PORT="4000"
 # Stripe envars
 REACT_APP_STRIPE_PRICING_TABLE_ID="prctbl_123abc"
 REACT_APP_STRIPE_PUBLISHABLE_KEY="pk_test_123abc"
-REACT_APP_STRIPE_AUTH_KEY='Bearer sk_test_123abc'
+
 REACT_APP_STRIPE_MANAGEMENT_URL="https://billing.stripe.com/p/login/test_123abc"
 
 # API server envars
@@ -292,34 +295,36 @@ The only values we need set in this `.env` file currently will be your Gateway U
 For the `KONG_URL`, If you’re running a local instance of Kong, by default this should be running on `http://localhost:8001`. If this is the case, you can leave the value as is. If it is different or running remotely, you can change the value to point to your Kong gateway.
 
 ##### With Kong Konnect
+
 For Kong Konnect, the setup also requires you to add a few additional environment variables to the `my-dev-portal-api/.env` file. You'll want to add in the following key-values to the file:
 
-``` conf
+```conf
 KONNECT_API_URL="https://us.api.konghq.com"
 KONNECT_API_VERSION="v2"
 KONNECT_RUNTIME_GROUP_NAME="default"
 KONNECT_PAT=""
 ```
-for the `KONNECT_API_URL` and `KONNECT_API_VERSION` values, you'll want to log into your Kong Konnect control plane and retrieve this. You can get this value by going to the __Gateway Manager__ screen and selecting your control plane. In the next screen, you can grab the __Admin API__ value (located in near the top of the screen) and truncate anything we don't need.
+
+for the `KONNECT_API_URL` and `KONNECT_API_VERSION` values, you'll want to log into your Kong Konnect control plane and retrieve this. You can get this value by going to the **Gateway Manager** screen and selecting your control plane. In the next screen, you can grab the **Admin API** value (located in near the top of the screen) and truncate anything we don't need.
 
 The raw value will look like this: https://us.api.konghq.com/v2/control-planes/123-asd-etc
 
 From this, we can populate our values like so:
 
-``` conf
+```conf
 KONNECT_API_URL="https://us.api.konghq.com"
 KONNECT_API_VERSION="v2"
 ```
 
-For the `KONNECT_RUNTIME_GROUP_NAME`, you'll use your __Control Plane__ name. By default, this will be fittingly named `default`.
+For the `KONNECT_RUNTIME_GROUP_NAME`, you'll use your **Control Plane** name. By default, this will be fittingly named `default`.
 
-``` conf
+```conf
 KONNECT_RUNTIME_GROUP_NAME="default"
 ```
 
-Lastly, we will generate a Konnect Personal Access Token. This can be done through the Konnect UI by going to your initials in the top-right of the screen and from the dropdown, selecting __Personal Access Tokens__. 
+Lastly, we will generate a Konnect Personal Access Token. This can be done through the Konnect UI by going to your initials in the top-right of the screen and from the dropdown, selecting **Personal Access Tokens**.
 
-From here, click __Generate Token__, give the token a __Name__ and __Expiration__, then click __Generate__. Paste the returned value into the `KONNECT_PAT` value.
+From here, click **Generate Token**, give the token a **Name** and **Expiration**, then click **Generate**. Paste the returned value into the `KONNECT_PAT` value.
 
 ```conf
 KONNECT_PAT="kpat_FIZqQxICG6aEpA10nQ1TesTtEStTEST"
@@ -327,7 +332,7 @@ KONNECT_PAT="kpat_FIZqQxICG6aEpA10nQ1TesTtEStTEST"
 
 #### AWS
 
-For the `AWS_INVOKE_URL`, you'll need to grab the __Invoke URL__ from your AWS API gateway instance. To do this, go to your API Gateway instance, click on __Stages__, and then select the appropriate stage. On the __Stage Editor__ screen, grab the __Invoke URL__ and paste the value into `AWS_INVOKE_URL`.
+For the `AWS_INVOKE_URL`, you'll need to grab the **Invoke URL** from your AWS API gateway instance. To do this, go to your API Gateway instance, click on **Stages**, and then select the appropriate stage. On the **Stage Editor** screen, grab the **Invoke URL** and paste the value into `AWS_INVOKE_URL`.
 
 #### Tyk
 
@@ -415,56 +420,58 @@ Once both values are added, save the file to make sure the updated values are pe
 
 #### For AWS API Gateway
 
-A few additional steps need to happen in order to get the AWS APi Gateway integration to work. These include adding the Developer Portal API to Auth0 and adding  logic to add additional fields from Stripe to the JWT.
+A few additional steps need to happen in order to get the AWS APi Gateway integration to work. These include adding the Developer Portal API to Auth0 and adding logic to add additional fields from Stripe to the JWT.
 
 ##### Add The Developer Portal API to Auth0
 
-In Auth0, we will also need to add our  Developer Portal API to Auth0. To do this, log into Auth0, and from the left-side menu, select __Applications__ > __APIs__.
+In Auth0, we will also need to add our Developer Portal API to Auth0. To do this, log into Auth0, and from the left-side menu, select **Applications** > **APIs**.
 
 Click the Create API button in the top right on the API screen to add the API to Auth0.
 
 We will fill in the following fields:
-* __Name__ - Here, we will put a friendly name for the API. For example, you can put in a value like “dev-portal-api”.
-* __Identifier__ - In this field, we will put our API endpoint, as recommended by Auth0. For example, you can put in a value like `http://127.0.0.1:3000` or the URL of where your Developer Portal API is hosted.
-* __Signing Algorithm__ - This field can be left as the default unless you require something more specific.
 
-Once the fields are filled in, click __Create__.
+- **Name** - Here, we will put a friendly name for the API. For example, you can put in a value like “dev-portal-api”.
+- **Identifier** - In this field, we will put our API endpoint, as recommended by Auth0. For example, you can put in a value like `http://127.0.0.1:3000` or the URL of where your Developer Portal API is hosted.
+- **Signing Algorithm** - This field can be left as the default unless you require something more specific.
 
-In the Developer Portal UI projects __.env__ file, we will add the following values:
+Once the fields are filled in, click **Create**.
 
-``` shell
+In the Developer Portal UI projects **.env** file, we will add the following values:
+
+```shell
 REACT_APP_AUTH0_AUDIENCE="http://127.0.0.1:3030"
 ```
 
-The value here will be what you put in the __Identifier__ field when you create the API in Auth0. Alternatively, you can retrieve the value by going to the __APIs__ page again, locating your API, and copying the __API Audience__ field.
+The value here will be what you put in the **Identifier** field when you create the API in Auth0. Alternatively, you can retrieve the value by going to the **APIs** page again, locating your API, and copying the **API Audience** field.
 
 ##### Add Custom JWT Field Logic to Auth0
+
 Next, we will add the logic to add the Stripe Customer and Subscription ID’s to the Auth0 JWT token. To do this, we will execute the following steps.
 
-* In Auth0, from the left-side menu, navigate to __Actions__ > __Flows__ > __Login__
-* In the right-side panel on the __Login Flow__ screen, click __Add Action__ > __Build Custom__
-* Name the Custom Action `AddStripeDetailsToClaim`
-* Add the code from the __my-dev-portal-authorizer/auth0/AddStripeDetailsToClaim in the code editor.js__ file in the Moesif Developer Portal, overwriting the existing code.
-* Once the code is added, click __Save Draft__ and then __Deploy__.
-* Back in the __Flows__ screen, drag the __AddStripeDetailsToClaim__ action (in the right-side panel under __Custom__) in between the __Start__ and __Complete__ actions.
-* Click __Apply__ to update and activate the flow.
+- In Auth0, from the left-side menu, navigate to **Actions** > **Flows** > **Login**
+- In the right-side panel on the **Login Flow** screen, click **Add Action** > **Build Custom**
+- Name the Custom Action `AddStripeDetailsToClaim`
+- Add the code from the **my-dev-portal-authorizer/auth0/AddStripeDetailsToClaim in the code editor.js** file in the Moesif Developer Portal, overwriting the existing code.
+- Once the code is added, click **Save Draft** and then **Deploy**.
+- Back in the **Flows** screen, drag the **AddStripeDetailsToClaim** action (in the right-side panel under **Custom**) in between the **Start** and **Complete** actions.
+- Click **Apply** to update and activate the flow.
 
 ##### Add Auth0 Environment Variables to API Project
-Lastly, we need to add in a few additional environment variables to our API project __.env__ file. In Auth0, go to __Applications__ > __APIs__ and select __Auth0 Management API__.
 
-From this screen, we will be able to get the values for the following values in the __my-dev-portal-api__ project’s __.env__ file:
+Lastly, we need to add in a few additional environment variables to our API project **.env** file. In Auth0, go to **Applications** > **APIs** and select **Auth0 Management API**.
 
+From this screen, we will be able to get the values for the following values in the **my-dev-portal-api** project’s **.env** file:
 
-``` shell
+```shell
 AUTH0_DOMAIN="your-domain.us.auth0.com"
 AUTH0_CLIENT_ID="yOurAuth0CliENtID"
 AUTH0_CLIENT_SECRET="abcd1234efgh5678"
 AUTH0_MANAGEMENT_API_AUDIENCE="https://{your-domain.us.auth0.com}/api/v2/"
 ```
 
-​​for the __AUTH0_MANAGEMENT_API_AUDIENCE__ value, just swap out the `{your-domain.us.auth0.com}` for your domain but leave the `https://` and `/api/v2/` in place.
+​​for the **AUTH0_MANAGEMENT_API_AUDIENCE** value, just swap out the `{your-domain.us.auth0.com}` for your domain but leave the `https://` and `/api/v2/` in place.
 
-Once the values are added, save the __.env__ file.
+Once the values are added, save the **.env** file.
 
 ---
 
@@ -501,89 +508,7 @@ Once all three values are added, save the file to make sure the updated values a
 
 ### Stripe
 
-The next step we will take is to create a product and price in Stripe. It’s best to do this step before you integrate Stripe into Moesif so you’ll already have some pricing plans for Moesif to pull in. A pricing plan can then be associated with specific billing criteria set up within a Billing Meter in Moesif.
-
-To create a product and price, log into Stripe and proceed to the **Products** page from the header menu in the Stripe UI. Once on the **Products** page, click on the **Add Product** button in the top right corner.
-
-In the **Add a Product** modal that appears, you’ll be able to add the details for your product and the price(s) for it. The form for your product will have a few fields to fill out. Some of these fields include:
-
-- **Name**
-  - This is the name of your product. In the example below, we use the name “My API”.
-
-- **Description**
-  - This field is optional but you could put a brief description of the product here. In the example below, we use a description of “This is a monetized API”.
-
-- **Pricing model**
-  - A few different pricing models can be set up in Stripe. These pricing models include:
-
-    - _Standard pricing_
-      - use this if you want to charge the same price for each API call.
-    - _Package_
-      - use this if you charge for API usage by the package or a group of units. For example, you could set it up to charge $10 for every 1000 API calls. Every time the user goes over the 1000 API call threshold, they are charged another $10.
-    - _Graduated_
-      - use graduated pricing tiers that may result in a different price for some units in an order. For example, you might charge $10.00 per unit for the first 100 units and then $5.00 per unit for the next 50. Today, this is only available for recurring prices.
-    - _Volume_
-      - use if you charge the same price for each unit based on the total number of units sold. For example, you might charge $10.00 per unit for 50 units, and $7.00 per unit for 100 units.
-
-- **Price**
-  - Depending on the pricing model selected, prices can be set in this field.
-
-- **Billing period**
-  - The billing period can be set as:
-
-    - Daily
-    - Weekly
-    - Monthly
-    - Every 3 months
-    - Every 6 months
-    - Yearly
-    - Customer
-
-  - For your configuration with Moesif, we recommend setting the billing period as Monthly. You’ll also need to check the **Usage is metered** box as well.
-
-- **Charge for metered usage by**
-  - Once the **Usage is metered** checkbox is selected, the option for **charge for metered usage by** will appear. This field lets you choose how metered usage will be calculated and charged for. Values available for this field are:
-
-    - _Sum of usage values during period_
-      - Users are charged for their usage recorded throughout the billing cycle
-    - _Most recent usage value during period_
-      - Users are charged based on the last usage recorded before the billing period ended
-    - _Most recent usage value_
-      - Users are charged for the last usage recorded throughout the subscription’s life at the end of each billing cycle
-    - _Maximum usage value during period_
-      - Users are charged for the highest amount recorded during the billing cycle
-
-  - The optimal setup for a Moesif Billing Meter is to set this value as **Sum of usage values during period** since usage is reported hourly by Moesif to Stripe
-
-- **Price description**
-  - This is an optional field but recommended. Here you can put a brief description of your price. This will allow you to more easily decipher which price you are selecting in the billing meter in Moesif, especially if you have multiple prices for a single product.
-
-Once you’ve input all of the details for your product and price, you can click **Save product** in the top right corner of the screen. This product and price will now be saved. Follow this same procedure to create more products as needed. As you create products, you will be able to view and edit them on the **products** screen.
-
-#### Creating the Stripe Pricing Table
-
-During the sign-up flow in the Developer Portal, the user will be prompted for which subscription/product they would like to subscribe to. In order to make this easy to manage, the Moesif Developer Portal uses a Stripe Pricing Table to display the available options and handle the checkout.
-
-To set up the Pricing Table, navigate to the **Products** page within Stripe. Once on the **Products** page, in the tabs available below the main menu, select **Pricing tables**. Once on the **Pricing tables** tab, click on the **Create pricing table** button in the top-right.
-
-For the next steps, follow the Stripe documentation on [how to create a pricing table](https://stripe.com/docs/payments/checkout/pricing-table#Create). For each of the entries added to the **Pricing Table**, on the **Payment settings** page under the **Confirmation page** section, select `Don’t show confirmation page` and fill in the URL with `http://127.0.0.1:4000/dashboard?checkout-session={CHECKOUT_SESSION_ID}`. By doing this, when payments are completed, the user will be redirected back to the developer portal, and the `CHECKOUT_SESSION_ID` will be used to retrieve Stripe account details upon redirect.
-
-After the pricing table is created, you’ll get an embeddable snippet of code. This code will look similar to this:
-
-```javascript
-<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-<stripe-pricing-table pricing-table-id="prctbl_123abc" publishable-key="pk_test_abc123">
-</stripe-pricing-table>
-```
-
-In the `my-dev-portal/.env` file, we will add the values from the code including the `pricing-table-id` and `publishable-key` values. To do this, take these values and add them to the values in the `.env` file.
-
-```shell
-REACT_APP_STRIPE_PRICING_TABLE_ID="prctbl_123abc"
-REACT_APP_STRIPE_PUBLISHABLE_KEY="pk_test_123abc"
-```
-
-Once added, save the `.env` file and move to the next step of adding the other Stripe configuration details to the Moesif Developer Portal.
+While you can create plans and prices directly in Stripe, we recommend you use the <a href="https://www.moesif.com/docs/product-catalog/" target="_blank">Moesif Product Catalog Tool</a> to create usage billing compatible plans.
 
 #### Adding Stripe API key to the Moesif Developer Portal
 
@@ -593,6 +518,12 @@ In the `my-dev-portal-api/.env` file, you will need to add a value for the `STRI
 
 ```shell
 STRIPE_API_KEY="sk_test_123abc"
+```
+
+In the `my-dev-portal/.env` file, we will add `publishable-key` values. To do this, take these values and add them to the values in the `.env` file.
+
+```shell
+REACT_APP_STRIPE_PUBLISHABLE_KEY="pk_test_123abc"
 ```
 
 Once the values are added, save the `.env` files and move to the next step in the developer portal configuration.
@@ -621,6 +552,11 @@ For the **Stripe API Key** field in **Stripe**, you’ll need to retrieve the AP
 
 After copying the key from Stripe, paste the key into the **Stripe API Key** field on the **Stripe Configuration** screen in Moesif. After setting the API key value, scroll down to the bottom of the screen and click **Save** to save the configuration in Moesif. At this point, your Stripe integration is complete in Moesif and you can begin to use it.
 
+## Use Moesif Product Catalog Tool to Create Plans and Price in Stripe
+
+Please <a href="https://www.moesif.com/docs/product-catalog/" target="_blank">Moesif Product Catalog Tool</a> to create usage billing compatible plans. These plans will actually reside in Stripe,
+the Moesif product catalog tool ensures they are compatible with usage based billing type.
+
 ## Setting up a Billing Meter in Moesif
 
 Once you have the Stripe integration active in Moesif, you can begin to set up your billing meter. Billing meters created in Moesif do two things: track usage based on specific criteria and report that usage to the billing provider. Moesif allows you to set up very simple and very complex billing meters with relative ease.
@@ -632,27 +568,35 @@ The next screen to appear will be the **Create Billing Meter** screen where you 
 Fields on this screen include:
 
 - **Billing Meter Name**
+
   - This is the Moesif internal name of your new Billing Meter
 
 - **Billing Provider**
+
   - In this dropdown, you can choose the billing provider you want to send your usage metrics.
 
 - **Product**
+
   - Here you can choose which product that you’ve set up in Stripe your usage metrics should be tied to.
 
 - **Price**
+
   - In the last field in the Billing Provider settings for the Billing Meter, you will choose which price you want to tie your usage metrics to.
 
 - **Filters**
+
   - Under the Filters configuration, you will configure your billing criteria to only include requests that fit certain criteria.
 
 - **Metrics**
+
   - Here you can choose which metric you would like to bill on. Available options include:
 
     - **Volume > Event Count**
+
       - This will increment usage for every event that fits the criteria outlined in the Filter criteria.
 
     - **Uniques > Users**
+
       - This will increment usage whenever a unique user sends a request that fits the Filter criteria. For every unique user, the count will be incremented by 1 regardless of the event count for that user.
 
     - **Uniques > Sessions/API Keys**
@@ -676,7 +620,17 @@ In Moesif, click the **New** button in the top corner of the left-side menu and 
 
 After everything is filled out, click **Get Embed Code**. You’ll then be presented with some embed code that you will need to plug into the `.env` file.
 
-In the `my-dev-portal-api/.env` file, you’ll need to add values for `MOESIF_MANAGEMENT_TOKEN` and `MOESIF_TEMPLATE_WORKSPACE_ID_LIVE_EVENT_LOG`. The `MOESIF_MANAGEMENT_TOKEN` comes from the large token highlighted in the example above. The `MOESIF_TEMPLATE_WORKSPACE_ID_LIVE_EVENT_LOG` value is the shorter string, the **workspace id**, highlighted at the top of the above image.
+In the `my-dev-portal-api/.env` file, you’ll need to add values for `MOESIF_MANAGEMENT_TOKEN` and `MOESIF_TEMPLATE_WORKSPACE_ID_LIVE_EVENT_LOG`. The `MOESIF_TEMPLATE_WORKSPACE_ID_LIVE_EVENT_LOG` value is the shorter string, the **workspace id**, highlighted at the top of the above image.
+
+But, instead of using `MOESIF_MANAGEMENT_TOKEN` comes from the large token highlighted in the example image above, we need to create a custom Moesif Management Token with some additional permissions. Please to go Moesif Menu API Keys and select these permissions:
+
+- workspaces: read
+- public_workspaces: read
+- companies: read,
+- users: read,
+- plans: read,
+- prices: read,
+- subscriptions: read,
 
 ```shell
 MOESIF_MANAGEMENT_TOKEN="your Moesif management token"
@@ -747,16 +701,17 @@ In **Stripe**, on the **Customers** screen, you should also be able to see your 
 In **Kong**, under **Consumers**, you should also see your new user added. For this entry, you should also see the **custom_id** field with the Stripe customer ID as well (will resemble `cus_123abc`).
 
 ### AWS
+
 With the amount of moving parts in the AWS implementation for the Moesif Developer Portal, it’s important to ensure that everything functions as intended.
 
 Log the current user out of the Moesif Developer Portal if you have one logged in. Execute the following steps to confirm that the flow is working as intended:
 
-* In the Moesif Developer Portal, log in with an existing user OR create a new user, log out, and log back in.
-* Next, go to the __Keys__ screen in the developer portal
-* From the __Keys__ screen, generate a new key and copy it onto your clipboard
-* Navigate to [www.jwt.io](www.jwt.io) and go to the __Debugger__ screen. Paste the key into the debugger and ensure that both the Stripe Customer and Subscription ID have been added to the token’s data under the __stripeCustomerId__ and __stripeSubscriptionId__ fields. For example, your payload data should look like this:
+- In the Moesif Developer Portal, log in with an existing user OR create a new user, log out, and log back in.
+- Next, go to the **Keys** screen in the developer portal
+- From the **Keys** screen, generate a new key and copy it onto your clipboard
+- Navigate to [www.jwt.io](www.jwt.io) and go to the **Debugger** screen. Paste the key into the debugger and ensure that both the Stripe Customer and Subscription ID have been added to the token’s data under the **stripeCustomerId** and **stripeSubscriptionId** fields. For example, your payload data should look like this:
 
-``` shell
+```shell
 {
  "stripeCustomerId": "cus_OXDy3IqRlUfHOz",
  "stripeSubscriptionId": "sub_1Nk9WyCUAiurhyBq9qUzE9w1",
@@ -773,7 +728,7 @@ Log the current user out of the Moesif Developer Portal if you have one logged i
 }
 ```
 
-Once the Stripe info is confirmed in the token, send a request to your AWS Gateway endpoint and confirm that the API call shows up in the __Live Event Log__ in Moesif. The API call should have the Stripe Customer and Subscription ID added in the Moesif User and Company fields, respectively.
+Once the Stripe info is confirmed in the token, send a request to your AWS Gateway endpoint and confirm that the API call shows up in the **Live Event Log** in Moesif. The API call should have the Stripe Customer and Subscription ID added in the Moesif User and Company fields, respectively.
 Lastly, add an invalid token (the easiest thing to do is remove a few characters from your existing token to invalidate it) and ensure that the AWS Lambda Authorizer we added also rejects any unauthorized calls.
 
 ### Tyk
@@ -790,7 +745,7 @@ Within the next 15 minutes, you should also see in Stripe that API call usage ha
 
 A last step you can do is also do the [**Meter Test**](https://www.moesif.com/docs/metered-billing/testing-billing-meters/) to ensure that all parts of the billing meter setup are working correctly.
 
-Depends on how you deploy the my-dev-portal-api, weather you decides to use API gateway or not, you will want to make sure these
-APIs are protected also so that they can only be called by my-dev-portal UI.
+Depends on how you deploy the `my-dev-portal-api`, weather you decides to use API gateway or not, you will want to make sure these
+APIs are protected so that they can only be called by `my-dev-portal` UI.
 
 With all parts of the ecosystem working properly, the Moesif Developer Portal can be released to your users!

@@ -5,7 +5,7 @@ import { LogoutButton } from "../../buttons/logout-button";
 import { SignupButton } from "../../buttons/signup-button";
 
 function OktaNavBarButtons() {
-  const { authState } = useOktaAuth(); 
+  const { authState } = useOktaAuth();
   const isAuthenticated = authState?.isAuthenticated;
 
   return (
@@ -23,6 +23,6 @@ function OktaNavBarButtons() {
       )}
     </div>
   );
-};
+}
 
-export default OktaNavBarButtons
+export default OktaNavBarButtons;

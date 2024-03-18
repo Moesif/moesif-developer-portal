@@ -2,10 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginCallback } from "@okta/okta-react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import Login from "./components/pages/login/Login";
 import Dashboard from "./components/pages/dashboard/Dashboard";
 import Settings from "./components/pages/settings/Settings";
-import StripeProducts from "./components/stripe/StripeProducts";
 import { OktaProviderWithNavigate } from "./OktaProviderWithNavigate";
 import { Auth0ProviderWithNavigate } from "./Auth0ProviderWithNavigate";
 import Keys from "./components/pages/keys/Keys";
@@ -14,6 +12,12 @@ import { AuthenticationGuard } from "./components/authentication-guard";
 import SignUp from "./components/pages/signup/SignUp";
 import RedirectToSignIn from "./components/pages/signup/OktaPostCreate";
 import { StripeProvider } from "./StripeProvider";
+import Return from "./components/pages/checkout/Return";
+import Setup from "./components/pages/setup/Setup";
+import Plans from "./components/pages/plans/Plans";
+import Home from "./components/pages/home/Home";
+import Checkout from "./components/pages/checkout/Checkout";
+import Subscription from "./components/pages/subscription/Subscription";
 
 function App() {
   const { isAuthenticated } = useAuth0();
@@ -25,14 +29,32 @@ function App() {
           <BrowserRouter>
             <OktaProviderWithNavigate>
               <Routes>
-                <Route path="/" element={<Login />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="login/callback" element={<LoginCallback />} />
+                <Route path="/return" element={<Return />} />
+                <Route path="/setup" element={<Setup />} />
+                <Route path="/plans" element={<Plans />} />
                 <Route
                   path="login/oktapostcreate"
                   element={<RedirectToSignIn />}
                 />
-                <Route path="product-select" element={<StripeProducts />} />
+                <Route
+                  path="/checkout"
+                  element={
+                    <SecureRoute>
+                      <Checkout />
+                    </SecureRoute>
+                  }
+                />
+                <Route
+                  path="/return"
+                  element={
+                    <SecureRoute>
+                      <Return />
+                    </SecureRoute>
+                  }
+                />
                 <Route
                   path="dashboard"
                   element={
@@ -57,6 +79,14 @@ function App() {
                     </SecureRoute>
                   }
                 />
+                <Route
+                  path="subscriptions"
+                  element={
+                    <SecureRoute>
+                      <Subscription />
+                    </SecureRoute>
+                  }
+                />
               </Routes>
             </OktaProviderWithNavigate>
           </BrowserRouter>
@@ -75,13 +105,23 @@ function App() {
                     path="/"
                     element={
                       !isAuthenticated ? (
-                        <Login />
+                        <Home />
                       ) : (
                         <Navigate replace to={"dashboard"} />
                       )
                     }
                   />
-                  <Route path="product-select" element={<StripeProducts />} />
+                  <Route path="/return" element={<Return />} />
+                  <Route path="/setup" element={<Setup />} />
+                  <Route path="/plans" element={<Plans />} />
+                  <Route
+                    path="/checkout"
+                    element={<AuthenticationGuard component={Checkout} />}
+                  />
+                  <Route
+                    path="/return"
+                    element={<AuthenticationGuard component={Return} />}
+                  />
                   <Route
                     path="dashboard"
                     element={<AuthenticationGuard component={Dashboard} />}
@@ -93,6 +133,10 @@ function App() {
                   <Route
                     path="keys"
                     element={<AuthenticationGuard component={Keys} />}
+                  />
+                  <Route
+                    path="subscription"
+                    element={<AuthenticationGuard component={Subscription} />}
                   />
                 </Routes>
               </StripeProvider>

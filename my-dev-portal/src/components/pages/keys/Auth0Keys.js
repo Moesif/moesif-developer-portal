@@ -22,7 +22,11 @@ const customStyles = {
 };
 
 const Auth0Keys = () => {
-  const { user: auth0User, isLoading: auth0IsLoading, getAccessTokenSilently } = useAuth0();
+  const {
+    user: auth0User,
+    isLoading: auth0IsLoading,
+    getAccessTokenSilently,
+  } = useAuth0();
   const [APIKey, setAPIKey] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -41,16 +45,16 @@ const Auth0Keys = () => {
       });
 
       console.log(token);
-    } catch(e) {
+    } catch (e) {
       console.error(e);
       // handle error, return, or throw e
     }
 
     fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-key`, {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` // Include the Auth0 access token in the Authorization header
+        Authorization: `Bearer ${token}`, // Include the Auth0 access token in the Authorization header
       },
       body: JSON.stringify({
         email: userEmail,
