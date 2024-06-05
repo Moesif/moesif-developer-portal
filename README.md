@@ -366,7 +366,7 @@ Once the integration is complete, you should begin to see some API call metrics 
 
 ### AWS
 
-With endpoints set up in AWS API Gateway and our base developer portal code pulled down, we can start to get analytics flowing into Moesif from AWS API Gateway. For instructions on how to do integrate AWS API Gateway and Moesif, you can reference [our integration documentation](https://www.moesif.com/docs/server-integration/aws-api-gateway/) or a more in-depth step-by-step approach in [our integration guide](https://www.moesif.com/docs/guides/integrating-api-analytics-with-aws-api-gateway/).
+With endpoints set up in AWS API Gateway and our base developer portal code pulled down, we can start to get analytics flowing into Moesif from AWS API Gateway. For instructions on how to do integrate AWS API Gateway and Moesif, you can reference [our integration documentation](https://www.moesif.com/docs/server-integration/aws-api-gateway/) or a more in-depth step-by-step approach in [our integration guide](https://www.moesif.com/docs/guides/guide-on-integrating-api-analytics-with-aws-api-gateway/).
 
 ---
 
