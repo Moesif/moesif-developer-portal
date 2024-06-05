@@ -709,7 +709,7 @@ Log the current user out of the Moesif Developer Portal if you have one logged i
 - In the Moesif Developer Portal, log in with an existing user OR create a new user, log out, and log back in.
 - Next, go to the **Keys** screen in the developer portal
 - From the **Keys** screen, generate a new key and copy it onto your clipboard
-- Navigate to [www.jwt.io](www.jwt.io) and go to the **Debugger** screen. Paste the key into the debugger and ensure that both the Stripe Customer and Subscription ID have been added to the token’s data under the **stripeCustomerId** and **stripeSubscriptionId** fields. For example, your payload data should look like this:
+- Navigate to [www.jwt.io](https://www.jwt.io) and go to the **Debugger** screen. Paste the key into the debugger and ensure that both the Stripe Customer and Subscription ID have been added to the token’s data under the **stripeCustomerId** and **stripeSubscriptionId** fields. For example, your payload data should look like this:
 
 ```shell
 {
