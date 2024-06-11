@@ -32,22 +32,6 @@ function syncToMoesif({ companyId, userId, email, subscriptionId }) {
     };
     moesifMiddleware.updateUser(user);
   }
-
-  if (subscriptionId) {
-    var subscription = {
-      subscriptionId,
-      companyId: companyId,
-      status: "active",
-    };
-    moesifMiddleware
-      .updateSubscription(subscription)
-      .then((result) => {
-        console.log("subscription updated successfully");
-      })
-      .catch((err) => {
-        console.error("Error updating subscription", err);
-      });
-  }
 }
 
 function getPlansFromMoesif() {
