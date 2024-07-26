@@ -7,7 +7,7 @@ export const NavBarBrand = () => {
       <NavLink to="/">
         <img
           className="nav-bar__logo"
-          src="https://static.moesif.com/dist/302ffde161af22cc139df50c9845efac.svg"
+          src="https://www.moesif.com/logo.png"
           alt="Moesif Logo"
           height="36"
         />
