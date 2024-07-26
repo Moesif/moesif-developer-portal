@@ -50,7 +50,7 @@ if (!templateWorkspaceIdLiveEvent) {
   );
 }
 
-if (apimProvider) {
+if (!apimProvider) {
   console.error(
     "No APIM_PROVIDER found. Please create an .env file with APIM_PROVIDER one of the supported API management providers or edit the code to connect to your API Management."
   );
