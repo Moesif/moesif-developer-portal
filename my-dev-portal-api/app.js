@@ -18,6 +18,10 @@ const {
   getSubscriptionForUserEmail,
 } = require("./services/moesifApis");
 
+const {
+  updateAuth0UserAppWithStripeInfo
+} = require('./services/auth0Services');
+
 const StripeSDK = require("stripe");
 const {
   createKongConnectCustomer,
