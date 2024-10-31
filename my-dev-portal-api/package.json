@@ -13,7 +13,7 @@
     "@aws-sdk/client-api-gateway": "^3.370.0",
     "@aws-sdk/client-apigatewayv2": "^3.370.0",
     "@okta/okta-auth-js": "^7.8.1",
-    "@okta/okta-sdk-nodejs": "^7.0.0",
+    "@okta/okta-sdk-nodejs": "^7.1.1",
     "@stripe/stripe-js": "^1.29.0",
     "auth0": "^3.7.2",
     "aws-sdk": "^2.1419.0",
