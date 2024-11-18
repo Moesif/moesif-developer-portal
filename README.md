@@ -11,6 +11,7 @@ This portal is a pre-release project in preview and actively being developed. Be
 1. Ensure APIs are secured using HTTPS and authentication layer
 2. Ensuring all keys stored securely in a keystore
 3. Customize the CSS for your brand
+4. Check assumptions in the DATA-MODEL.md, if your data mapping needs is different, you may want to adjust the code according.
 
 ## Supported Solutions
 

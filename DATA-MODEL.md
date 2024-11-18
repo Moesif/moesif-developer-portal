@@ -1,7 +1,7 @@
 
 # Data Model
 
-For the purpose of this project, the data model is based on below:
+For the purpose of this project, the data model is based on below. This is just one approach, as this repo is just glue code, if your data model needs are different, you may need to adjust some of the code.
 
 ## Moesif
 

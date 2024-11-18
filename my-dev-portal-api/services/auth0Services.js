@@ -5,32 +5,9 @@ async function updateAuth0UserAppWithStripeInfo({
   stripe_customer_id,
   stripe_subscription_id
 }) {
-  let url = `https://${process.env.AUTH0_DOMAIN}/oauth/token`;
-  let auth0Token;
-
-  let options = {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      client_id: process.env.AUTH0_CLIENT_ID,
-      client_secret: process.env.AUTH0_CLIENT_SECRET,
-      audience: process.env.AUTH0_MANAGEMENT_API_AUDIENCE,
-      grant_type: "client_credentials",
-    }),
-  };
-
-  auth0Token = await fetch(url, options)
-    .then((response) => response.json())
-    .then((result) => {
-      console.log(result);
-      auth0Token = result.access_token;
-    })
-    .catch((error) => console.error("Error:", error));
-
   const auth0 = new ManagementClient({
     clientId: process.env.AUTH0_CLIENT_ID,
     clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    token: auth0Token,
     domain: process.env.AUTH0_DOMAIN,
   });
 
