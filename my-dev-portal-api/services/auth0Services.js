@@ -37,6 +37,6 @@ async function updateAuth0UserAppWithStripeInfo({
   );
 }
 
-modules.exports = {
+module.exports = {
   updateAuth0UserAppWithStripeInfo,
 };
