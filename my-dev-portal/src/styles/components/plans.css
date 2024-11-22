@@ -1,13 +1,45 @@
-.plans--container {
+/* .plans--container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Adjust as needed */
+  gap: 20px;
 }
 
 .plan--single {
-  flex: 1 1 0; /* Adjust as needed */
+  flex: 1 1 0;
   background-color: #2d2c2c;
   padding: 20px;
   border-width: 1px;
   border-radius: 10px;
+} */
+
+.plans--container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px; /* Space between tiles */
+  align-items: stretch;
+}
+
+.plan--single {
+  background-color: #2d2c2c;
+  padding: 20px;
+  border-width: 1px;
+  border-radius: 10px;
+}
+
+@media (min-width: 600px) {
+  .plans--container {
+      grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .plans--container {
+      grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .plans--container {
+      grid-template-columns: repeat(4, 1fr);
+  }
 }
