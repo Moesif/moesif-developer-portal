@@ -32,11 +32,13 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ],
     "rules": {
-      "react/react-in-jsx-scope": "off"
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-no-target-blank": "off",
+      "react/no-direct-mutation-state": "off",
+      "react/no-typos": "off"
     }
   },
   "browserslist": {
