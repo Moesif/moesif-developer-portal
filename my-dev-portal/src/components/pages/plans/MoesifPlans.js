@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import SinglePlan from "./SinglePlan";
 
 import { LineLoader } from "../../line-loader";
-import NoPriceFound from './NoPriceFound';
+import NoPriceFound from "./NoPriceFound";
+import CommonTable from "../../common-table";
+import PriceTile from "./PriceTile";
 
 const examplePlansReturnedFromApi = {
   hits: [
@@ -140,11 +142,20 @@ function MoesifPlans({ skipTitle }) {
       </div>
       <NoPriceFound />
       {error && <p>Error loading plans</p>}
-      {!loading && !error && (!plans || plans.length === 0) && (
-        <NoPriceFound />
-      )}
+      {!loading && !error && (!plans || plans.length === 0) && <NoPriceFound />}
       <div className="plans--container">
-        {plans && plans.map((item) => <SinglePlan key={item.id} plan={item} />)}
+        {plans &&
+          plans
+            .map((plan) =>
+              plan?.prices?.map((price) => (
+                <PriceTile
+                  key={`${plan.id}${price.id}`}
+                  plan={plan}
+                  price={price}
+                />
+              ))
+            )
+            .flat()}
       </div>
     </div>
   );
