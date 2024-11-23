@@ -244,12 +244,32 @@ const examplePlans = {
 function TierTable(props) {
   const { tiers } = props;
 
+  const exampleTiers = [
+    {
+      up_to: 1000,
+      unit_price_in_decimal: "0.05",
+      flat_price_in_decimal: "0",
+    },
+    {
+      up_to: "inf",
+      unit_price_in_decimal: "0.02",
+      flat_price_in_decimal: "0",
+    },
+  ];
+
   const doesTierHaveFlatFee = tiers.some(
     (item) => !!item.flat_price_in_decimal
   );
   const doesTierHaveUnitPrice = tiers.some(
     (item) => !!item.unit_price_in_decimal
   );
+
+  const data = tiers;
+
+  const columns = [
+
+  ]
+
 }
 
 function PriceTile(props) {
