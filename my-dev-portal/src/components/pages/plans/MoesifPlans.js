@@ -3,6 +3,7 @@ import SinglePlan from "./SinglePlan";
 
 import productCatalogImage from "../../../images/assets/product-catalog-nav.png";
 import { LineLoader } from "../../line-loader";
+import NoPriceFound from './NoPriceFound';
 
 const examplePlansReturnedFromApi = {
   hits: [
@@ -99,7 +100,7 @@ const examplePlansReturnedFromApi = {
   failures: [],
 };
 
-function MoesifPlans(props) {
+function MoesifPlans({ skipTitle }) {
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState(null);
   const [error, setError] = useState();
@@ -128,27 +129,20 @@ function MoesifPlans(props) {
   }
 
   return (
-    <div className="page-layout__focus">
-      {error && <p>Error landing plans</p>}
-      {!loading && !error && (!plans || plans.length === 0) && (
-        <div>
-          <p>
-            <strong>No Plans found</strong>, please use{" "}
-            <a
-              href="https://www.moesif.com/docs/product-catalog/"
-              target="_blank"
-            >
-              Moesif product catalog tool
-            </a>{" "}
-            to create compatible plans and prices for your Billing Provider.
-          </p>
-          <a
-            href="https://www.moesif.com/docs/product-catalog/"
-            target="_blank"
-          >
-            <img src={productCatalogImage} width="100%" alt="flow-diagram" />
-          </a>
+    <div className="page-layout__content">
+      <div>
+        <h3>My API Pricing</h3>
+        <div className="">
+          <div>
+            Developers: See read me file in this repo for setup instructions
+          </div>
+          <div>Or, jump to setup page to get started</div>
         </div>
+      </div>
+      <NoPriceFound />
+      {error && <p>Error loading plans</p>}
+      {!loading && !error && (!plans || plans.length === 0) && (
+        <NoPriceFound />
       )}
       <div className="plans--container">
         {plans && plans.map((item) => <SinglePlan key={item.id} plan={item} />)}
