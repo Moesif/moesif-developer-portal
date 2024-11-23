@@ -52,7 +52,6 @@
     ]
   },
   "devDependencies": {
-    "react-scripts": "5.0.1",
-    "sass": "^1.81.0"
+    "react-scripts": "5.0.1"
   }
 }
