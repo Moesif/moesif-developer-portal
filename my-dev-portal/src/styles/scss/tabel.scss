@@ -1,5 +1,7 @@
+$header-background: #f5f5f5 !default;
+
 // Table Component =================================================================
-.common-table {
+.comon-table {
   width: 100%;
   margin-bottom: 12px;
   position: relative;
@@ -8,12 +10,12 @@
     border: 1px solid rgba(0, 0, 0, 0.3);
   }
 
-  &.common-table__aggregate-row {
+  &.comon-table__aggregate-row {
     border: none !important;
   }
 
   &__header {
-    background-color: $config-background;
+    background-color: $header-background;
     border-radius: 4px 4px 0 0;
     position: sticky;
     top: 0px;
@@ -111,11 +113,11 @@
     }
 
     &--emphasized {
-      .common-table__aggregation-label {
+      .comon-table__aggregation-label {
         color: #ffad00;
       }
 
-      .common-table__aggregation-value {
+      .comon-table__aggregation-value {
         color: #d17e00;
       }
     }
