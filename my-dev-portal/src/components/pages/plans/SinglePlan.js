@@ -36,8 +36,9 @@ function SinglePlan(props) {
 
   return (
     <div className="plan--single">
+      <div>Example Plan</div>
       <div>
-        <h3>{plan.name}</h3>
+        <h5>{plan.name}</h5>
         <div>{plan.description}</div>
       </div>
       <div>

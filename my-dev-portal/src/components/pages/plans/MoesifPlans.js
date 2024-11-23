@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SinglePlan from "./SinglePlan";
 
-import productCatalogImage from "../../../images/assets/product-catalog-nav.png";
 import { LineLoader } from "../../line-loader";
 import NoPriceFound from './NoPriceFound';
 
