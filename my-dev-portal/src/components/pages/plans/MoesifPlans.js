@@ -4,7 +4,7 @@ import SinglePlan from "./SinglePlan";
 import { LineLoader } from "../../line-loader";
 import NoPriceFound from "./NoPriceFound";
 import CommonTable from "../../common-table";
-import PriceTile from "./PriceTile";
+import PriceTile, { examplePlansFromStripe } from "./PriceTile";
 
 const examplePlansReturnedFromApi = {
   hits: [
@@ -157,8 +157,24 @@ function MoesifPlans({ skipTitle }) {
             )
             .flat()}
       </div>
+      <hr />
+
+      <div className="plans--container">
+        {examplePlansFromStripe.hits
+          .map((plan) =>
+            plan?.prices?.map((price) => (
+              <PriceTile
+                key={`${plan.id}${price.id}`}
+                plan={plan}
+                price={price}
+              />
+            ))
+          )
+          .flat()}
+      </div>
     </div>
   );
 }
 
 export default MoesifPlans;
+
