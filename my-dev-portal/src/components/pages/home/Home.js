@@ -6,18 +6,28 @@ import MoesifPlans from "../plans/MoesifPlans";
 import { SignupButton } from "../../buttons/signup-button";
 import { LoginButton } from "../../buttons/login-button";
 import { Link } from "react-router-dom";
-import heroImage from '../../../images/assets/hero-image.png';
+import heroImage from "../../../images/assets/hero-image.png";
 
 function Home() {
   return (
     <PageLayout>
-      <div className="login-page">
-        <h1>Welcome to Your Custom Dev Portal!</h1>
-        <h2>
-          <SignupButton isLink /> or <LoginButton isLink /> to get started.
-        </h2>
-        <img src={heroImage} width="100%" alt="flow-diagram" />
-      </div>
+      <section className="hero">
+        <div className="hero-content">
+          <h1>MyDev Portal!</h1>
+          <p>
+            Welcome to your custom developer portal. Prompt customers to the
+            links below.
+          </p>
+
+          <div className="buttons">
+            <SignupButton isLink />
+            <LoginButton isLink />
+          </div>
+        </div>
+        <div className="hero-image">
+          <img src={heroImage} alt="flow-diagram" />
+        </div>
+      </section>
       <hr />
       <MoesifPlans />
       <hr />
@@ -26,7 +36,7 @@ function Home() {
         https://github.com/Moesif/moesif-developer-portal for set up
         instructions. Or see <Link to="/setup">Set up</Link> page
       </h3>
-      <div style={{height: '50' }} />
+      <div style={{ height: "50" }} />
     </PageLayout>
   );
 }
