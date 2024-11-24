@@ -108,14 +108,14 @@ button {
   border: 0.1rem solid var(--white);
   color: var(--white);
   background-color: transparent;
-  width: 50%;
-  font-size: 1.6rem;
+  /* width: 50%; */
+  font-size: 1.4rem;
 
   margin-right: 1.6rem;
 
   font-style: normal;
   font-weight: 500;
-  line-height: 3.2rem;
+  line-height: 1.6rem;
   padding: 0.8rem 0;
   border-radius: 0.8rem;
   text-align: center;
