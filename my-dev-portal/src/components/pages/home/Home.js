@@ -15,7 +15,7 @@ function Home() {
       <PageLayout>
         <section className="hero">
           <div className="hero-content">
-            <h1>MyDev Portal!</h1>
+            <h1>My Dev Portal!</h1>
             <p>
               Welcome to your custom developer portal. Prompt customers to the
               links below.

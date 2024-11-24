@@ -7,16 +7,19 @@
   text-align: center;
 
   h1 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     margin-bottom: 10px;
+    font-weight: 800;
   }
 
   p {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     margin-bottom: 20px;
+    font-weight: 500;
   }
 
   .buttons {
+    padding-top: 20px;
     display: flex;
     gap: 10px;
 
