@@ -20,8 +20,8 @@ function Home() {
           </p>
 
           <div className="buttons">
-            <SignupButton isLink />
             <LoginButton isLink />
+            <SignupButton />
           </div>
         </div>
         <div className="hero-image">
