@@ -174,7 +174,7 @@ function MoesifPlans({ skipTitle }) {
             )
             .flat()}
       </div>
-      <hr />
+      {/* <hr /> */}
 
       {/* <div className="plans--container">
         {examplePlansFromStripe.hits
