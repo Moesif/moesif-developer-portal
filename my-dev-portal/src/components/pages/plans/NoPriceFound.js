@@ -32,8 +32,22 @@ function NoPriceFound(props) {
       </p>
 
       <div className="box-actions">
-        <button className="button button__link">See Docs</button>
-        <button className="button button--outline-secondary">Go to Moesif</button>
+        <a
+          href="https://www.moesif.com/docs/product-catalog/"
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <button className="button button__link">See Docs</button>
+        </a>
+        <a
+          href="https://www.moesif.com"
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <button className="button button--outline-secondary">
+            Go to Moesif
+          </button>
+        </a>
       </div>
     </div>
   );

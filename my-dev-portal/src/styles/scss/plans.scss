@@ -54,7 +54,7 @@
   border: 1px solid #ccc;
   padding: 20px;
   max-width: 600px;
-  width: 100;
+  width: 100%;
   margin: 20px auto;
   display: flex;
   flex-direction: column;
@@ -82,4 +82,28 @@
   content: "\2192"; /* Unicode for right arrow */
   margin: 0 5px;
   color: white;
+}
+
+
+.plans-title-section {
+  display: flex;
+  padding: 20px;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+
+  .plans-title {
+    font-size: x-large;
+    font-weight: 800;
+    padding: 1em;
+  }
+
+  .plans-hint {
+    text-align: center;
+    font-size: smaller;
+    font-weight: 300;
+    color: gray;
+  }
 }
