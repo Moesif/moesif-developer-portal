@@ -20,10 +20,22 @@
 }
 
 .plan--single {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
   background-color: #2d2c2c;
   padding: 10px;
   border-width: 1px;
   border-radius: 10px;
+}
+
+.plan--content {
+  flex-grow: 1;
+}
+
+.plan--action {
+  margin-top: auto;
 }
 
 @media (min-width: 700px) {

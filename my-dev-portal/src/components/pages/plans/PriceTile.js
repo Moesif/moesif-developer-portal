@@ -1627,16 +1627,20 @@ function PriceTile(props) {
 
   return (
     <div className="plan--single">
-      <div>{price.name || plan?.name || "Place Holder Plan"}</div>
-      {price.tiers ? (
-        <TierTable tiers={price.tiers} />
-      ) : (
-        <div>
-          {formatPrice(price.price_in_decimal)}/{plan?.unit || "unit"}
-        </div>
-      )}
-      <div>{formatPeriod(price.period_units, price.period)}</div>
-      {actionButton}
+      <div className="plan--content">
+        <div>{price.name || plan?.name || "Place Holder Plan"}</div>
+        {price.tiers ? (
+          <TierTable tiers={price.tiers} />
+        ) : (
+          <div>
+            {formatPrice(price.price_in_decimal)}/{plan?.unit || "unit"}
+          </div>
+        )}
+      </div>
+      <div className="plan--action">
+        <div>{formatPeriod(price.period_units, price.period)}</div>
+        {actionButton}
+      </div>
     </div>
   );
 }
