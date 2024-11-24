@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import SinglePlan from "./SinglePlan";
-
+import { Link } from "react-router-dom";
 import { LineLoader } from "../../line-loader";
 import NoPriceFound from "./NoPriceFound";
 import PriceTile, { examplePlansFromStripe } from "./PriceTile";
+import { useAuth0 } from "@auth0/auth0-react";
+import { SignupButton } from "../../buttons/signup-button";
 
 const examplePlansReturnedFromApi = {
   hits: [
@@ -101,9 +103,23 @@ const examplePlansReturnedFromApi = {
 };
 
 function MoesifPlans({ skipTitle }) {
+  const { isAuthenticated } = useAuth0();
+
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState(null);
   const [error, setError] = useState();
+
+  const getActionButton = (price, plan) => {
+    if (isAuthenticated) {
+      return (
+        <Link to={`/checkout?price_id_to_purchase=${price.id}`}>
+          <button>Select</button>
+        </Link>
+      );
+    } else {
+      return <SignupButton />;
+    }
+  };
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/plans`)
@@ -145,12 +161,14 @@ function MoesifPlans({ skipTitle }) {
       <div className="plans--container">
         {plans &&
           plans
+            .filter((plan) => plan.status === "active")
             .map((plan) =>
               plan?.prices?.map((price) => (
                 <PriceTile
                   key={`${plan.id}${price.id}`}
                   plan={plan}
                   price={price}
+                  actionButton={getActionButton(price, plan)}
                 />
               ))
             )
@@ -158,7 +176,7 @@ function MoesifPlans({ skipTitle }) {
       </div>
       <hr />
 
-      <div className="plans--container">
+      {/* <div className="plans--container">
         {examplePlansFromStripe.hits
           .map((plan) =>
             plan?.prices?.map((price) => (
@@ -166,14 +184,14 @@ function MoesifPlans({ skipTitle }) {
                 key={`${plan.id}${price.id}`}
                 plan={plan}
                 price={price}
+                actionButton={getActionButton(price, plan)}
               />
             ))
           )
           .flat()}
-      </div>
+      </div> */}
     </div>
   );
 }
 
 export default MoesifPlans;
-

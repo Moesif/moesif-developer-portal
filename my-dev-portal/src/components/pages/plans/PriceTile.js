@@ -1,4 +1,6 @@
 import React from "react";
+import isNil from "lodash/isNil";
+import { Link } from "react-router-dom";
 import CommonTable from "../../common-table";
 
 export const examplePlansFromStripe = {
@@ -1461,7 +1463,11 @@ export const examplePlansFromStripe = {
   failures: [],
 };
 
-function formatPrice(priceInDecimal) {
+function formatPrice(priceInDecimal = 0) {
+  if (isNil(priceInDecimal)) {
+    return "";
+  }
+
   const priceInDollars = Number(priceInDecimal) / 100;
 
   // Format the price as a currency string with up to 10 decimal places
@@ -1569,14 +1575,14 @@ function TierTable(props) {
         cell: ({ index, value, row }) => {
           return formatPrice(value);
         },
-        justifyContent: "flex-start",
+        justifyContent: "flex-end",
       },
       {
         header: "",
         accessor: "plus",
         cell: () => <span>{"+"}</span>,
         width: "15px",
-        justifyContent: "center",
+        justifyContent: "flex-end",
       },
       {
         header: <span>Flat Fee</span>,
@@ -1617,18 +1623,20 @@ function TierTable(props) {
 }
 
 function PriceTile(props) {
-  const { price, plan, onSelection } = props;
+  const { price, plan, actionButton, onSelection } = props;
 
   return (
     <div className="plan--single">
-      <div>{price.name}</div>
+      <div>{price.name || plan?.name || "Place Holder Plan"}</div>
       {price.tiers ? (
         <TierTable tiers={price.tiers} />
       ) : (
-        <div>{formatPrice(price.price_in_decimal)}/unit</div>
+        <div>
+          {formatPrice(price.price_in_decimal)}/{plan?.unit || "unit"}
+        </div>
       )}
       <div>{formatPeriod(price.period_units, price.period)}</div>
-      <button onClick={onSelection}>Sign Up</button>
+      {actionButton}
     </div>
   );
 }
