@@ -1508,28 +1508,31 @@ function TierTable(props) {
 
   const data = tiers;
 
-  let columns = [];
+  let columns = [
+    {
+      header: "Units",
+      accessor: "up_to",
+      cell: ({ index, value, row }) => {
+        return (
+          <span>
+            {data[index - 1]?.up_to || 1}
+            {" - "}
+            {value}
+          </span>
+        );
+      },
+    },
+    {
+      header: "",
+      accessor: "id",
+      cell: ({ index }) => <span className="tier-arrow">→</span>,
+      width: "15px",
+    },
+  ];
 
   if (haveBoth) {
     columns = [
-      {
-        header: "Units",
-        accessor: "up_to",
-        cell: ({ index, value, row }) => {
-          return (
-            <span>
-              {data[index - 1]?.up_to || 1}
-              {" - "}
-              {value}
-            </span>
-          );
-        },
-      },
-      {
-        header: "",
-        accessor: "id",
-        cell: ({ index }) => <span>{"->"}</span>,
-      },
+      ...columns,
       {
         header: "/Unit",
         accessor: "unit_price_in_decimal",
@@ -1541,6 +1544,7 @@ function TierTable(props) {
         header: "",
         accessor: "plus",
         cell: () => <span>{"+"}</span>,
+        width: "15px",
       },
       {
         header: <span>Flat Fee</span>,
@@ -1552,24 +1556,7 @@ function TierTable(props) {
     ];
   } else if (haveFlatFee) {
     columns = [
-      {
-        header: "Units",
-        accessor: "up_to",
-        cell: ({ index, value, row }) => {
-          return (
-            <span>
-              {data[index - 1]?.up_to || 1}
-              {" - "}
-              {value}
-            </span>
-          );
-        },
-      },
-      {
-        header: "",
-        accessor: "id",
-        cell: ({ index }) => <span>{"->"}</span>,
-      },
+      ...columns,
       {
         header: <span>Flat Fee</span>,
         accessor: "flat_price_in_decimal",
@@ -1580,24 +1567,7 @@ function TierTable(props) {
     ];
   } else if (haveUnitPrice) {
     columns = [
-      {
-        header: "Units",
-        accessor: "up_to",
-        cell: ({ index, value, row }) => {
-          return (
-            <span>
-              {data[index - 1]?.up_to || 1}
-              {" - "}
-              {value}
-            </span>
-          );
-        },
-      },
-      {
-        header: "",
-        accessor: "id",
-        cell: ({ index }) => <span>{"->"}</span>,
-      },
+      ...columns,
       {
         header: "/Unit",
         accessor: "unit_price_in_decimal",

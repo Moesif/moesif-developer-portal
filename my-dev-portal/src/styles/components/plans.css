@@ -14,6 +14,7 @@
 
 .plans--container {
   display: grid;
+  font-size: smaller;
 
   grid-template-columns: 1fr;
   gap: 20px; /* Space between tiles */
@@ -52,4 +53,10 @@
 
 .no-plan-box {
   display: block;
+}
+
+.tier-arrow {
+  content: "\2192"; /* Unicode for right arrow */
+  margin: 0 5px;
+  color: white;
 }
