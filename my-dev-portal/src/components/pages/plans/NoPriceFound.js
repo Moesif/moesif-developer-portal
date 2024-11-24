@@ -14,8 +14,8 @@ function NoPriceFound(props) {
         Plan pricing options will appear here when you create stripe plans using
         the{" "}
         <a
-          href="https://www.moesif.com/"
-          _target="_blank"
+          href="https://www.moesif.com/docs/product-catalog/"
+          target="_blank"
           rel="noreferrer noopener"
         >
           Product Catalogue
@@ -23,7 +23,7 @@ function NoPriceFound(props) {
         feature in{" "}
         <a
           href="https://www.moesif.com"
-          _target="_blank"
+          target="_blank"
           rel="noreferrer noopener"
         >
           Moesif
