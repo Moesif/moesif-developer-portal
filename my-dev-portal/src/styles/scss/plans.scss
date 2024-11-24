@@ -35,7 +35,11 @@
 
   .single-price {
     margin-top: 1em;
+    height: 50%;
     margin-bottom: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .single-price--price {

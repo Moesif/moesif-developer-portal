@@ -1635,10 +1635,14 @@ function PriceTile(props) {
           <TierTable tiers={price.tiers} />
         ) : (
           <div className="single-price">
-            <span className="single-price--price">
-              {formatPrice(price.price_in_decimal)}
-            </span>{" "}
-            <span className="single-price--unit">/{plan?.unit || "unit"}</span>
+            <div>
+              <span className="single-price--price">
+                {formatPrice(price.price_in_decimal)}
+              </span>{" "}
+              <span className="single-price--unit">
+                /{plan?.unit || "unit"}
+              </span>
+            </div>
           </div>
         )}
       </div>
