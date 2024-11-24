@@ -1,6 +1,6 @@
 {
   "name": "my-dev-portal",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "private": true,
   "dependencies": {
     "@auth0/auth0-react": "^2.0.1",
@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "react-scripts": "5.0.1",
-    "sass": "^1.81.0"
+    "sass": "1.78.0",
+    "sass-loader": "^16.0.3"
   }
 }

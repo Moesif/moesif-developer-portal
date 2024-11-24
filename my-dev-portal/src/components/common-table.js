@@ -1,7 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import safeGet from "lodash/get";
-import isNil from "lodash/isNil";
 
 function convertToPx(x) {
   if (x === undefined || x === null) return x;
@@ -12,15 +11,9 @@ function convertToPx(x) {
 const TableHeader = (props) => {
   const {
     columnField,
-    sortable,
     header,
-    sortColumnAccessor,
-    sortDirection,
-    setSortDirection,
-    setSortColumn,
     data,
     alignRight,
-    minRowHeight,
     contentType,
     justify,
   } = props;
@@ -78,14 +71,9 @@ function CommonTable(props) {
     minRowHeight,
     emptyState,
     className,
-    hasAggregation,
-    hasPagination,
     withBorder,
     tableRef,
     rowRef,
-    aggregateRowRef,
-    paginationRef,
-    sizeSelectorRef,
   } = props;
   let displayData = [];
 
@@ -114,7 +102,6 @@ function CommonTable(props) {
     })
     .join(" ");
 
-  const aggregation = Array.from({ length: columns.length });
   const borderClass = withBorder ? "common-table--with-border" : "";
   return (
     <>
@@ -218,53 +205,6 @@ function CommonTable(props) {
                   );
                 }
 
-                // aggregate results if needed
-                if (hasAggregation && col.aggregationType) {
-                  if (aggregation[idx] === undefined) {
-                    if (col.aggregationType === "avg") {
-                      aggregation[idx] = { sum: 0, length: 0 };
-                    } else if (col.aggregationType !== "min") {
-                      aggregation[idx] = 0;
-                    }
-                  }
-
-                  if (value?.length === 0) {
-                    // hack to deal with value being an empty array, e.g. empty error array
-                    value = undefined;
-                  }
-
-                  switch (col.aggregationType) {
-                    case "count":
-                    case "total":
-                      if (value || value === 0) {
-                        aggregation[idx] += 1;
-                      }
-                      break;
-                    case "sum":
-                      aggregation[idx] += value || 0;
-                      break;
-                    case "avg":
-                      aggregation[idx] = {
-                        sum: (aggregation[idx]?.sum || 0) + value,
-                        length: (aggregation[idx]?.length || 0) + 1,
-                      };
-                      break;
-                    case "min":
-                      if (aggregation[idx] === undefined) {
-                        aggregation[idx] = value;
-                      } else {
-                        aggregation[idx] =
-                          value < aggregation[idx] ? value : aggregation[idx];
-                      }
-                      break;
-                    case "max":
-                      aggregation[idx] =
-                        value > aggregation[idx] ? value : aggregation[idx];
-                      break;
-                    default:
-                      break; // do nothing
-                  }
-                }
                 return content;
               })}
             </tr>
@@ -290,8 +230,6 @@ CommonTable.propTypes = {
   children: PropTypes.object,
   style: PropTypes.object,
   className: PropTypes.string,
-  hasAggregation: PropTypes.bool,
-  hasPagination: PropTypes.bool,
   withBorder: PropTypes.bool,
 };
 
