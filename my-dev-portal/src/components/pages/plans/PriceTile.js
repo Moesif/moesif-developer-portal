@@ -1487,7 +1487,7 @@ function formatPeriod(periodUnits, period) {
       return "daily";
     case "M":
     default:
-      return "Monthly";
+      return "monthly";
   }
 }
 
@@ -1626,19 +1626,26 @@ function PriceTile(props) {
   const { price, plan, actionButton, onSelection } = props;
 
   return (
-    <div className="plan--single">
+    <div className="price--tile">
       <div className="plan--content">
-        <div>{price.name || plan?.name || "Place Holder Plan"}</div>
+        <div className="price-name">
+          {price.name || plan?.name || "Place Holder Plan"}
+        </div>
         {price.tiers ? (
           <TierTable tiers={price.tiers} />
         ) : (
-          <div>
-            {formatPrice(price.price_in_decimal)}/{plan?.unit || "unit"}
+          <div className="single-price">
+            <span className="single-price--price">
+              {formatPrice(price.price_in_decimal)}
+            </span>{" "}
+            <span className="single-price--unit">/{plan?.unit || "unit"}</span>
           </div>
         )}
       </div>
-      <div className="plan--action">
-        <div>{formatPeriod(price.period_units, price.period)}</div>
+      <div className="plan--bottom">
+        <div className="plan-period">
+          {formatPeriod(price.period_units, price.period)}
+        </div>
         {actionButton}
       </div>
     </div>

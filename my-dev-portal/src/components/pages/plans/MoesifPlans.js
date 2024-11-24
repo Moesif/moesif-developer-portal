@@ -157,7 +157,7 @@ function MoesifPlans({ skipTitle }) {
           </div>
         </div>
       </div>
-      <NoPriceFound />
+      {/* <NoPriceFound /> */}
       {error && <p>Error loading plans</p>}
       {!loading && !error && (!plans || plans.length === 0) && <NoPriceFound />}
       <div className="plans--container">
@@ -176,8 +176,6 @@ function MoesifPlans({ skipTitle }) {
             )
             .flat()}
       </div>
-      {/* <hr /> */}
-
       <div className="plans--container">
         {examplePlansFromStripe.hits
           .map((plan) =>
