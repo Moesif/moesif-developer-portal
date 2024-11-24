@@ -179,7 +179,7 @@ function PriceTile(props) {
                 {formatPrice(price.price_in_decimal)}
               </span>{" "}
               <span className="single-price--unit">
-                /{plan?.unit || "unit"}
+                {price.pricing_model === "per_unit" ? `/${plan?.unit || "unit"}` : 'flat fee'}
               </span>
             </div>
           </div>
