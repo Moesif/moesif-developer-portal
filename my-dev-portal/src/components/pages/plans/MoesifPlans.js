@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import SinglePlan from "./SinglePlan";
 import { Link } from "react-router-dom";
 import { LineLoader } from "../../line-loader";
 import NoPriceFound from "./NoPriceFound";
