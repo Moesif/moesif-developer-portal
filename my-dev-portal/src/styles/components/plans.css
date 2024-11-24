@@ -14,8 +14,6 @@
 
 .plans--container {
   display: grid;
-  font-size: smaller;
-
   grid-template-columns: 1fr;
   gap: 20px; /* Space between tiles */
   align-items: stretch;

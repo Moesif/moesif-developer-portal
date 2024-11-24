@@ -1485,6 +1485,32 @@ function formatPeriod(periodUnits, period) {
   }
 }
 
+function formatNumberToHuman(input) {
+  // Handle "inf" case
+  if (input === "inf") {
+    return "∞"; // Unicode infinity symbol
+  }
+
+  // Convert the input to a number
+  const num = parseFloat(input);
+
+  // Define the thresholds for the human-readable format
+  const thresholds = [
+    { value: 1000000, suffix: "M" },
+    { value: 1000, suffix: "K" },
+  ];
+
+  // Find the appropriate threshold and format the number
+  for (const { value, suffix } of thresholds) {
+    if (num >= value) {
+      return `${(num / value).toFixed(1)}${suffix}`;
+    }
+  }
+
+  // If no threshold is met, return the original number
+  return num.toString();
+}
+
 function TierTable(props) {
   const { tiers } = props;
 
@@ -1515,18 +1541,22 @@ function TierTable(props) {
       cell: ({ index, value, row }) => {
         return (
           <span>
-            {data[index - 1]?.up_to || 1}
+            {data[index - 1]?.up_to
+              ? formatNumberToHuman(data[index - 1]?.up_to)
+              : 1}
             {" - "}
-            {value}
+            {formatNumberToHuman(value)}
           </span>
         );
       },
+      justifyContent: "flex-start",
     },
     {
       header: "",
       accessor: "id",
       cell: ({ index }) => <span className="tier-arrow">→</span>,
       width: "15px",
+      justifyContent: "center",
     },
   ];
 
@@ -1539,12 +1569,14 @@ function TierTable(props) {
         cell: ({ index, value, row }) => {
           return formatPrice(value);
         },
+        justifyContent: "flex-start",
       },
       {
         header: "",
         accessor: "plus",
         cell: () => <span>{"+"}</span>,
         width: "15px",
+        justifyContent: "center",
       },
       {
         header: <span>Flat Fee</span>,
@@ -1552,6 +1584,7 @@ function TierTable(props) {
         cell: ({ index, value, row }) => {
           return formatPrice(value);
         },
+        justifyContent: "flex-end",
       },
     ];
   } else if (haveFlatFee) {
@@ -1563,6 +1596,7 @@ function TierTable(props) {
         cell: ({ index, value, row }) => {
           return formatPrice(value);
         },
+        justifyContent: "flex-end",
       },
     ];
   } else if (haveUnitPrice) {
@@ -1574,11 +1608,12 @@ function TierTable(props) {
         cell: ({ index, value, row }) => {
           return formatPrice(value);
         },
+        justifyContent: "flex-end",
       },
     ];
   }
 
-  return <CommonTable data={tiers} columns={columns} />;
+  return <CommonTable className="tier-table" data={tiers} columns={columns} />;
 }
 
 function PriceTile(props) {

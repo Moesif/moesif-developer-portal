@@ -1,7 +1,7 @@
 $header-background: #f5f5f5 !default;
 
 // Table Component =================================================================
-.comon-table {
+.common-table {
   width: 100%;
   margin-bottom: 12px;
   position: relative;
@@ -10,7 +10,7 @@ $header-background: #f5f5f5 !default;
     border: 1px solid rgba(0, 0, 0, 0.3);
   }
 
-  &.comon-table__aggregate-row {
+  &.common-table__aggregate-row {
     border: none !important;
   }
 
@@ -113,11 +113,11 @@ $header-background: #f5f5f5 !default;
     }
 
     &--emphasized {
-      .comon-table__aggregation-label {
+      .common-table__aggregation-label {
         color: #ffad00;
       }
 
-      .comon-table__aggregation-value {
+      .common-table__aggregation-value {
         color: #d17e00;
       }
     }
@@ -128,4 +128,9 @@ $header-background: #f5f5f5 !default;
   tr:nth-child(odd) {
     background-color: #f0f0f0;
   }
+}
+
+
+.tier-table {
+  font-size: smaller;
 }
