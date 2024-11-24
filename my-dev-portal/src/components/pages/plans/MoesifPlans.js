@@ -3,7 +3,6 @@ import SinglePlan from "./SinglePlan";
 
 import { LineLoader } from "../../line-loader";
 import NoPriceFound from "./NoPriceFound";
-import CommonTable from "../../common-table";
 import PriceTile, { examplePlansFromStripe } from "./PriceTile";
 
 const examplePlansReturnedFromApi = {

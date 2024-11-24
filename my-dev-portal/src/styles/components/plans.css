@@ -22,32 +22,32 @@
 
 .plan--single {
   background-color: #2d2c2c;
-  padding: 20px;
+  padding: 10px;
   border-width: 1px;
   border-radius: 10px;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 700px) {
   .plans--container {
       grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
+  .plans--container {
+      grid-template-columns: repeat(3, 1fr);
+      /* padding-left: 30px;
+      padding-right: 30px; */
+  }
+}
+/*
+@media (min-width: 1200px) {
   .plans--container {
       grid-template-columns: repeat(3, 1fr);
       padding-left: 30px;
       padding-right: 30px;
   }
-}
-
-@media (min-width: 1200px) {
-  .plans--container {
-      grid-template-columns: repeat(4, 1fr);
-      padding-left: 30px;
-      padding-right: 30px;
-  }
-}
+} */
 
 
 .no-plan-box {
