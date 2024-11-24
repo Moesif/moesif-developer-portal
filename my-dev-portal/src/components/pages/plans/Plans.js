@@ -8,7 +8,7 @@ function Plans(props) {
   return (
     <>
     <PageLayout>
-      <MoesifPlans skipTitle/>
+      <MoesifPlans />
     </PageLayout>
     <PageFooter />
     </>
