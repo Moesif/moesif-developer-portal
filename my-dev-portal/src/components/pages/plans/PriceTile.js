@@ -187,7 +187,8 @@ function PriceTile(props) {
       </div>
       <div className="plan--bottom">
         <div className="plan-period">
-          {formatPeriod(price.period_units, price.period)}
+          {formatPeriod(price.period_units, price.period)}{" "}
+          {plan?.name && ` [${plan?.name}]`}
         </div>
         {actionButton}
       </div>
