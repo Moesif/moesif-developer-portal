@@ -113,11 +113,11 @@ function MoesifPlans({ skipTitle }) {
     if (isAuthenticated) {
       return (
         <Link to={`/checkout?price_id_to_purchase=${price.id}`}>
-          <button>Select</button>
+          <button className="button__price-action">Select</button>
         </Link>
       );
     } else {
-      return <SignupButton />;
+      return <SignupButton isPriceAction />;
     }
   };
 

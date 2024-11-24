@@ -18,7 +18,7 @@ const SignupButtonWithOkta = ({ isLink }) => {
   );
 };
 
-const SignupButtonWithAuth0 = ({ isLink }) => {
+const SignupButtonWithAuth0 = ({ isLink, isPriceAction }) => {
   const { loginWithRedirect } = useAuth0();
 
   const handleSignUp = async () => {
@@ -34,7 +34,7 @@ const SignupButtonWithAuth0 = ({ isLink }) => {
     });
   };
 
-  const className = isLink ? " button__link" : "button__sign-up";
+  const className = isLink ? " button__link" : `button__${isPriceAction ? 'price-action': 'sign-up'}`;
 
   return (
     <button className={className} onClick={handleSignUp}>
