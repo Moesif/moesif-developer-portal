@@ -9,8 +9,8 @@ function NoPriceFound(props) {
         src={tagIcon}
         style={{ width: "100px", height: "100px", fill: "gray" }}
       />
-      <h4>No Prices Found</h4>
-      <p>
+      <h4 className="box-title">No Prices Found</h4>
+      <p className="box-description">
         Plan pricing options will appear here when you create stripe plans using
         the{" "}
         <a
@@ -20,7 +20,7 @@ function NoPriceFound(props) {
         >
           Product Catalogue
         </a>{" "}
-        feature in
+        feature in{" "}
         <a
           href="https://www.moesif.com"
           _target="_blank"
@@ -31,9 +31,10 @@ function NoPriceFound(props) {
         . Sign in to get started.
       </p>
 
-      <button className="button__link">See Docs</button>
-
-      <button className="button__secondary">Go to Moesif</button>
+      <div className="box-actions">
+        <button className="button button__link">See Docs</button>
+        <button className="button button--outline-secondary">Go to Moesif</button>
+      </div>
     </div>
   );
 }
