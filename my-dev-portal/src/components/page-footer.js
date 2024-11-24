@@ -15,11 +15,11 @@ export const PageFooter = () => {
             </a>
           </div>
           <div className="page-footer-info__button">
-            <a className="button button--compact" href="https://www.moesif.com" target="_blank">
+            <a className="button button__link" href="https://www.moesif.com" target="_blank">
               Moesif
             </a>{" "}
             <a
-              className="button button--compact"
+              className="button button__link"
               href="https://www.moesif.com/docs/developer-portal/"
               target="_blank"
               style={{ marginLeft: "5px" }}

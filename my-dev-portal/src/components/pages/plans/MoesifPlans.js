@@ -176,7 +176,7 @@ function MoesifPlans({ skipTitle }) {
       </div>
       {/* <hr /> */}
 
-      {/* <div className="plans--container">
+      <div className="plans--container">
         {examplePlansFromStripe.hits
           .map((plan) =>
             plan?.prices?.map((price) => (
@@ -189,7 +189,7 @@ function MoesifPlans({ skipTitle }) {
             ))
           )
           .flat()}
-      </div> */}
+      </div>
     </div>
   );
 }

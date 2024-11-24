@@ -7,7 +7,7 @@ export const MobileNavBarBrand = ({ handleClick }) => {
       <NavLink to="/">
         <img
           className="mobile-nav-bar__logo"
-          src="https://static.moesif.com/dist/302ffde161af22cc139df50c9845efac.svg"
+          src="https://www.moesif.com/logo.png"
           alt="Moesif logo"
           height="24"
         />

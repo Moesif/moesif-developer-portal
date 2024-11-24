@@ -54,6 +54,7 @@
 
 .page-footer-info__message {
   /* responsive */
+  margin-left: 0.5rem;
 
   text-align: left;
 }
