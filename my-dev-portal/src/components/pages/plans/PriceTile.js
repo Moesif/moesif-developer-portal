@@ -1,0 +1,199 @@
+import React from "react";
+import isNil from "lodash/isNil";
+import CommonTable from "../../common-table";
+
+function formatPrice(priceInDecimal = 0) {
+  if (isNil(priceInDecimal)) {
+    return "";
+  }
+
+  const priceInDollars = Number(priceInDecimal) / 100;
+
+  // Format the price as a currency string with up to 10 decimal places
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0, // Minimum number of decimal places
+    maximumFractionDigits: 10, // Maximum number of decimal places
+  }).format(priceInDollars);
+}
+
+function formatPeriod(periodUnits, period) {
+  switch (periodUnits) {
+    case "y":
+      return "yearly";
+    case "d":
+      return "daily";
+    case "M":
+    default:
+      return "monthly";
+  }
+}
+
+function formatNumberToHuman(input) {
+  // Handle "inf" case
+  if (input === "inf") {
+    return "∞"; // Unicode infinity symbol
+  }
+
+  // Convert the input to a number
+  const num = parseFloat(input);
+
+  // Define the thresholds for the human-readable format
+  const thresholds = [
+    { value: 1000000, suffix: "M" },
+    { value: 1000, suffix: "K" },
+  ];
+
+  // Find the appropriate threshold and format the number
+  for (const { value, suffix } of thresholds) {
+    if (num >= value) {
+      return `${(num / value).toFixed(1)}${suffix}`;
+    }
+  }
+
+  // If no threshold is met, return the original number
+  return num.toString();
+}
+
+function TierTable(props) {
+  const { tiers } = props;
+
+  const exampleTiers = [
+    {
+      up_to: 1000,
+      unit_price_in_decimal: "0.05",
+      flat_price_in_decimal: "0",
+    },
+    {
+      up_to: "inf",
+      unit_price_in_decimal: "0.02",
+      flat_price_in_decimal: "0",
+    },
+  ];
+
+  const haveFlatFee = tiers.some((item) => !!item.flat_price_in_decimal);
+  const haveUnitPrice = tiers.some((item) => !!item.unit_price_in_decimal);
+
+  const haveBoth = haveFlatFee && haveUnitPrice;
+
+  const data = tiers;
+
+  let columns = [
+    {
+      header: "Units",
+      accessor: "up_to",
+      cell: ({ index, value, row }) => {
+        return (
+          <span>
+            {data[index - 1]?.up_to
+              ? formatNumberToHuman(data[index - 1]?.up_to)
+              : 1}
+            {" - "}
+            {formatNumberToHuman(value)}
+          </span>
+        );
+      },
+      justifyContent: "flex-start",
+    },
+    {
+      header: "",
+      accessor: "id",
+      cell: ({ index }) => <span className="tier-arrow">→</span>,
+      width: "15px",
+      justifyContent: "center",
+    },
+  ];
+
+  if (haveBoth) {
+    columns = [
+      ...columns,
+      {
+        header: "/Unit",
+        accessor: "unit_price_in_decimal",
+        cell: ({ index, value, row }) => {
+          return formatPrice(value);
+        },
+        justifyContent: "flex-end",
+      },
+      {
+        header: "",
+        accessor: "plus",
+        cell: () => <span>{"+"}</span>,
+        width: "15px",
+        justifyContent: "flex-end",
+      },
+      {
+        header: <span>Flat Fee</span>,
+        accessor: "flat_price_in_decimal",
+        cell: ({ index, value, row }) => {
+          return formatPrice(value);
+        },
+        justifyContent: "flex-end",
+      },
+    ];
+  } else if (haveFlatFee) {
+    columns = [
+      ...columns,
+      {
+        header: <span>Flat Fee</span>,
+        accessor: "flat_price_in_decimal",
+        cell: ({ index, value, row }) => {
+          return formatPrice(value);
+        },
+        justifyContent: "flex-end",
+      },
+    ];
+  } else if (haveUnitPrice) {
+    columns = [
+      ...columns,
+      {
+        header: "/Unit",
+        accessor: "unit_price_in_decimal",
+        cell: ({ index, value, row }) => {
+          return formatPrice(value);
+        },
+        justifyContent: "flex-end",
+      },
+    ];
+  }
+
+  return <CommonTable className="tier-table" data={tiers} columns={columns} />;
+}
+
+function PriceTile(props) {
+  const { price, plan, actionButton, onSelection } = props;
+
+  return (
+    <div className="price--tile">
+      <div className="plan--content">
+        <div className="price-name">
+          {price.name || plan?.name || "Place Holder Plan"}
+        </div>
+        {price.tiers ? (
+          <TierTable tiers={price.tiers} />
+        ) : (
+          <div className="single-price">
+            <div>
+              <span className="single-price--price">
+                {formatPrice(price.price_in_decimal)}
+              </span>{" "}
+              <span className="single-price--unit">
+                /{plan?.unit || "unit"}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="plan--bottom">
+        <div className="plan-period">
+          {formatPeriod(price.period_units, price.period)}{" "}
+          {plan?.name && ` [${plan?.name}]`}
+        </div>
+        {actionButton}
+      </div>
+    </div>
+  );
+}
+
+export default PriceTile;

@@ -12,9 +12,7 @@ button {
 
   user-select: none;
 
-  transition:
-    background 0.3s ease-out,
-    color 0.3s ease-out;
+  transition: background 0.3s ease-out, color 0.3s ease-out;
 
   /* responsive */
   padding: 0.8rem 1.2rem;
@@ -97,9 +95,7 @@ button {
   cursor: pointer;
   user-select: none;
 
-  transition:
-    background 0.3s ease-out,
-    color 0.3s ease-out;
+  transition: background 0.3s ease-out, color 0.3s ease-out;
 }
 
 .button__purp {
@@ -112,14 +108,14 @@ button {
   border: 0.1rem solid var(--white);
   color: var(--white);
   background-color: transparent;
-  width: 50%;
-  font-size: 1.6rem;
+  /* width: 50%; */
+  font-size: 1.4rem;
 
   margin-right: 1.6rem;
 
   font-style: normal;
   font-weight: 500;
-  line-height: 3.2rem;
+  line-height: 1.6rem;
   padding: 0.8rem 0;
   border-radius: 0.8rem;
   text-align: center;
@@ -152,4 +148,24 @@ button {
   padding-inline: 2px;
   width: fit-content;
   background-color: inherit;
+}
+
+.button__price-action {
+  min-width: 8.4rem;
+
+  border: 0.1rem solid var(--white);
+  color: var(--white);
+  background-color: transparent;
+  width: 100%;
+  font-size: 1.6rem;
+
+  font-style: normal;
+  font-weight: 500;
+  line-height: 3.2rem;
+  padding: 0.3rem 0;
+  border-radius: 0.8rem;
+  text-align: center;
+
+  cursor: pointer;
+  user-select: none;
 }

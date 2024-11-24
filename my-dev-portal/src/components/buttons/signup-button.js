@@ -18,7 +18,7 @@ const SignupButtonWithOkta = ({ isLink }) => {
   );
 };
 
-const SignupButtonWithAuth0 = ({ isLink }) => {
+const SignupButtonWithAuth0 = ({ isLink, isPriceAction }) => {
   const { loginWithRedirect } = useAuth0();
 
   const handleSignUp = async () => {
@@ -34,7 +34,9 @@ const SignupButtonWithAuth0 = ({ isLink }) => {
     });
   };
 
-  const className = isLink ? " button__link" : "button__sign-up";
+  const className = isLink
+    ? " button__link"
+    : ` button__${isPriceAction ? "price-action" : "sign-up"}`;
 
   return (
     <button className={className} onClick={handleSignUp}>
@@ -43,10 +45,14 @@ const SignupButtonWithAuth0 = ({ isLink }) => {
   );
 };
 
-export const SignupButton = ({ isLink }) => {
+export const SignupButton = ({ isLink, isPriceAction }) => {
   if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
-    return <SignupButtonWithOkta isLink={isLink} />;
+    return (
+      <SignupButtonWithOkta isLink={isLink} isPriceAction={isPriceAction} />
+    );
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
-    return <SignupButtonWithAuth0 isLink={isLink} />;
+    return (
+      <SignupButtonWithAuth0 isLink={isLink} isPriceAction={isPriceAction} />
+    );
   }
 };

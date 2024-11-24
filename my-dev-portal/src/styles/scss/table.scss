@@ -1,0 +1,144 @@
+$header-background: none !default;
+
+// Table Component =================================================================
+.common-table {
+  width: 100%;
+  margin-bottom: 12px;
+  position: relative;
+
+  &--with-border {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  &.common-table__aggregate-row {
+    border: none !important;
+  }
+
+  tr {
+    border-bottom: 1px solid rgb(95, 95, 95);
+  }
+  td {
+    border: none;
+  }
+
+  &__header {
+    background-color: $header-background;
+    border-radius: 4px 4px 0 0;
+    position: sticky;
+    top: 0px;
+    z-index: 4;
+
+    &--center {
+      text-align: center;
+    }
+
+    & th {
+      align-self: auto;
+      font-weight: 1000;
+      font-size: 0.8em;
+      color: gray;
+    }
+
+    .btn {
+      background-color: transparent;
+      // padding: 3px 12px;
+      font-weight: 500;
+      font-size: 1em;
+      padding: 0;
+
+      &:active {
+        background-color: transparent;
+        background-image: none;
+        box-shadow: none;
+      }
+    }
+  }
+
+  &__title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: -4px 0;
+  }
+
+  tr {
+    display: grid;
+    grid-template-rows: auto min-content;
+    align-items: center;
+
+    .btn-icon {
+      padding: 0;
+    }
+
+    .button-row--left > *,
+    .button-row--center > *,
+    .button-row--right > * {
+      margin: 0;
+    }
+
+    .button-row--left > * {
+      margin-right: 5px;
+    }
+    .button-row--right > * {
+      margin-left: 5px;
+    }
+
+    &:last-child {
+      border-radius: 0 0 4px 4px;
+    }
+  }
+
+  td {
+    padding: 3px 3px;
+    word-break: break-word;
+  }
+
+  &--sample-rate-regex-table tr {
+    grid-template-columns: 80px 3fr 2fr;
+  }
+
+  &--regex-sample-table tr {
+    grid-template-columns: 1fr 150px 80px;
+  }
+
+  &--ip-block-table tr {
+    grid-template-columns: 1fr 1fr auto;
+  }
+
+  &__aggregation {
+    font-weight: 500;
+    gap: 4px;
+    border: none !important;
+
+    &-label {
+      color: #aab4bd;
+    }
+
+    &-value {
+      color: #5b676e;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &--emphasized {
+      .common-table__aggregation-label {
+        color: #ffad00;
+      }
+
+      .common-table__aggregation-value {
+        color: #d17e00;
+      }
+    }
+  }
+}
+
+.striped {
+  tr:nth-child(odd) {
+    background-color: #f0f0f0;
+  }
+}
+
+
+.tier-table {
+  font-size: smaller;
+}

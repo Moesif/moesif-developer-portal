@@ -31,7 +31,7 @@
 
   /* responsive */
 
-  padding: 3.2rem;
+  padding: 3.2rem 0.5rem;
 }
 
 .page-footer-grid__info {
@@ -39,7 +39,7 @@
 
   /* responsive */
 
-  grid-template-columns: 1.5fr 1fr auto;
+  grid-template-columns: 1.5fr 1fr;
   column-gap: 2.4rem;
 }
 
@@ -54,6 +54,7 @@
 
 .page-footer-info__message {
   /* responsive */
+  margin-left: 0.5rem;
 
   text-align: left;
 }
@@ -72,7 +73,7 @@
 
 .page-footer-info__button {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
 }
 
@@ -157,6 +158,11 @@
   .page-footer-info__resource-list-item:nth-child(even) {
     text-align: left;
   }
+
+  .page-footer-info__button {
+    justify-content: center;
+  }
+
 }
 
 @media only screen and (max-width: 480px) {

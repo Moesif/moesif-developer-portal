@@ -1,0 +1,127 @@
+.plans--container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px; /* Space between tiles */
+  align-items: stretch;
+}
+
+.price--tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  background-color: #2d2c2c;
+  padding: 15px;
+  border-width: 1px;
+  border-radius: 10px;
+}
+
+.plan--content {
+  flex-grow: 1;
+
+  .single-price {
+    margin-top: 1em;
+    height: 50%;
+    margin-bottom: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .single-price--price {
+    font-size: x-large;
+  }
+
+  .single-price--unit {
+    font-size: x-small;
+  }
+}
+
+.price-name {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.plan-period {
+  font-weight: 300;
+  font-size: medium;
+  margin-bottom: 1em;
+}
+
+.plan--bottom {
+  margin-top: auto;
+}
+
+@media (min-width: 700px) {
+  .plans--container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .plans--container {
+    grid-template-columns: repeat(3, 1fr);
+    /* padding-left: 30px;
+      padding-right: 30px; */
+  }
+}
+
+.no-plan-box {
+  display: block;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 20px;
+  max-width: 600px;
+  width: 100%;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+
+  .box-title {
+    font-weight: 600;
+    padding: 1em;
+  }
+
+  .box-description {
+    font-size: smaller;
+    font-weight: 300;
+  }
+
+  .box-actions {
+    display: flex;
+    gap: 1em;
+
+  }
+}
+
+.tier-arrow {
+  content: "\2192"; /* Unicode for right arrow */
+  margin: 0 5px;
+  color: white;
+}
+
+
+.plans-title-section {
+  display: flex;
+  padding: 20px;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+
+  .plans-title {
+    font-size: x-large;
+    font-weight: 800;
+    padding: 1em;
+  }
+
+  .plans-hint {
+    text-align: center;
+    font-size: smaller;
+    font-weight: 300;
+    color: gray;
+  }
+}
