@@ -22,10 +22,12 @@ const TableHeader = (props) => {
     alignRight,
     minRowHeight,
     contentType,
+    justify,
   } = props;
 
   const justifyContent =
-    contentType === "number" || contentType === "date" ? "flex-end" : "";
+    justify ||
+    (contentType === "number" || contentType === "date" ? "flex-end" : "");
 
   let displayHeader;
   if (header === undefined) {
@@ -51,7 +53,7 @@ const TableHeader = (props) => {
     );
   }
 
-  return <th style={{ justifyContent }}>{displayHeader}</th>;
+  return <th style={{ display: "flex", justifyContent }}>{displayHeader}</th>;
 };
 
 const FullRowComponent = ({ children, className }) => (
@@ -134,6 +136,7 @@ function CommonTable(props) {
                 header={col.header}
                 data={displayData}
                 alignRight={col.alignRight}
+                justify={col.justifyContent}
                 contentType={col.contentType}
                 minRowHeight={minRowHeight}
               />
@@ -159,7 +162,11 @@ function CommonTable(props) {
                       key={
                         typeof col.accessor === "string" ? col.accessor : idx
                       }
-                      style={{ minHeight: minRowHeight, justifyContent, display: "flex" }}
+                      style={{
+                        minHeight: minRowHeight,
+                        justifyContent,
+                        display: "flex",
+                      }}
                     />
                   );
                 }
@@ -182,7 +189,11 @@ function CommonTable(props) {
                   content = (
                     <td
                       key={colKey}
-                      style={{ minHeight: minRowHeight, justifyContent, display: "flex"  }}
+                      style={{
+                        minHeight: minRowHeight,
+                        justifyContent,
+                        display: "flex",
+                      }}
                     >
                       {col.cell({
                         value: content,
@@ -196,7 +207,11 @@ function CommonTable(props) {
                   content = (
                     <td
                       key={colKey}
-                      style={{ minHeight: minRowHeight, justifyContent, display: "flex"  }}
+                      style={{
+                        minHeight: minRowHeight,
+                        justifyContent,
+                        display: "flex",
+                      }}
                     >
                       {content}
                     </td>

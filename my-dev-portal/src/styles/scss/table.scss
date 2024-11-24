@@ -1,4 +1,4 @@
-$header-background: #f5f5f5 !default;
+$header-background: none !default;
 
 // Table Component =================================================================
 .common-table {
@@ -14,6 +14,13 @@ $header-background: #f5f5f5 !default;
     border: none !important;
   }
 
+  tr {
+    border-bottom: 1px solid rgb(95, 95, 95);
+  }
+  td {
+    border: none;
+  }
+
   &__header {
     background-color: $header-background;
     border-radius: 4px 4px 0 0;
@@ -25,10 +32,11 @@ $header-background: #f5f5f5 !default;
       text-align: center;
     }
 
-    & td {
-      align-self: end;
-      font-weight: 500;
-      font-size: 1em;
+    & th {
+      align-self: auto;
+      font-weight: 1000;
+      font-size: 0.8em;
+      color: gray;
     }
 
     .btn {
