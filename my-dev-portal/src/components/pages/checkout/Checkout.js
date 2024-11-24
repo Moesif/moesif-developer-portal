@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import useAuthCombined from "../../../hooks/useAuthCombined";
 import { PageLoader } from "../../page-loader";
@@ -7,7 +7,7 @@ import CheckoutForm from "./CheckoutForm";
 import { Navigate } from "react-router-dom";
 
 function Checkout(props) {
-  const { isAuthenticated, isLoading, user, handleSignUp } = useAuthCombined();
+  const { isLoading, user } = useAuthCombined();
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);

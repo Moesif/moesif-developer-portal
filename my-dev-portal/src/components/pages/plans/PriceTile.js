@@ -59,18 +59,18 @@ function formatNumberToHuman(input) {
 function TierTable(props) {
   const { tiers } = props;
 
-  const exampleTiers = [
-    {
-      up_to: 1000,
-      unit_price_in_decimal: "0.05",
-      flat_price_in_decimal: "0",
-    },
-    {
-      up_to: "inf",
-      unit_price_in_decimal: "0.02",
-      flat_price_in_decimal: "0",
-    },
-  ];
+  // const exampleTiers = [
+  //   {
+  //     up_to: 1000,
+  //     unit_price_in_decimal: "0.05",
+  //     flat_price_in_decimal: "0",
+  //   },
+  //   {
+  //     up_to: "inf",
+  //     unit_price_in_decimal: "0.02",
+  //     flat_price_in_decimal: "0",
+  //   },
+  // ];
 
   const haveFlatFee = tiers.some((item) => !!item.flat_price_in_decimal);
   const haveUnitPrice = tiers.some((item) => !!item.unit_price_in_decimal);
@@ -162,7 +162,7 @@ function TierTable(props) {
 }
 
 function PriceTile(props) {
-  const { price, plan, actionButton, onSelection } = props;
+  const { price, plan, actionButton } = props;
 
   return (
     <div className="price--tile">

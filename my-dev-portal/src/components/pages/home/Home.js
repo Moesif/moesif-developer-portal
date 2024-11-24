@@ -1,11 +1,10 @@
 import React from "react";
 
 import { PageLayout } from "../../page-layout";
-import { PageLoader } from "../../page-loader";
 import MoesifPlans from "../plans/MoesifPlans";
 import { SignupButton } from "../../buttons/signup-button";
 import { LoginButton } from "../../buttons/login-button";
-import { Link } from "react-router-dom";
+
 import heroImage from "../../../images/assets/hero-image.png";
 import { PageFooter } from "../../page-footer";
 

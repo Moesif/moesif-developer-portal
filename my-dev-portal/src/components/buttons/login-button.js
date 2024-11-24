@@ -12,7 +12,7 @@ const LoginButtonWithOkta = ({ isLink }) => {
   const className = isLink ? " button__link lowercase" : "button__login";
 
   return (
-    <button className="button__login" onClick={handleLogin}>
+    <button className={className} onClick={handleLogin}>
       Log In
     </button>
   );
