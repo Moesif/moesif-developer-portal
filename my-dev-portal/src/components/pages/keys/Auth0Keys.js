@@ -72,7 +72,11 @@ const Auth0Keys = () => {
         openModal(setIsOpen);
       })
       .catch((error) => {
-        setAPIKey("Error creating key:", error);
+        setAPIKey(
+          `Error creating key: ${
+            error.response?.body?.message || error.toString()
+          }`
+        );
         openModal(setIsOpen);
       });
   }
@@ -147,6 +151,24 @@ const Auth0Keys = () => {
               />
             </button>
           </div>
+          {APIKey?.includes("Error") && (
+            <div style={{ color: "black", fontWeight: 300, maxWidth: 600 }}>
+              <h6>Trouble shooting API Key Generation Error</h6>
+              <ul>
+                <li>
+                  If using pre-supported API Gateway, did you set up already and
+                  configured it?
+                </li>
+                <li>If using custom API gateway, did you implement the code for generating key.</li>
+                <li>
+                  Did you already purchase a plan? In default implementation,
+                  API Gateway provisioning is triggered upon successful checkout
+                  call back from Stripe. See API route{" "}
+                  <code>/register/stripe/:checkout_session_id</code>.
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
         <div className="modal-footer">
           <button

@@ -7,7 +7,7 @@ $header-background: none !default;
   position: relative;
 
   &--with-border {
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    border: 1px solid $border-color;
   }
 
   &.common-table__aggregate-row {
@@ -15,7 +15,8 @@ $header-background: none !default;
   }
 
   tr {
-    border-bottom: 1px solid rgb(95, 95, 95);
+    // we need line below each row.
+    // border-bottom: 1px solid rgb(72, 72, 72);
   }
   td {
     border: none;
@@ -103,38 +104,11 @@ $header-background: none !default;
   &--ip-block-table tr {
     grid-template-columns: 1fr 1fr auto;
   }
-
-  &__aggregation {
-    font-weight: 500;
-    gap: 4px;
-    border: none !important;
-
-    &-label {
-      color: #aab4bd;
-    }
-
-    &-value {
-      color: #5b676e;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    &--emphasized {
-      .common-table__aggregation-label {
-        color: #ffad00;
-      }
-
-      .common-table__aggregation-value {
-        color: #d17e00;
-      }
-    }
-  }
 }
 
 .striped {
   tr:nth-child(odd) {
-    background-color: #f0f0f0;
+    background-color: $focus-bg;
   }
 }
 

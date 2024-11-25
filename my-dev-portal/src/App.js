@@ -18,14 +18,15 @@ import Plans from "./components/pages/plans/Plans";
 import Home from "./components/pages/home/Home";
 import Checkout from "./components/pages/checkout/Checkout";
 import Subscription from "./components/pages/subscription/Subscription";
+import { PageFooter } from './components/page-footer';
 
 function App() {
   const { isAuthenticated } = useAuth0();
 
   if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return (
-      <div className="App">
-        <header className="App-header">
+      <div>
+        <div>
           <BrowserRouter>
             <OktaProviderWithNavigate>
               <Routes>
@@ -90,13 +91,14 @@ function App() {
               </Routes>
             </OktaProviderWithNavigate>
           </BrowserRouter>
-        </header>
+        </div>
+        <PageFooter />
       </div>
     );
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     return (
-      <div className="App">
-        <header className="App-header">
+      <div>
+        <div>
           <BrowserRouter>
             <Auth0ProviderWithNavigate>
               <StripeProvider>
@@ -142,7 +144,8 @@ function App() {
               </StripeProvider>
             </Auth0ProviderWithNavigate>
           </BrowserRouter>
-        </header>
+        </div>
+        <PageFooter />
       </div>
     );
   } else {

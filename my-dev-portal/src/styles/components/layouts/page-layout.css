@@ -4,6 +4,7 @@
   align-items: center;
   gap: 56px;
 
+  min-height: 90vh;
   height: 100%;
   width: 100%;
 }
@@ -30,7 +31,7 @@
 }
 
 .page-layout__focus {
-  background: #212121;
+  background: var(--focus-bg);
   padding: 3rem;
   width: 100%;
 }

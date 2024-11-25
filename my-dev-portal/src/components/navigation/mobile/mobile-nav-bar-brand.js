@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import yourLogo from '../../../images/icons/your-logo.svg';
 
 export const MobileNavBarBrand = ({ handleClick }) => {
   return (
@@ -7,7 +8,7 @@ export const MobileNavBarBrand = ({ handleClick }) => {
       <NavLink to="/">
         <img
           className="mobile-nav-bar__logo"
-          src="https://www.moesif.com/logo.png"
+          src={yourLogo}
           alt="Moesif logo"
           height="24"
         />

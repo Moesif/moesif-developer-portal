@@ -8,8 +8,8 @@ html {
   font-size: 10px;
   text-rendering: geometricPrecision;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  color: #d9d9d9;
-  background-color: var(--moesif-black);
+  color: var(--body-text-color);
+  background-color: var(--overall-bg);
 }
 
 html,
@@ -22,7 +22,7 @@ body {
 }
 
 body {
-  background-color: var(--black);
+  background-color: var(--overall-bg);
 
   font-family: var(--font-primary);
   font-size: 1.6rem;
@@ -121,8 +121,13 @@ textarea {
 }
 
 a {
-  color: var(--white);
+  color: var(--body-text-color);
   text-decoration: none;
+}
+
+a:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
 }
 
 figure {

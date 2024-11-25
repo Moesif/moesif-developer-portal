@@ -1,34 +1,7 @@
 import React from "react";
-import isNil from "lodash/isNil";
+
 import CommonTable from "../../common-table";
-
-function formatPrice(priceInDecimal = 0) {
-  if (isNil(priceInDecimal)) {
-    return "";
-  }
-
-  const priceInDollars = Number(priceInDecimal) / 100;
-
-  // Format the price as a currency string with up to 10 decimal places
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0, // Minimum number of decimal places
-    maximumFractionDigits: 10, // Maximum number of decimal places
-  }).format(priceInDollars);
-}
-
-function formatPeriod(periodUnits, period) {
-  switch (periodUnits) {
-    case "y":
-      return "yearly";
-    case "d":
-      return "daily";
-    case "M":
-    default:
-      return "monthly";
-  }
-}
+import { formatPrice, formatPeriod } from "../../../common/utils";
 
 function formatNumberToHuman(input) {
   // Handle "inf" case
@@ -99,7 +72,7 @@ function TierTable(props) {
     {
       header: "",
       accessor: "id",
-      cell: ({ index }) => <span className="tier-arrow">→</span>,
+      cell: ({ index }) => <span className="price-operator">⟶</span>,
       width: "15px",
       justifyContent: "center",
     },
@@ -119,8 +92,17 @@ function TierTable(props) {
       {
         header: "",
         accessor: "plus",
-        cell: () => <span>{"+"}</span>,
-        width: "15px",
+        cell: () => (
+          <span
+            className="price-operator"
+            style={{
+              paddingLeft: "10px",
+            }}
+          >
+            {"+"}
+          </span>
+        ),
+        width: "40px",
         justifyContent: "flex-end",
       },
       {
@@ -130,6 +112,7 @@ function TierTable(props) {
           return formatPrice(value);
         },
         justifyContent: "flex-end",
+        width: "60px",
       },
     ];
   } else if (haveFlatFee) {
@@ -179,7 +162,9 @@ function PriceTile(props) {
                 {formatPrice(price.price_in_decimal)}
               </span>{" "}
               <span className="single-price--unit">
-                {price.pricing_model === "per_unit" ? `/${plan?.unit || "unit"}` : 'flat fee'}
+                {price.pricing_model === "per_unit"
+                  ? `/${plan?.unit || "unit"}`
+                  : "flat fee"}
               </span>
             </div>
           </div>

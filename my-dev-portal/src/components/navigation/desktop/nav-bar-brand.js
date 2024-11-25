@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import yourLogo from '../../../images/icons/your-logo.svg';
 
 export const NavBarBrand = () => {
   return (
@@ -7,7 +8,7 @@ export const NavBarBrand = () => {
       <NavLink to="/">
         <img
           className="nav-bar__logo"
-          src="https://www.moesif.com/logo.png"
+          src={yourLogo}
           alt="Moesif Logo"
           height="36"
         />

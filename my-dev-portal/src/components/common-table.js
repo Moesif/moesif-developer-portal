@@ -70,7 +70,7 @@ function CommonTable(props) {
     minRows,
     minRowHeight,
     emptyState,
-    className,
+    className = "",
     withBorder,
     tableRef,
     rowRef,
@@ -231,8 +231,4 @@ CommonTable.propTypes = {
   style: PropTypes.object,
   className: PropTypes.string,
   withBorder: PropTypes.bool,
-};
-
-CommonTable.defaultProps = {
-  className: "",
 };
