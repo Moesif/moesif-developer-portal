@@ -31,7 +31,7 @@
 }
 
 .page-layout__focus {
-  background: #212121;
+  background: var(--focus-bg);
   padding: 3rem;
   width: 100%;
 }

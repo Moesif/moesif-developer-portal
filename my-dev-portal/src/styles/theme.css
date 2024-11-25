@@ -37,6 +37,7 @@
   --moesif-black: #272f34;
 
   --overall-bg: var(--dark-background);
+  --focus-bg: var(--dark-theme-0);
 
   --yellow-mandarine-gradient: linear-gradient(
     153.07deg,
