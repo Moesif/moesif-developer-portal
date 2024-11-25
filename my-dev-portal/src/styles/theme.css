@@ -39,6 +39,10 @@
   --overall-bg: var(--dark-background);
   --nav-bg: #121212;
   --focus-bg: var(--dark-theme-0);
+  --button-outline: var(--dark-theme-5);
+  --body-text-color: var(--dark-theme-5);
+  --link-text-color: var(--dark-theme-5);
+  --link-hover-color: var(--dark-theme-4);
 
   --yellow-mandarine-gradient: linear-gradient(
     153.07deg,

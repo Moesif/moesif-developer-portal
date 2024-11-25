@@ -8,7 +8,6 @@ button {
 
   font-family: var(--font-primary);
   font-size: 1.4rem;
-  color: var(--white);
 
   user-select: none;
 
@@ -153,7 +152,7 @@ button {
 .button__price-action {
   min-width: 8.4rem;
 
-  border: 0.1rem solid var(--white);
+  border: 1px solid var(--button-outline);
   color: var(--white);
   background-color: transparent;
   width: 100%;

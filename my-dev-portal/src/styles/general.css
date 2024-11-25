@@ -8,7 +8,7 @@ html {
   font-size: 10px;
   text-rendering: geometricPrecision;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  color: #d9d9d9;
+  color: var(--body-text-color);
   background-color: var(--overall-bg);
 }
 
@@ -121,8 +121,13 @@ textarea {
 }
 
 a {
-  color: var(--white);
+  color: var(--body-text-color);
   text-decoration: none;
+}
+
+a:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
 }
 
 figure {
