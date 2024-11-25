@@ -6,7 +6,6 @@ import { SignupButton } from "../../buttons/signup-button";
 import { LoginButton } from "../../buttons/login-button";
 
 import heroImage from "../../../images/assets/hero-image.png";
-import { PageFooter } from "../../page-footer";
 
 function Home() {
   return (
