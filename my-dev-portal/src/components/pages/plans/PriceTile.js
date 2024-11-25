@@ -99,7 +99,7 @@ function TierTable(props) {
     {
       header: "",
       accessor: "id",
-      cell: ({ index }) => <span className="tier-arrow">→</span>,
+      cell: ({ index }) => <span className="price-operator">⟶</span>,
       width: "15px",
       justifyContent: "center",
     },
@@ -119,7 +119,16 @@ function TierTable(props) {
       {
         header: "",
         accessor: "plus",
-        cell: () => <span>{"+"}</span>,
+        cell: () => (
+          <span
+            className="price-operator"
+            style={{
+              paddingLeft: "10px",
+            }}
+          >
+            {"+"}
+          </span>
+        ),
         width: "15px",
         justifyContent: "flex-end",
       },
@@ -179,7 +188,9 @@ function PriceTile(props) {
                 {formatPrice(price.price_in_decimal)}
               </span>{" "}
               <span className="single-price--unit">
-                {price.pricing_model === "per_unit" ? `/${plan?.unit || "unit"}` : 'flat fee'}
+                {price.pricing_model === "per_unit"
+                  ? `/${plan?.unit || "unit"}`
+                  : "flat fee"}
               </span>
             </div>
           </div>

@@ -10,30 +10,27 @@ import { PageFooter } from "../../page-footer";
 
 function Home() {
   return (
-    <>
-      <PageLayout>
-        <section className="hero">
-          <div className="hero-content">
-            <h1>My Dev Portal!</h1>
-            <p>
-              Welcome to your custom developer portal. Prompt customers to the
-              links below.
-            </p>
+    <PageLayout>
+      <section className="hero">
+        <div className="hero-content">
+          <h1>My Dev Portal!</h1>
+          <p>
+            Welcome to your custom developer portal. Prompt customers to the
+            links below.
+          </p>
 
-            <div className="buttons">
-              <LoginButton isLink />
-              <SignupButton />
-            </div>
+          <div className="buttons">
+            <LoginButton isLink />
+            <SignupButton />
           </div>
-          <div className="hero-image">
-            <img src={heroImage} alt="flow-diagram" />
-          </div>
-        </section>
-        <MoesifPlans />
-        <section style={{ paddingTop: "2em" }} />
-      </PageLayout>
-      <PageFooter />
-    </>
+        </div>
+        <div className="hero-image">
+          <img src={heroImage} alt="flow-diagram" />
+        </div>
+      </section>
+      <MoesifPlans />
+      <section style={{ paddingTop: "2em" }} />
+    </PageLayout>
   );
 }
 

@@ -10,7 +10,7 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  background-color: #2d2c2c;
+  border: 1px solid #2d2c2c;
   padding: 15px;
   border-width: 1px;
   border-radius: 10px;
@@ -96,12 +96,9 @@
   }
 }
 
-.tier-arrow {
-  content: "\2192"; /* Unicode for right arrow */
-  margin: 0 5px;
-  color: white;
+.price-operator {
+  color: #2d2c2c;
 }
-
 
 .plans-title-section {
   display: flex;

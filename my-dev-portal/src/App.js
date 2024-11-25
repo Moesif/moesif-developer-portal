@@ -18,6 +18,7 @@ import Plans from "./components/pages/plans/Plans";
 import Home from "./components/pages/home/Home";
 import Checkout from "./components/pages/checkout/Checkout";
 import Subscription from "./components/pages/subscription/Subscription";
+import { PageFooter } from './components/page-footer';
 
 function App() {
   const { isAuthenticated } = useAuth0();
@@ -91,6 +92,7 @@ function App() {
             </OktaProviderWithNavigate>
           </BrowserRouter>
         </header>
+        <PageFooter />
       </div>
     );
   } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
@@ -143,6 +145,7 @@ function App() {
             </Auth0ProviderWithNavigate>
           </BrowserRouter>
         </header>
+        <PageFooter />
       </div>
     );
   } else {

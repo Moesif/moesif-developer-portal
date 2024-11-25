@@ -1,3 +1,21 @@
+$dark-theme-0: #272F34;
+$dark-theme-1: #2D353A;
+$dark-theme-2: rgba(255, 255, 255, 0.1);
+$dark-theme-3: #5B676E;
+$dark-theme-4: #AAB4BD;
+$dark-theme-5: #D2DADE;
+$dark-theme-6: #FFFFFF;
+
+$light-theme-0: #FFFFFF;
+$light-theme-1: #FAFAFA;
+$light-theme-2: #5B676E;
+$light-theme-3: #D2DADE;
+$light-theme-4: #AAB4BD;
+$light-theme-5: #5B676E;
+$light-theme-6: #272F34;
+
+$muted-text-color: $dark-theme-3;
+
 @import "theme.css";
 @import "general.css";
 @import "components/index.css";
