@@ -129,7 +129,7 @@ function TierTable(props) {
             {"+"}
           </span>
         ),
-        width: "15px",
+        width: "40px",
         justifyContent: "flex-end",
       },
       {
@@ -139,6 +139,7 @@ function TierTable(props) {
           return formatPrice(value);
         },
         justifyContent: "flex-end",
+        width: '60px',
       },
     ];
   } else if (haveFlatFee) {
