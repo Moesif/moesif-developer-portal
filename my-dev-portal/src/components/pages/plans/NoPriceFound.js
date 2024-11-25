@@ -1,13 +1,13 @@
 import React from "react";
 import SVG from "react-inlinesvg";
-import tagIcon from "../../../images/icons/tag.svg";
-import { iconFillColor } from '../../../common/constants';
+import noPriceIcon from "../../../images/icons/empty-state-price.svg";
+import { iconFillColor } from "../../../common/constants";
 
 function NoPriceFound(props) {
   return (
     <div className="no-plan-box">
       <SVG
-        src={tagIcon}
+        src={noPriceIcon}
         style={{ width: "100px", height: "100px", fill: iconFillColor }}
       />
       <h4 className="box-title">No Prices Found</h4>
