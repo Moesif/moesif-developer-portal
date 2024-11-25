@@ -5,6 +5,7 @@ import useSubscriptions from "../../../hooks/useSubscriptions";
 import useAuthCombined from "../../../hooks/useAuthCombined";
 import { PageLoader } from "../../page-loader";
 import { Link } from "react-router-dom";
+import { formatIsoTimestamp } from '../../../common/utils';
 
 // const exampleSubs = [
 //   {
@@ -105,7 +106,7 @@ function SubDisplay({ sub }) {
         <tr>
           <td>Current Period</td>
           <td>
-            {sub.current_period_start} to {sub.current_period_end}
+            {formatIsoTimestamp(sub.current_period_start)} - {formatIsoTimestamp(sub.current_period_end)}
           </td>
         </tr>
         {sub.items?.map((item) => (
