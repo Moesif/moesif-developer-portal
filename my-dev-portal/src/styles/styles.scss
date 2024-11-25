@@ -23,3 +23,7 @@ $muted-text-color: $dark-theme-4;
 @import "scss/hero.scss";
 @import "scss/plans.scss";
 
+.text-muted {
+  color: $muted-text-color;
+  font-weight: 300;
+}

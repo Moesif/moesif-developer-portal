@@ -1,34 +1,7 @@
 import React from "react";
-import isNil from "lodash/isNil";
+
 import CommonTable from "../../common-table";
-
-function formatPrice(priceInDecimal = 0) {
-  if (isNil(priceInDecimal)) {
-    return "";
-  }
-
-  const priceInDollars = Number(priceInDecimal) / 100;
-
-  // Format the price as a currency string with up to 10 decimal places
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0, // Minimum number of decimal places
-    maximumFractionDigits: 10, // Maximum number of decimal places
-  }).format(priceInDollars);
-}
-
-function formatPeriod(periodUnits, period) {
-  switch (periodUnits) {
-    case "y":
-      return "yearly";
-    case "d":
-      return "daily";
-    case "M":
-    default:
-      return "monthly";
-  }
-}
+import { formatPrice, formatPeriod } from "../../../common/utils";
 
 function formatNumberToHuman(input) {
   // Handle "inf" case
@@ -139,7 +112,7 @@ function TierTable(props) {
           return formatPrice(value);
         },
         justifyContent: "flex-end",
-        width: '60px',
+        width: "60px",
       },
     ];
   } else if (haveFlatFee) {

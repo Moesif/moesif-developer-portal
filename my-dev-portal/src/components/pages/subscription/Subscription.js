@@ -95,7 +95,6 @@ import { Link } from "react-router-dom";
 // ];
 
 function SubDisplay({ sub }) {
-
   return (
     <div className="sub-table">
       <table>
@@ -111,10 +110,14 @@ function SubDisplay({ sub }) {
         </tr>
         {sub.items?.map((item) => (
           <tr key={item.subscription_item_id + item.price_id + item.plan_id}>
-            <td>plan id: {item.plan_id}</td>
             <td>
-              {item.price?.price_in_decimal} {item.price?.currency}{" "}
-              {item.price?.price_in_decimal.pricing_model}{" "}
+              plan: {item.plan?.name}
+              <br />
+              price: {item?.price?.name}
+            </td>
+            <td>
+              {item.price?.price_in_decimal}
+              Price Model: {item.price?.pricing_model}{" "}
             </td>
           </tr>
         ))}
@@ -140,7 +143,7 @@ function Subscription(props) {
             No Subscriptions found. Please go to{" "}
             <Link to="/plans">Plans page </Link> and select a plan
           </p>
-          <p>
+          <p className="text-muted">
             If you just purchased a plan, please wait at least 10 to 15 minutes
             for the systems to sync.
           </p>
