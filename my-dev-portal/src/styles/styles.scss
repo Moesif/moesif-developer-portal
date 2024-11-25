@@ -5,6 +5,7 @@ $dark-theme-3: #5B676E;
 $dark-theme-4: #AAB4BD;
 $dark-theme-5: #D2DADE;
 $dark-theme-6: #FFFFFF;
+$dark-background: #121212;
 
 $light-theme-0: #FFFFFF;
 $light-theme-1: #FAFAFA;
@@ -15,6 +16,7 @@ $light-theme-5: #5B676E;
 $light-theme-6: #272F34;
 
 $muted-text-color: $dark-theme-4;
+$border-color: $dark-theme-3;
 
 @import "theme.css";
 @import "general.css";
@@ -23,6 +25,8 @@ $muted-text-color: $dark-theme-4;
 @import "scss/hero.scss";
 @import "scss/plans.scss";
 
+
+// standard styles
 .text-muted {
   color: $muted-text-color;
   font-weight: 300;

@@ -10,7 +10,7 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  border: 1px solid #2d2c2c;
+  border: 1px solid $border-color;
   padding: 15px;
   border-width: 1px;
   border-radius: 10px;
@@ -69,7 +69,7 @@
 .no-plan-box {
   display: block;
   border-radius: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid $border-color;
   padding: 20px;
   max-width: 600px;
   width: 100%;
@@ -117,8 +117,8 @@
 
   .plans-hint {
     text-align: center;
-    font-size: smaller;
+    font-size: small;
     font-weight: 300;
-    color: gray;
+    color: $muted-text-color;
   }
 }
