@@ -1,6 +1,8 @@
 import React from "react";
 import { PageLayout } from "../../page-layout";
 import wfImage from "../../../images/assets/wf-diagram.png";
+import { SignupButton } from '../../buttons/signup-button';
+import { LoginButton } from '../../buttons/login-button';
 
 function Setup(props) {
   return (
@@ -19,6 +21,10 @@ function Setup(props) {
             README and our github repo.
           </a>
         </p>
+        <div className="buttons">
+          <LoginButton isLink />
+          <SignupButton />
+        </div>
       </div>
       <div className="page-layout__focus">
         <img src={wfImage} width="100%" alt="flow-diagram" />
