@@ -57,7 +57,7 @@ function Auth0Settings(props) {
             actions={
               <>
                 <a
-                  href="https://www.moesif.com/docs/product-catalog/"
+                  href="https://www.moesif.com/docs/developer-portal/developer-portal-overview/"
                   target="_blank"
                   rel="noreferrer noopener"
                 >
