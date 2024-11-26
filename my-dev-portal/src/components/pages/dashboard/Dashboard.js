@@ -1,6 +1,21 @@
 import OktaDashboard from "./OktaDashboard";
 import Auth0Dashboard from "./Auth0Dashboard";
 
+function customizeUrlDisplayOptions(embedInfo) {
+  // see here
+  // https://www.moesif.com/docs/embedded-templates/creating-and-using-templates/#display-options
+
+  const displayOptions = {
+    embed: true,
+    hide_header: true,
+    show_daterange: true,
+  };
+
+  return `https://www.moesif.com/public/em/ws/${
+    embedInfo._id
+  }?${new URLSearchParams(displayOptions).toString()}#${embedInfo.token}`;
+}
+
 function fetchEmbedInfo(
   userId,
   setIFrameSrcLiveEvent,
@@ -23,10 +38,12 @@ function fetchEmbedInfo(
       return response.json();
     })
     .then(function (body) {
-      setIFrameSrcLiveEvent(body ? body.url : "");
+      const customizedUrl = customizeUrlDisplayOptions(body);
+      setIFrameSrcLiveEvent(customizedUrl);
     })
     .catch(function (err) {
-      setError("Could not load charts");
+      console.error(err);
+      setError("Could not load charts.w");
     });
 
   fetch(
@@ -48,6 +65,7 @@ function fetchEmbedInfo(
       setIFrameSrcTimeSeries(body ? body.url : "");
     })
     .catch(function (err) {
+      console.error(err);
       setError(
         "Could not load. Please check if you created .env with MOESIF_MANAGEMENT_TOKEN && MOESIF_TEMPLATE_WORKSPACE_ID and run `node server.js`."
       );
