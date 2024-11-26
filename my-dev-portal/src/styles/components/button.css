@@ -98,7 +98,10 @@ button {
 }
 
 .button__purp {
+  background: var(--white);
+  color: var(--black);
   width: 100%;
+  border: unset;
 }
 
 .button__sign-up {

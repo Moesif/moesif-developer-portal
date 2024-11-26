@@ -96,27 +96,27 @@ const Auth0Keys = () => {
   return (
     <PageLayout>
       <div className="keys-description">
-        <h1>Keys</h1>
-        <h2>
+        <h1>My API Keys</h1>
+        <p className="description">
           On this page, you can create an API key to access{"\n"}the APIs that
           are protected through key-auth.
-        </h2>
+        </p>
         <div>
           <p>
             To use the API key, add an <code>apiKey</code> header to your API
             request with the{"\n"}generated key as the value.
-            {"\n\n"}
-            <strong>Note: </strong>
-            Make sure to store the key somewhere safe as you will not be{"\n"}
-            able to retrieve it once you close the modal.
           </p>
         </div>
-
-        <div className="page-layout__focus">
-          <button className="button__purp" onClick={createKey}>
-            Create Key
-          </button>
+        <div className="page-action">
+        <button className="button__purp" onClick={createKey}>
+          Create Key
+        </button>
         </div>
+        <p>
+          <strong>Note: </strong>
+          Make sure to store the key somewhere safe as you will not be{"\n"}
+          able to retrieve it once you close the modal.
+        </p>
       </div>
 
       <Modal
@@ -159,7 +159,10 @@ const Auth0Keys = () => {
                   If using pre-supported API Gateway, did you set up already and
                   configured it?
                 </li>
-                <li>If using custom API gateway, did you implement the code for generating key.</li>
+                <li>
+                  If using custom API gateway, did you implement the code for
+                  generating key?
+                </li>
                 <li>
                   Did you already purchase a plan? In default implementation,
                   API Gateway provisioning is triggered upon successful checkout
