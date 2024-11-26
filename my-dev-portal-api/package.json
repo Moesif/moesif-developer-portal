@@ -1,22 +1,20 @@
 {
-  "name": "moesif-node",
+  "name": "my-dev-portal-api",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "start-server": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "npm run install-plugins",
+    "install-plugins": "find ../plugins -maxdepth 1 -type d -exec sh -c 'if [ -f \"{}/package.json\" ]; then cd \"{}\" && npm install; fi' \\;"
   },
   "author": "",
-  "license": "ISC",
+  "license": " Apache-2.0",
   "dependencies": {
-    "@aws-sdk/client-api-gateway": "^3.370.0",
-    "@aws-sdk/client-apigatewayv2": "^3.370.0",
     "@okta/okta-auth-js": "^7.8.1",
     "@okta/okta-sdk-nodejs": "^7.1.1",
     "@stripe/stripe-js": "^1.29.0",
-    "auth0": "^3.7.2",
-    "aws-sdk": "^2.1419.0",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
@@ -27,6 +25,11 @@
     "moesif-nodejs": "^3.5.8",
     "node-fetch": "^2.6.5",
     "path": "^0.12.7",
-    "stripe": "^8.222.0"
+    "stripe": "^8.222.0",
+
+    "dev-portal-auth0-m2m-plugin": "file:../plugins/auth0-m2m",
+    "dev-portal-kong-gateway-plugin": "file:../plugins/kong-gateway",
+    "dev-portal-kong-konnect-plugin": "file:../plugins/kong-konnect",
+    "dev-portal-tyk-plugin": "file:../plugins/tyk"
   }
 }

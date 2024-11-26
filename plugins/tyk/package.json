@@ -1,0 +1,11 @@
+{
+    "name": "dev-portal-tyk-plugin",
+    "version": "1.0.0",
+    "description": "",
+    "main": "tykProvisioningPlugin.js",
+    "author": "",
+    "license": " Apache-2.0",
+    "dependencies": {
+    }
+}
+  
