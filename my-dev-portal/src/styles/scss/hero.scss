@@ -80,6 +80,15 @@
   padding: 20px;
   max-width: 600px;
 
+  .buttons {
+    padding-top: 20px;
+    display: flex;
+    gap: 10px;
+
+    justify-content: center;
+  }
+
+
   h1 {
     padding-bottom: 10px;
   }
