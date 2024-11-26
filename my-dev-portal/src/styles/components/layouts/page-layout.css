@@ -9,6 +9,11 @@
   width: 100%;
 }
 
+.page-layout--home {
+  background-image: url('../../../images/assets/dev-portal-hero-bg@2x.png');
+  background-repeat: no-repeat;
+}
+
 .page-layout > * {
   padding-inline: 24px;
 }
