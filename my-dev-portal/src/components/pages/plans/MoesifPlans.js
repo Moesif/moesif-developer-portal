@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { LineLoader } from "../../line-loader";
 import NoPriceFound from "./NoPriceFound";
@@ -6,15 +6,14 @@ import PriceTile from "./PriceTile";
 import { useAuth0 } from "@auth0/auth0-react";
 import { SignupButton } from "../../buttons/signup-button";
 import { examplePlansFromStripe } from "./examplePlansFromStripe";
+import usePlans from '../../../hooks/usePlans';
 
 const SHOW_EXAMPLE_PLANS = true;
 
 function MoesifPlans({ skipExample }) {
   const { isAuthenticated } = useAuth0();
 
-  const [loading, setLoading] = useState(true);
-  const [plans, setPlans] = useState(null);
-  const [error, setError] = useState();
+  const { plans, plansLoading: loading, plansError: error } = usePlans();
 
   const getActionButton = (price, plan, options) => {
     if (options?.disable) {
@@ -30,25 +29,6 @@ function MoesifPlans({ skipExample }) {
       return <SignupButton isPriceAction />;
     }
   };
-
-  useEffect(() => {
-    fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/plans`)
-      .then((res) => res.json())
-      .then((result) => {
-        console.log(result);
-        const loadedPlans = result?.hits || [];
-        const activePlans = loadedPlans.filter(
-          (item) => item.status === "active"
-        );
-        setPlans(activePlans);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log("failed to load plans", err);
-        setLoading(false);
-        setError(err);
-      });
-  }, []);
 
   if (loading) {
     return <LineLoader />;
