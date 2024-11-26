@@ -27,7 +27,7 @@ function Setup(props) {
         </div>
       </div>
       <div className="page-layout__focus">
-        <img src={wfImage} width="100%" alt="flow-diagram" />
+        <img src={wfImage} style={{ padding: '30px'}}width="100%" alt="flow-diagram" />
       </div>
       <div style={{ height: "50" }} />
     </PageLayout>
