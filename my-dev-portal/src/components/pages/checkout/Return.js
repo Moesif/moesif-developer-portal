@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { PageLayout } from '../../page-layout';
+import { PageLayout } from "../../page-layout";
+import SuccessNotice from "./SuccessNotice";
+import { Link } from "react-router-dom";
+import noPriceIcon from "../../../images/icons/empty-state-price.svg";
+import { iconFillColor } from "../../../common/constants";
+import NoticeBox from "../../notice-box";
 
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
@@ -45,22 +50,58 @@ function Return(props) {
   if (status === "complete" && sessionId) {
     return (
       <PageLayout>
-      <section id="success">
-        <p>
-          We appreciate your business! A confirmation email will be sent to{" "}
-          {customerEmail}. If you have any questions, please email{" "}
-          <a href="mailto:orders@example.com">orders@example.com</a>.
-        </p>
-        <p>
-          For developers, if you setup API Management, you can go to Keys, and
-          get your API keys.
-        </p>
-      </section>
+        <h1>Subscribe</h1>
+        <NoticeBox
+          iconSrc={noPriceIcon}
+          title="Success"
+          description="You are now subscription to the plan and price."
+          actions={
+            <>
+              <a
+                href="https://www.moesif.com/docs/developer-portal/"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                <button className="button button__link">See Docs</button>
+              </a>
+              <Link to="/keys" rel="noreferrer noopener">
+                <button className="button button--outline-secondary">
+                  Get API Key
+                </button>
+              </Link>
+            </>
+          }
+        />
       </PageLayout>
     );
   }
 
-  return null;
+  return (
+    <PageLayout>
+      <h1>Subscribe Status</h1>
+      <NoticeBox
+        iconSrc={noPriceIcon}
+        title="Checkout Failed"
+        description="Seems you didn't checkout successfully?"
+        actions={
+          <>
+            <a
+              href="https://www.moesif.com/docs/developer-portal/"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              <button className="button button__link">See Docs</button>
+            </a>
+            <Link to="/plans" rel="noreferrer noopener">
+              <button className="button button--outline-secondary">
+                Go to Plans
+              </button>
+            </Link>
+          </>
+        }
+      />
+    </PageLayout>
+  );
 }
 
 export default Return;

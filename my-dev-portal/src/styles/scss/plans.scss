@@ -66,12 +66,11 @@
   }
 }
 
-.no-plan-box {
+.notice-box {
   display: block;
   border-radius: 10px;
   border: 1px solid $border-color;
-  padding: 20px;
-  max-width: 600px;
+  padding: 50px 20px;
   width: 100%;
   margin: 20px auto;
   display: flex;
@@ -92,7 +91,6 @@
   .box-actions {
     display: flex;
     gap: 1em;
-
   }
 }
 

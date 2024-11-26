@@ -75,6 +75,7 @@ const Auth0Dashboard = (props) => {
 
   return (
     <PageLayout>
+      <h1>My Dashboards</h1>
       <>
         <MoesifEmbeddedTemplate
           iFrameSrcLiveEvent={iFrameSrcLiveEvent}
