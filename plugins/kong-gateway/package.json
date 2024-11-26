@@ -1,0 +1,11 @@
+{
+    "name": "dev-portal-kong-gateway-plugin",
+    "version": "1.0.0",
+    "description": "",
+    "main": "KongProvisioningPlugin.js",
+    "author": "",
+    "license": " Apache-2.0",
+    "dependencies": {
+    }
+}
+  
