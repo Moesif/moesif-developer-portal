@@ -13,7 +13,7 @@ import SubDisplay from './SubDisplay';
 function Subscription(props) {
   const { isAuthenticated, isLoading, user } = useAuthCombined();
   const { subscriptions, finishedLoading } = useSubscriptions(user);
-  const { plansError, plansLoading, plans } = usePlans();
+  const { plansLoading, plans } = usePlans();
 
   if (isLoading || !finishedLoading || !isAuthenticated || plansLoading) {
     return <PageLoader />;
