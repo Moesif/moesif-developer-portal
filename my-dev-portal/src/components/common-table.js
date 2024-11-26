@@ -159,17 +159,14 @@ function CommonTable(props) {
                 }
 
                 let content = null;
-                let value = null;
 
                 let colKey = idx;
 
                 if (col.accessor instanceof Function) {
                   content = safeGet(row, col.accessor({ row, index }));
-                  value = content;
                 } else if (col.accessor) {
                   colKey = col.accessor;
                   content = safeGet(row, col.accessor);
-                  value = content;
                 }
 
                 if (col.cell) {

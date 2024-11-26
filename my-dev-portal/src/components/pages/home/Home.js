@@ -5,12 +5,11 @@ import MoesifPlans from "../plans/MoesifPlans";
 import { SignupButton } from "../../buttons/signup-button";
 import { LoginButton } from "../../buttons/login-button";
 
-import heroImage from "../../../images/assets/hero-image.png";
-import { PageFooter } from "../../page-footer";
+import heroImage from "../../../images/assets/dev-portal-hero.svg";
 
 function Home() {
   return (
-    <PageLayout>
+    <PageLayout isHome>
       <section className="hero">
         <div className="hero-content">
           <h1>My Dev Portal!</h1>

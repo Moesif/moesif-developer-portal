@@ -9,7 +9,7 @@ export const NavBarBrand = () => {
         <img
           className="nav-bar__logo"
           src={yourLogo}
-          alt="Moesif Logo"
+          alt="Your Logo"
           height="36"
         />
       </NavLink>
