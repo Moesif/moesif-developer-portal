@@ -1,0 +1,11 @@
+{
+    "name": "dev-portal-kong-konnect-plugin",
+    "version": "1.0.0",
+    "description": "",
+    "main": "KonnectProvisioningPlugin.js",
+    "author": "",
+    "license": " Apache-2.0",
+    "dependencies": {
+    }
+}
+  

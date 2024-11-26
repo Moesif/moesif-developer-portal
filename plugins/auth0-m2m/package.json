@@ -1,0 +1,14 @@
+{
+    "name": "dev-portal-auth0-m2m-plugin",
+    "version": "1.0.0",
+    "description": "",
+    "main": "Auth0M2MProvisioningPlugin.js",
+    "author": "",
+    "license": " Apache-2.0",
+    "dependencies": {
+        "auth0": "^4.14.0"
+    },
+    "scripts": {
+        "postinstall": "cd resources/aws-authorizer && npm install && npm run zip"
+    }
+}

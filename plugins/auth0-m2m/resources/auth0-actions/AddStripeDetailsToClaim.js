@@ -1,5 +1,5 @@
 /****************************************************
- * This handler should be added to the Auth0 Login Flow (Actions > Flows > Login).
+ * This handler should be added to the Auth0 Login Flow (Actions > Triggers > Post-User-Registration).
  * By adding this in, the Stripe data that is saved to the Auth0 profile will now be injected into the claim
  * so it can be mapped to the principalId field in AWS Gateway
  */

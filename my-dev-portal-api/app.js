@@ -1,9 +1,9 @@
 const express = require("express");
 const path = require("path");
 require("dotenv").config();
-var bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 const moesif = require("moesif-nodejs");
-var cors = require("cors");
+const cors = require("cors");
 const fetch = require("node-fetch");
 const { Client } = require("@okta/okta-sdk-nodejs");
 
@@ -18,21 +18,12 @@ const {
   getSubscriptionForUserEmail,
 } = require("./services/moesifApis");
 
-const {
-  updateAuth0UserAppWithStripeInfo
-} = require('./services/auth0Services');
-
 const StripeSDK = require("stripe");
-const {
-  createKongConnectCustomer,
-  createKongEnterpriseCustomer,
-  createKonnectApiKeyForCustomer,
-} = require("./services/kongAPIMServices");
+const { getApimProvisioningPlugin } = require("./config/pluginLoader")
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
 const port = 3030;
-const apimProvider = process.env.APIM_PROVIDER;
 
 const moesifManagementToken = process.env.MOESIF_MANAGEMENT_TOKEN;
 const templateWorkspaceIdLiveEvent =
@@ -54,11 +45,7 @@ if (!templateWorkspaceIdLiveEvent) {
   );
 }
 
-if (!apimProvider) {
-  console.error(
-    "No APIM_PROVIDER found. Please create an .env file with APIM_PROVIDER one of the supported API management providers or edit the code to connect to your API Management."
-  );
-}
+const provisioningService = getApimProvisioningPlugin();
 
 const moesifMiddleware = moesif({
   applicationId: process.env.MOESIF_APPLICATION_ID,
@@ -258,33 +245,9 @@ app.post("/register/stripe/:checkout_session_id", function (req, res) {
           console.error("Error updating user/company/sub:", error);
         }
 
-        if (apimProvider === "Kong") {
-          // Konnect
-          if (
-            typeof process.env.KONNECT_PAT !== "undefined" &&
-            process.env.KONNECT_PAT !== ""
-          ) {
-            const kongConsumerResponse = await createKongConnectCustomer({
-              username: email,
-              customId: stripe_customer_id,
-            });
-          } else {
-            // Kong Enterprise
-            const KongConsumerResponse = await createKongEnterpriseCustomer({
-              username: email,
-              customId: stripe_customer_id,
-            });
-          }
-        } else if (apimProvider === "AWS") {
-          // for AWS, we are using the appMeta info
-          // in Auth0 determine service level.
-          // which will update the credentials
-          updateAuth0UserAppWithStripeInfo({
-            email,
-            stripe_customer_id,
-            stripe_subscription_id,
-          });
-        }
+        // Provision new user for access to API
+        const user = await provisioningService.provisionUser(stripe_customer_id, email, stripe_subscription_id);
+        console.log(JSON.stringify(user));
       }
       // we still pass on result.
       console.log(JSON.stringify(stripeCheckOutSessionInfo));
@@ -319,102 +282,15 @@ app.get("/stripe/customer", function (req, res) {
 
 app.post("/create-key", jsonParser, async function (req, res) {
   try {
+    // FIXME needs validation on email
     const email = req.body.email;
-    const kongConsumerId = req.body.kongConsumerId;
-    var apiKey = "";
+    const stripeCustomer = await getStripeCustomer(email);
+    const customerId = (stripeCustomer.data && stripeCustomer.data[0]) ? stripeCustomer.data[0].id : undefined;
 
-    if (apimProvider === "Kong") {
-      // Konnect
-      if (
-        typeof process.env.KONNECT_PAT !== "undefined" &&
-        process.env.KONNECT_PAT !== ""
-      ) {
-
-        const konnectKeyResult = await createKonnectApiKeyForCustomer({ email });
-        console.log(`Created Konnect Consumer Key`);
-        apiKey = konnectKeyResult.key;
-        res.status(200);
-        res.send({ apikey: apiKey });
-      } else {
-        // Kong Enterprise
-        const data = await createKongEnterpriseApiKeyCustomer({ email })
-        apiKey = data.key;
-        res.status(200);
-        res.send({ apikey: apiKey });
-      }
-    } else if (apimProvider === "AWS") {
-      var auth0Jwt = req.headers.authorization; // Get the Auth0 JWT from the request
-
-      if (!auth0Jwt) {
-        throw new Error("No authorization header provided");
-      }
-
-      if (!auth0Jwt.startsWith("Bearer ")) {
-        throw new Error("Invalid authorization header");
-      }
-
-      auth0Jwt = auth0Jwt.slice(7);
-      res.status(200).send({ apikey: auth0Jwt });
-    } else if (apimProvider === "Tyk") {
-      var stripe_customer_id = "";
-
-      // Fetch the customer info from Stripe
-      const stripeResponse = await fetch(
-        `https://api.stripe.com/v1/customers/search?query=${encodeURIComponent(
-          `email:"${email}"`
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.STRIPE_API_KEY}`,
-          },
-        }
-      );
-
-      if (stripeResponse.ok) {
-        const result = await stripeResponse.json();
-
-        if (result.data && result.data[0]) {
-          stripe_customer_id = result.data[0].id;
-        } else {
-          // Stripe customer not found
-          throw new Error("(Tyk) Stripe customer not found");
-        }
-      } else {
-        // Handle non-2xx HTTP response from Stripe
-        throw new Error(
-          `(Tyk) Stripe API returned status: ${stripeResponse.status}`
-        );
-      }
-
-      // Create the request body for Tyk API
-      var body = {
-        alias: stripe_customer_id,
-        org_id: `${process.env.TYK_DASH_ORG_ID}`,
-      };
-
-      // Send the request to Tyk API
-      var response = await fetch(`${process.env.TYK_GATEWAY_URL}/tyk/keys`, {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-          "x-tyk-authorization": `${process.env.TYK_GATEWAY_SECRET_KEY}`,
-        },
-      });
-
-      if (!response.ok) {
-        // Handle non-2xx HTTP response from Tyk
-        throw new Error(`(Tyk) Tyk API returned status: ${response.status}`);
-      }
-
-      var data = await response.json();
-      var tykAPIKey = data.key;
-
-      // Send the Tyk API key back as the response
-      res.status(200).send({ apikey: tykAPIKey });
-    }
+    // Provision new key for access to API
+    const apiKey = await provisioningService.createApiKey(customerId, email);
+    // Send the Tyk API key back as the response
+    res.status(200).send({ apikey: apiKey });
   } catch (error) {
     console.error("Error creating key:", error);
     res.status(500).json({ message: "Failed to create key" });
@@ -423,6 +299,7 @@ app.post("/create-key", jsonParser, async function (req, res) {
 
 app.get("/embed-dash-time-series(/:userId)", function (req, res) {
   try {
+    // FIXME needs validation on userId
     const userId = req.params.userId;
 
     getInfoForEmbeddedWorkspaces({
