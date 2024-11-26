@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { PageLayout } from "../../page-layout";
-import SuccessNotice from "./SuccessNotice";
 import { Link } from "react-router-dom";
 import noPriceIcon from "../../../images/icons/empty-state-price.svg";
-import { iconFillColor } from "../../../common/constants";
 import NoticeBox from "../../notice-box";
 
 // used on embedded checkout example code:
@@ -54,7 +52,7 @@ function Return(props) {
         <NoticeBox
           iconSrc={noPriceIcon}
           title="Success"
-          description="You are now subscription to the plan and price."
+          description={`You are now subscription to the plan and price. A email should be sent to ${customerEmail}`}
           actions={
             <>
               <a
