@@ -9,14 +9,17 @@ import { examplePlansFromStripe } from "./examplePlansFromStripe";
 
 const SHOW_EXAMPLE_PLANS = true;
 
-function MoesifPlans({ skipTitle }) {
+function MoesifPlans({ skipExample }) {
   const { isAuthenticated } = useAuth0();
 
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState(null);
   const [error, setError] = useState();
 
-  const getActionButton = (price, plan) => {
+  const getActionButton = (price, plan, options) => {
+    if (options?.disable) {
+      return <button className="button__price-action">Sign Up</button>
+    }
     if (isAuthenticated) {
       return (
         <Link to={`/checkout?price_id_to_purchase=${price.id}`}>
@@ -83,7 +86,7 @@ function MoesifPlans({ skipTitle }) {
             )
             .flat()}
       </div>
-      {SHOW_EXAMPLE_PLANS && (
+      {SHOW_EXAMPLE_PLANS && !skipExample && (
         <>
         <h3>Example Plans</h3>
         <div className="plans--container">
@@ -94,7 +97,7 @@ function MoesifPlans({ skipTitle }) {
                   key={`${plan.id}${price.id}`}
                   plan={plan}
                   price={price}
-                  actionButton={getActionButton(price, plan)}
+                  actionButton={getActionButton(price, plan, { disable: true })}
                 />
               ))
             )
