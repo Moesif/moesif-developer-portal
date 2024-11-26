@@ -169,6 +169,7 @@ const Auth0Keys = () => {
                   call back from Stripe. See API route{" "}
                   <code>/register/stripe/:checkout_session_id</code>.
                 </li>
+                <li>If provision was triggered, was provisioning successful?</li>
               </ul>
             </div>
           )}
