@@ -153,8 +153,13 @@ function Subscription(props) {
           <NoticeBox
             iconSrc={noPriceIcon}
             title="No Subscription found"
-            description="If you just purchased a plan, please wait at least 10 to 15 minutes
-            for the systems to sync."
+            description={
+              <span>
+                If you just purchased a plan, please{" "}
+                <strong>wait at least 10 to 15 minutes</strong>{" "}
+                for the systems to sync.
+              </span>
+            }
             actions={
               <>
                 <a
