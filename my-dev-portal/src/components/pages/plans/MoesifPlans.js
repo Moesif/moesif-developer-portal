@@ -18,7 +18,7 @@ function MoesifPlans({ skipExample }) {
 
   const getActionButton = (price, plan, options) => {
     if (options?.disable) {
-      return <button className="button__price-action">Sign Up</button>
+      return <button disabled className="button__price-action">Sign Up <span style={{ fontSize: "x-small", fontWeight: '300'}}>example</span></button>
     }
     if (isAuthenticated) {
       return (

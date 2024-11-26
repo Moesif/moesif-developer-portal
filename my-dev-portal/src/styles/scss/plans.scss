@@ -94,6 +94,12 @@
   }
 }
 
+.container-box {
+  border-radius: 10px;
+  border: 1px solid $border-color;
+  padding: 2em;
+}
+
 .price-operator {
   color: $muted-text-color;
 }
@@ -115,7 +121,6 @@
 
   .plans-hint {
     text-align: center;
-    font-size: small;
     font-weight: 300;
     color: $muted-text-color;
   }
