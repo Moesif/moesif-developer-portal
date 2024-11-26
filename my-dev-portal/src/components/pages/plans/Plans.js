@@ -8,7 +8,6 @@ function Plans(props) {
   return (
     <PageLayout>
       <MoesifPlans skipExample />
-      <NoPriceFound />
     </PageLayout>
   );
 }
