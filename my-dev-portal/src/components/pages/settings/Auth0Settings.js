@@ -24,18 +24,19 @@ function Auth0Settings(props) {
   return (
     isAuthenticated && (
       <PageLayout>
-        <h1>Settings</h1>
-        <div className="user-profile">
-          {user.picture && (
-            <img
-              className="profile-picture"
-              src={user.picture}
-              alt={user.name}
-            />
-          )}
-          <h1>{user.name}</h1>
-        </div>
-        <div className="page-layout__focus">
+        <h1>My Settings</h1>
+        <div className="container-box">
+          <div className="user-profile">
+            {user.picture && (
+              <img
+                className="profile-picture"
+                src={user.picture}
+                alt={user.name}
+              />
+            )}
+            <h1>{user.name}</h1>
+          </div>
+          <div>
           <button
             disabled={!user.email}
             className="button__purp"
@@ -43,6 +44,7 @@ function Auth0Settings(props) {
           >
             Manage Billing
           </button>
+          </div>
         </div>
       </PageLayout>
     )
