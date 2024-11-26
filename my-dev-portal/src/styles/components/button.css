@@ -75,9 +75,9 @@ button {
 .button__logout {
   min-width: 8.4rem;
 
-  border: 0.1rem solid var(--orange);
-  color: var(--white);
-  background: var(--orange);
+  border: 0.1rem solid var(--white);
+  color: var(--black);
+  background: var(--white);
   width: 50%;
   font-size: 1.6rem;
 
