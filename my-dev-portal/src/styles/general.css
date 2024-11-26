@@ -158,25 +158,6 @@ code {
   color: black;
 }
 
-.dashboards-wrapper {
-  display: flex;
-  justify-content: space-between;
-}
-
-.iframeWrapper {
-  position: relative;
-  padding-bottom: 27%;
-  padding-right: 49%;
-}
-
-.iframeWrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
 @media only screen and (max-width: 640px) {
   .mobile-scroll-lock {
     overflow: hidden;

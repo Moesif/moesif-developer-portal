@@ -69,3 +69,23 @@ $nav-bar-color: $dark-background;
   }
 }
 
+
+.dashboards-container {
+  display: grid;
+  gap: 16px; // Adjust the gap between tiles as needed
+
+  // Default to one iframe per row
+  grid-template-columns: 1fr;
+
+  // Media query for screens larger than 1200px
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr); // Two iframes per row
+  }
+}
+
+// Iframe styling
+.dashboards-container iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9; // Maintain 16:9 aspect ratio
+  border: none; // Optional: remove border if not needed
+}
