@@ -52,13 +52,13 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 400;
+  font-weight: 500;
   margin: 0;
 }
 
 h1 {
-  font-size: 3.2rem;
-  font-weight: 300;
+  font-size: 3rem;
+  font-weight: 500;
 }
 
 h2 {
@@ -82,7 +82,8 @@ h6 {
 }
 
 p {
-  margin: 0 0 1.6rem;
+  margin: 0 0 1.3rem;
+  font-weight: 300;
 }
 
 strong {

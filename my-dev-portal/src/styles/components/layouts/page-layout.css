@@ -39,6 +39,7 @@
   background: var(--focus-bg);
   padding: 3rem;
   width: 100%;
+  border-radius: 10px;
 }
 
 .page-layout__focus.dashboards {

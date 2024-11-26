@@ -16,6 +16,12 @@
   border-radius: 10px;
 }
 
+.plan--subscription-period {
+  font-size: xx-small;
+  margin-bottom: 5px;
+}
+
+
 .plan--content {
   flex-grow: 1;
 
@@ -66,36 +72,6 @@
   }
 }
 
-.no-plan-box {
-  display: block;
-  border-radius: 10px;
-  border: 1px solid $border-color;
-  padding: 20px;
-  max-width: 600px;
-  width: 100%;
-  margin: 20px auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center horizontally */
-  justify-content: center; /* Center vertically */
-
-  .box-title {
-    font-weight: 600;
-    padding: 1em;
-  }
-
-  .box-description {
-    font-size: smaller;
-    font-weight: 300;
-  }
-
-  .box-actions {
-    display: flex;
-    gap: 1em;
-
-  }
-}
-
 .price-operator {
   color: $muted-text-color;
 }
@@ -117,7 +93,6 @@
 
   .plans-hint {
     text-align: center;
-    font-size: small;
     font-weight: 300;
     color: $muted-text-color;
   }

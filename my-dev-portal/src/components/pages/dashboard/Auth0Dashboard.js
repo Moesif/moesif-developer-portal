@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { PageLoader } from "../../page-loader";
 import MoesifEmbeddedTemplate from "../../moesif/moesif-embedded-template";
+import NoticeBox from "../../notice-box";
+import dashIcon from '../../../images/icons/bar-chart.svg';
 
 const Auth0Dashboard = (props) => {
   const { user: auth0User, isLoading: auth0IsLoading } = useAuth0();
@@ -68,20 +70,69 @@ const Auth0Dashboard = (props) => {
     }
   }, [isLoading, navigate, checkout_session_id, user, fetchEmbedInfo]);
 
-
   if (isLoading) {
     return <PageLoader />;
   }
 
   return (
     <PageLayout>
-      <>
+      <h1>My Dashboards</h1>
+      <p>
+        Please see{" "}
+        <a
+          className="button__link"
+          target="_blank"
+          href="https://www.moesif.com/docs/embedded-templates/"
+        >
+          Moesif Embedded Metric
+        </a>{" "}
+        docs to for details regarding configuration,{" "}
+        <a
+          className="button__link"
+          target="_blank"
+          href="https://www.moesif.com/docs/embedded-templates/creating-and-using-templates/#display-options"
+        >
+          display options
+        </a>,
+        and setup instructions.
+      </p>
+      {!error && (
         <MoesifEmbeddedTemplate
           iFrameSrcLiveEvent={iFrameSrcLiveEvent}
           iFrameSrcTimeSeries={iFrameSrcTimeSeries}
           error={error}
         />
-      </>
+      )}
+      {error && (
+        <NoticeBox
+          iconSrc={dashIcon}
+          title={error.toString()}
+          description={
+            <p>
+              Did you set up your environment variables correctly for embedded
+              dashboard and charts?
+            </p>
+          }
+          actions={
+            <>
+              <a
+                target="_blank"
+                href="https://www.moesif.com/docs/embedded-templates/"
+              >
+                <button className="button button__link">
+                  Embedded Metric Docs
+                </button>
+              </a>
+              <a
+                target="_blank"
+                href="https://www.moesif.com/docs/developer-portal/configuring-the-dashboard/"
+              >
+                <button className="button">Dev Portal Docs</button>
+              </a>
+            </>
+          }
+        />
+      )}
     </PageLayout>
   );
 };

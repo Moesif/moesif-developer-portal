@@ -75,7 +75,7 @@
 .nav-bar__tab--active {
   text-decoration-line: underline;
   text-decoration-style: solid;
-  text-decoration-color: var(--orange);
+  text-decoration-color: var(--white);
 
   /* responsive */
 
