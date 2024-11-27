@@ -8,7 +8,7 @@ import { SignupButton } from "../../buttons/signup-button";
 import { examplePlansFromStripe } from "./examplePlansFromStripe";
 import usePlans from '../../../hooks/usePlans';
 
-const SHOW_EXAMPLE_PLANS = true;
+const SHOW_EXAMPLE_PLANS = false;
 
 function MoesifPlans({ skipExample }) {
   const { isAuthenticated } = useAuth0();
@@ -37,10 +37,10 @@ function MoesifPlans({ skipExample }) {
   return (
     <div className="page-layout__content">
       <div className="plans-title-section">
-        <h3 className="plans-title">My API Pricing</h3>
+        <h3 className="plans-title">API Products and Plans</h3>
         <div className="plans-hint">
           <div>
-            Developers: See read me file in <a href="https://github.com/Moesif/moesif-developer-portal">this repo</a> for setup instructions
+            Developers: See README.md file in <a href="https://github.com/Moesif/moesif-developer-portal">this repo</a> for setup instructions
           </div>
           <div>
             Or, jump to <Link to={"/setup"}>setup</Link> page to get started

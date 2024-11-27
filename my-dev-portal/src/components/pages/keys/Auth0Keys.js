@@ -98,13 +98,12 @@ const Auth0Keys = () => {
       <div className="keys-description">
         <h1>My API Keys</h1>
         <p className="description">
-          On this page, you can create an API key to access{"\n"}the APIs that
-          are protected through key-auth.
+          On this page, you can generate an API key to access{"\n"}the APIs 
+          you're subscribed to.
         </p>
         <div>
           <p>
-            To use the API key, add an <code>apiKey</code> header to your API
-            request with the{"\n"}generated key as the value.
+            To create an API key, you must be subscribed to an API plan first.
           </p>
         </div>
         <div className="page-action">
