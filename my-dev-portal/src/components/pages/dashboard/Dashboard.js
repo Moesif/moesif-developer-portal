@@ -1,5 +1,3 @@
-// import OktaDashboard from "./OktaDashboard";
-// import Auth0Dashboard from "./Auth0Dashboard";
 import CombinedDashboard from './CombinedDashboard';
 
 function customizeUrlDisplayOptions(embedInfo) {
@@ -86,9 +84,4 @@ function fetchEmbedInfo({
 
 export default function Dashboard() {
   return <CombinedDashboard fetchEmbedInfo={fetchEmbedInfo} />
-  // if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
-  //   return <OktaDashboard fetchEmbedInfo={fetchEmbedInfo} />;
-  // } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
-  //   return <Auth0Dashboard fetchEmbedInfo={fetchEmbedInfo} />;
-  // }
 }
