@@ -6,15 +6,16 @@ class Auth0M2MProvisioningPlugin extends ProvisioningPlugin {
         super();
         this.slug = "auth0-jwt";
         this.mgmtClient = new ManagementClient({
-            domain: process.env.AUTH0_DOMAIN,
+            domain: process.env.AUTH0_M2M_DOMAIN,
             clientId: process.env.AUTH0_M2M_CLIENT_ID,
             clientSecret: process.env.AUTH0_M2M_CLIENT_SECRET,
         });
         this.authClient = new AuthenticationClient({
-            domain: process.env.AUTH0_DOMAIN,
+            domain: process.env.AUTH0_M2M_DOMAIN,
             clientId: process.env.AUTH0_M2M_CLIENT_ID,
             clientSecret: process.env.AUTH0_M2M_CLIENT_SECRET,
           });
+
         this.apiAudience = process.env.AUTH0_M2M_API_AUDIENCE;
         this.apiScope = process.env.AUTH0_M2M_API_SCOPE;
 
@@ -68,24 +69,53 @@ class Auth0M2MProvisioningPlugin extends ProvisioningPlugin {
         );
     }
     
+    // Auth0 Machine-to-Machine (M2M) Access for Organizations. Requires paid plan from Auth0
+    // https://auth0.com/docs/manage-users/organizations/organizations-for-m2m-applications
+    // You can replace this function with your own logic to create API keys scoped to a single organization
     async createApiKey(customerId, email) {
         const user = await this.getUser(customerId, email);
+        const userOrgs = await this.mgmtClient.users.getUserOrganizations({
+            id: user.user_id,
+          });
 
-        if (!user['app_metadata'] || !user.app_metadata['customerId'] || !user.app_metadata['subscriptionId']) {
-            throw new Error(`Auth0M2MProvisioningPlugin No subscription linked for this user. Must subscribe to a plan first`);
+        if (!userOrgs['data'] || userOrgs.data.length != 1) {
+            // Currently only support users linked to a single org
+            throw new Error(`Auth0M2MProvisioningPlugin Cannot determine org_id for user ${user.user_id}`);
         }
+        const orgId = userOrgs.data[0].id;
 
-        const scope = `${this.apiScopes || ""}`
-        console.log(user)
+        // Create an Application (Client) for this specific tenant
+        // Auth0 requires complying with OIDC compliant OAuth flow in order to share a long lived key
+        // To scope secret to a single org, we create a dedicated application
+        const client = await this.mgmtClient.clients.create({
+            name: this.sanitizeEmail(email),
+            app_type: 'non_interactive',
+            is_first_party: false,
+            default_organization: {
+                organization_id: orgId,
+                flows: ['client_credentials']
+            },
+            organization_usage: 'require',  // This is important!
+        });
 
-        // FIXME needs to be scoped to single user
-        const token = await this.authClient.oauth.clientCredentialsGrant({
+        const clientId = client.data.client_id
+        const response = JSON.stringify({client_id: clientId, client_secret: client.data.client_secret})
+
+        // Define grant behavior for the recently created client
+        const grant = await this.mgmtClient.clientGrants.create({
+            client_id: clientId,
             audience: this.apiAudience,
-            scope: scope.trim(),
+            scope: this.apiScope.trim().split(' '),
             organization_usage: 'require',  // This is important!
             allow_any_organization: false
         });
-        return token.data.access_token
+        const grantId = grant.data.id;
+
+        // Authorize the organization to access this application and API
+        const memberRes = await this.mgmtClient.organizations.postOrganizationClientGrants({
+            grant_id: grantId,
+        });
+        return response
     }
 
     sanitizeEmail(email) {
