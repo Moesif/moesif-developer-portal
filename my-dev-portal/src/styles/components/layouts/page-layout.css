@@ -28,6 +28,18 @@
   gap: 56px;
   width: 100%;
   white-space: pre-wrap;
+
+  a {
+    color: white;
+  }
+
+  a:hover {
+    color: white;
+    text-decoration: underline;
+    text-decoration-thickness: 1%;
+    text-underline-offset: 4px;
+  }
+
 }
 
 .page-layout__content > * {

@@ -12,10 +12,10 @@ function Home() {
     <PageLayout isHome>
       <section className="hero">
         <div className="hero-content">
-          <h1>My Dev Portal!</h1>
+          <h1>My Dev Portal</h1>
           <p>
-            Welcome to your custom developer portal. Prompt customers to the
-            links below.
+            Welcome to your custom developer portal. <br></br>
+            Prompt customers to the links below.
           </p>
 
           <div className="buttons">

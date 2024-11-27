@@ -141,8 +141,8 @@ function Subscription(props) {
       {(!subscriptions || subscriptions.length <= 0) && (
         <div>
           <p>
-            No Subscriptions found. Please go to{" "}
-            <Link to="/plans">Plans page </Link> and select a plan
+            No Subscriptions found. Please go to the{" "}
+            <Link to="/plans">'Plans' page</Link> and select a plan
           </p>
           <p className="text-muted">
             If you just purchased a plan, please wait at least 10 to 15 minutes

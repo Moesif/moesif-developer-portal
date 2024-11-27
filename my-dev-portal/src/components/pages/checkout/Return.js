@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { PageLayout } from '../../page-layout';
+import { Link } from "react-router-dom";
 
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
@@ -52,8 +53,7 @@ function Return(props) {
           <a href="mailto:orders@example.com">orders@example.com</a>.
         </p>
         <p>
-          For developers, if you setup API Management, you can go to Keys, and
-          get your API keys.
+          For developers, if you set up API Management, you can get your keys under the <Link to="/keys">'API Keys' tab</Link>.
         </p>
       </section>
       </PageLayout>

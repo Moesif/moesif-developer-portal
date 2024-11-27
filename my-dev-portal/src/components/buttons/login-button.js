@@ -9,7 +9,7 @@ const LoginButtonWithOkta = ({ isLink }) => {
     await oktaAuth.signInWithRedirect({ originalUri: "/dashboard" });
   };
 
-  const className = isLink ? " button__link lowercase" : "button__login";
+  const className = isLink ? " button__link" : "button__login";
 
   return (
     <button className={className} onClick={handleLogin}>
@@ -32,7 +32,7 @@ const LoginButtonWithAuth0 = ({ isLink }) => {
       scope: "openid profile email offline_access",
     });
   };
-  const className = isLink ? " button__link lowercase" : "button__login";
+  const className = isLink ? " button__link" : "button__login";
 
   return (
     <button className={className} onClick={handleLogin}>

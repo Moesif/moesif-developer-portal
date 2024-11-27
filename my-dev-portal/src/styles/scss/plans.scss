@@ -102,7 +102,7 @@
 
 .plans-title-section {
   display: flex;
-  padding: 20px;
+  padding-bottom: 20px;
   max-width: 600px;
   display: flex;
   flex-direction: column;
@@ -110,15 +110,29 @@
   justify-content: center; /* Center vertically */
 
   .plans-title {
-    font-size: x-large;
-    font-weight: 800;
-    padding: 1em;
+    font-size: 2em;
+    font-weight: 600;
+    padding: 0.5em;
   }
 
   .plans-hint {
     text-align: center;
-    font-size: small;
+    font-size: 1.25em;
     font-weight: 300;
     color: $muted-text-color;
+    transition: 0.9s ease-in;
+
+    a {
+      color: white;
+
+    }
+
+    a:hover {
+      color: white;
+      text-decoration: underline;
+      text-decoration-thickness: 1%;
+      text-underline-offset: 4px;
+    }
+
   }
 }

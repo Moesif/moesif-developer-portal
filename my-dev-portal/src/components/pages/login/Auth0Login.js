@@ -4,7 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { PageLayout } from "../../page-layout";
 import { PageLoader } from "../../page-loader";
 
-import wfImage from "../../../images/assets/wf-diagram.png";
+import wfImage from "../../../images/assets/dev-portal-architecture-diagram.svg";
 import { SignupButton } from "../../buttons/signup-button";
 import { LoginButton } from "../../buttons/login-button";
 

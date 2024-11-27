@@ -22,7 +22,7 @@ export const PageFooter = () => {
               className="button button__link"
               href="https://www.moesif.com/docs/developer-portal/"
               target="_blank"
-              style={{ marginLeft: "5px" }}
+              style={{ marginLeft: "40px" }}
             >
               More Docs
             </a>

@@ -7,8 +7,6 @@
 
   margin-top: 2.4rem;
 
-  background-color: #282c34;
-
   color: var(--light-aluminium);
   font-weight: 500;
   text-align: center;
@@ -31,7 +29,7 @@
 
   /* responsive */
 
-  padding: 3.2rem 0.5rem;
+  padding: 3.2rem 0rem;
 }
 
 .page-footer-grid__info {
@@ -54,7 +52,6 @@
 
 .page-footer-info__message {
   /* responsive */
-  margin-left: 0.5rem;
 
   text-align: left;
 }
