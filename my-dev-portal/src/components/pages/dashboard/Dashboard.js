@@ -9,6 +9,7 @@ function customizeUrlDisplayOptions(embedInfo) {
     embed: true,
     hide_header: true,
     show_daterange: true,
+    primary_color: "#000",
   };
 
   return `https://www.moesif.com/public/em/ws/${
@@ -39,6 +40,7 @@ function fetchEmbedInfo(
     })
     .then(function (body) {
       const customizedUrl = customizeUrlDisplayOptions(body);
+      console.log('custom 1 ' + customizedUrl);
       setIFrameSrcLiveEvent(customizedUrl);
     })
     .catch(function (err) {
@@ -62,7 +64,9 @@ function fetchEmbedInfo(
       return response.json();
     })
     .then(function (body) {
-      setIFrameSrcTimeSeries(body ? body.url : "");
+      const customizedUrl = customizeUrlDisplayOptions(body);
+      console.log('customized Url'+  customizedUrl);
+      setIFrameSrcTimeSeries(customizedUrl);
     })
     .catch(function (err) {
       console.error(err);
