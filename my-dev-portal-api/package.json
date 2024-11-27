@@ -28,6 +28,7 @@
     "stripe": "^8.222.0",
 
     "dev-portal-auth0-m2m-plugin": "file:../plugins/auth0-m2m",
+    "dev-portal-jwt-plugin": "file:../plugins/jwt",
     "dev-portal-kong-gateway-plugin": "file:../plugins/kong-gateway",
     "dev-portal-kong-konnect-plugin": "file:../plugins/kong-konnect",
     "dev-portal-tyk-plugin": "file:../plugins/tyk"
