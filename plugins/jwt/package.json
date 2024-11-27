@@ -1,0 +1,13 @@
+{
+    "name": "dev-portal-jwt-plugin",
+    "version": "1.0.0",
+    "description": "",
+    "main": "JwtProvisioningPlugin.js",
+    "author": "",
+    "license": " Apache-2.0",
+    "dependencies": {
+        "jsonwebtoken": "^8.5.1",
+        "jwks-rsa": "^2.0.5"
+    }
+}
+  
