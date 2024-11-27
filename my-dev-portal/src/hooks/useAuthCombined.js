@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0, useEffect, useState } from "@auth0/auth0-react";
 import { useOktaAuth } from "@okta/okta-react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +21,8 @@ function useAuthOktaVersion() {
     isAuthenticated,
     isLoading,
     user,
+    idToken: authState?.idToken,
+    accessToken: authState?.idToken,
     oktaAuthState: authState,
     handleSignUp,
   };
@@ -28,10 +30,12 @@ function useAuthOktaVersion() {
 
 function useAuthAuth0Version() {
   const {
+    idToken,
     user: auth0User,
     isLoading: auth0IsLoading,
     isAuthenticated,
     loginWithRedirect,
+    ...rest
   } = useAuth0();
 
   let isLoading = auth0IsLoading;
@@ -55,9 +59,14 @@ function useAuthAuth0Version() {
     user,
     isLoading,
     handleSignUp,
+    idToken,
+    ...rest,
   };
 }
 
-const finalResolved =  process.env.REACT_APP_AUTH_PROVIDER === "Okta" ? useAuthOktaVersion : useAuthAuth0Version;
+const useAuthCombined =
+  process.env.REACT_APP_AUTH_PROVIDER === "Okta"
+    ? useAuthOktaVersion
+    : useAuthAuth0Version;
 
-export default finalResolved;
+export default useAuthCombined;

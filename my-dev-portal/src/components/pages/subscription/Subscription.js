@@ -11,8 +11,8 @@ import noPriceIcon from "../../../images/icons/empty-state-price.svg";
 import SubDisplay from "./SubDisplay";
 
 function Subscription(props) {
-  const { isAuthenticated, isLoading, user } = useAuthCombined();
-  const { subscriptions, finishedLoading } = useSubscriptions(user);
+  const { isAuthenticated, isLoading, user, idToken } = useAuthCombined();
+  const { subscriptions, finishedLoading } = useSubscriptions({ user, idToken });
   const { plansLoading, plans } = usePlans();
 
   if (isLoading || !finishedLoading || !isAuthenticated || plansLoading) {

@@ -1,5 +1,6 @@
-import OktaDashboard from "./OktaDashboard";
-import Auth0Dashboard from "./Auth0Dashboard";
+// import OktaDashboard from "./OktaDashboard";
+// import Auth0Dashboard from "./Auth0Dashboard";
+import CombinedDashboard from './CombinedDashboard';
 
 function customizeUrlDisplayOptions(embedInfo) {
   // see here
@@ -17,12 +18,19 @@ function customizeUrlDisplayOptions(embedInfo) {
   }?${new URLSearchParams(displayOptions).toString()}#${embedInfo.token}`;
 }
 
-function fetchEmbedInfo(
-  userId,
+function fetchEmbedInfo({
+  stripCustomerId,
+  authUserId,
   setIFrameSrcLiveEvent,
   setIFrameSrcTimeSeries,
   setError
-) {
+}) {
+
+  const userId = stripCustomerId; // authUserId;
+  // depends your data model (see assumptions in DATA_MODEL.md),
+  // and if in your API gateway if you identifyUser using stripeCustomerId
+  // or the userId from authorization provider.
+  // even perhaps you have your own userId for your own system.
   fetch(
     `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/embed-dash-live-event/` +
       encodeURIComponent(userId)
@@ -77,9 +85,10 @@ function fetchEmbedInfo(
 }
 
 export default function Dashboard() {
-  if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
-    return <OktaDashboard fetchEmbedInfo={fetchEmbedInfo} />;
-  } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
-    return <Auth0Dashboard fetchEmbedInfo={fetchEmbedInfo} />;
-  }
+  return <CombinedDashboard fetchEmbedInfo={fetchEmbedInfo} />
+  // if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
+  //   return <OktaDashboard fetchEmbedInfo={fetchEmbedInfo} />;
+  // } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
+  //   return <Auth0Dashboard fetchEmbedInfo={fetchEmbedInfo} />;
+  // }
 }

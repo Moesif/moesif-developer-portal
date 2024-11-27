@@ -4,6 +4,7 @@ import { PageLayout } from "../../page-layout";
 import { Link } from "react-router-dom";
 import noPriceIcon from "../../../images/icons/empty-state-price.svg";
 import NoticeBox from "../../notice-box";
+import useAuthCombined from '../../../hooks/useAuthCombined';
 
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
@@ -14,6 +15,7 @@ import NoticeBox from "../../notice-box";
 function Return(props) {
   const [status, setStatus] = useState(null);
   const [customerEmail, setCustomerEmail] = useState("");
+  const { idToken } = useAuthCombined();
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -27,7 +29,7 @@ function Return(props) {
         {
           method: "POST",
           headers: {
-            // 'Authorization': should be the auth0 access token.
+            'Authorization': `Bearer ${idToken}`,
           },
         }
       )

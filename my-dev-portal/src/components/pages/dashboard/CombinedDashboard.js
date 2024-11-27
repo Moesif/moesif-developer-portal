@@ -7,17 +7,10 @@ import NoticeBox from "../../notice-box";
 import dashIcon from "../../../images/icons/bar-chart.svg";
 import useAuthCombined from "../../../hooks/useAuthCombined";
 
-const Auth0Dashboard = (props) => {
-  const {
-    user: auth0User,
-    isLoading: auth0IsLoading,
-    idToken,
-  } = useAuthCombined();
+const CombinedDashboard = (props) => {
+  const { user, isLoading, idToken } = useAuthCombined();
 
   const { fetchEmbedInfo } = props;
-
-  let isLoading = auth0IsLoading;
-  let user = auth0User;
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -64,6 +57,7 @@ const Auth0Dashboard = (props) => {
         .then((stripeCustomerObject) => {
           fetchEmbedInfo({
             stripeCustomerId: stripeCustomerObject?.id,
+            authUserId: user?.id,
             setIFrameSrcLiveEvent,
             setIFrameSrcTimeSeries,
             setError,
@@ -142,4 +136,4 @@ const Auth0Dashboard = (props) => {
   );
 };
 
-export default Auth0Dashboard;
+export default CombinedDashboard;
