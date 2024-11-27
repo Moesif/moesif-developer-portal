@@ -14,3 +14,4 @@ my-dev-portal-api/.env
 my-dev-portal-api/.env
 my-dev-portal-authorizer/.env
 .DS_Store
+*.zip

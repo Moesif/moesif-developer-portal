@@ -71,27 +71,27 @@ const OktaKeys = () => {
   return (
     <PageLayout>
       <div className="keys-description">
-        <h1>Keys</h1>
-        <h2>
-          On this page, you can create an API key to access the APIs that are
-          protected through key-auth.
-        </h2>
+        <h1>My API Keys</h1>
+        <p className="description">
+          On this page, you can create an API key to access{"\n"}the APIs that
+          are protected through key-auth.
+        </p>
         <div>
           <p>
             To use the API key, add an <code>apiKey</code> header to your API
-            request with the generated key as the value.
-            {"\n\n"}
-            <strong>Note: </strong>
-            Make sure to store the key somewhere safe as you will not be able to
-            retrieve it once you close the modal.
+            request with the{"\n"}generated key as the value.
           </p>
         </div>
-
-        <div className="page-layout__focus">
+        <div className="page-action">
           <button className="button__purp" onClick={createKey}>
             Create Key
           </button>
         </div>
+        <p>
+          <strong>Note: </strong>
+          Make sure to store the key somewhere safe as you will not be{"\n"}
+          able to retrieve it once you close the modal.
+        </p>
       </div>
 
       <Modal
