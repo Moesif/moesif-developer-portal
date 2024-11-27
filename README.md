@@ -2,7 +2,7 @@
 
 The Moesif developer portal is an open-source project to help provide a great starting place to quickly build your own developer experience. You can customize and deploy the developer portal without being worried about lock-in or lack of customization. The developer portal is focused on providing a low-friction solution allowing your customers to quickly and easily subscribe and provide authenticated, metered access to your APIs.
 
-![Architecture Diagram of Moesif Developer Portal](https://raw.githubusercontent.com/Moesif/moesif-developer-portal/main/my-dev-portal/src/images/assets/wf-diagram.png)
+![Architecture Diagram of Moesif Developer Portal](https://raw.githubusercontent.com/Moesif/moesif-developer-portal/main/my-dev-portal/src/images/assets/dev-portal-architecture-diagram.svg)
 
 ## Production Readiness
 

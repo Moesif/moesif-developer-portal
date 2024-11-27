@@ -1,8 +1,8 @@
 import React from "react";
 import { PageLayout } from "../../page-layout";
-import wfImage from "../../../images/assets/wf-diagram.png";
-import { SignupButton } from '../../buttons/signup-button';
+import wfImage from "../../../images/assets/dev-portal-architecture-diagram.svg";
 import { LoginButton } from '../../buttons/login-button';
+import { SignupButton } from '../../buttons/signup-button';
 
 function Setup(props) {
   return (

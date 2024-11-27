@@ -94,7 +94,11 @@ button {
   cursor: pointer;
   user-select: none;
 
-  transition: background 0.3s ease-out, color 0.3s ease-out;
+  transition: filter 0.3s ease-out;
+}
+
+.button__logout:hover {
+  filter: brightness(110%);
 }
 
 .button__purp {
@@ -124,6 +128,11 @@ button {
 
   cursor: pointer;
   user-select: none;
+  transition: background 0.1s ease-out, color 0.3s ease-out;
+}
+
+.button__sign-up:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .button__login:last-child,
@@ -145,11 +154,15 @@ button {
 
 .button__link {
   border: none;
-  text-decoration: underline;
   color: inherit;
   padding-inline: 2px;
   width: fit-content;
   background-color: inherit;
+  transition: background 0.3s ease-out, color 0.3s ease-out;
+}
+
+.button__link:hover {
+  color: white;
 }
 
 .button__price-action {
@@ -170,4 +183,9 @@ button {
 
   cursor: pointer;
   user-select: none;
+  transition: background 0.3s ease-out, color 0.3s ease-out;
+}
+
+.button__price-action:hover {
+  background: rgba(255, 255, 255, 0.10);
 }

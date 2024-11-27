@@ -40,7 +40,7 @@ function MoesifPlans({ skipExample }) {
         <h3 className="plans-title">My API Pricing</h3>
         <div className="plans-hint">
           <div>
-            Developers: See read me file in this repo for setup instructions
+            Developers: See read me file in <a href="https://github.com/Moesif/moesif-developer-portal">this repo</a> for setup instructions
           </div>
           <div>
             Or, jump to <Link to={"/setup"}>setup</Link> page to get started
