@@ -145,13 +145,16 @@ function TierTable(props) {
 }
 
 function PriceTile(props) {
-  const { price, plan, actionButton } = props;
+  const { price, plan, actionButton, subscriptionPeriod } = props;
 
   return (
     <div className="price--tile">
       <div className="plan--content">
+        {subscriptionPeriod && (
+          <div className="plan--subscription-period">{subscriptionPeriod}</div>
+        )}
         <div className="price-name">
-          {price.name || plan?.name || "Place Holder Plan"}
+          {price?.name || plan?.name || "Place Holder Plan"}
         </div>
         {price.tiers ? (
           <TierTable tiers={price.tiers} />
@@ -173,7 +176,7 @@ function PriceTile(props) {
       <div className="plan--bottom">
         <div className="plan-period">
           {formatPeriod(price.period_units, price.period)}{" "}
-          {plan?.name && ` [${plan?.name}]`}
+          {plan?.name && `- ${plan?.name}`}
         </div>
         {actionButton}
       </div>

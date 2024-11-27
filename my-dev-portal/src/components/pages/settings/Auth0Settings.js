@@ -3,6 +3,8 @@ import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { PageLayout } from "../../page-layout";
 import { PageLoader } from "../../page-loader";
+import NoticeBox from "../../notice-box";
+import profileIcon from "../../../images/icons/user.svg";
 
 function Auth0Settings(props) {
   const {
@@ -22,30 +24,60 @@ function Auth0Settings(props) {
   }
 
   return (
-    isAuthenticated && (
-      <PageLayout>
-        <h1>Settings</h1>
-        <div className="user-profile">
-          {user.picture && (
-            <img
-              className="profile-picture"
-              src={user.picture}
-              alt={user.name}
-            />
-          )}
-          <h1>{user.name}</h1>
+    <PageLayout>
+      <h1>My Settings</h1>
+      {isAuthenticated && user ? (
+        <div className="container-box">
+          <div className="user-profile">
+            {user.picture && (
+              <img
+                className="profile-picture"
+                src={user.picture}
+                alt={user.name}
+              />
+            )}
+            <h1>{user.name}</h1>
+          </div>
+          <div>
+            <button
+              disabled={!user.email}
+              className="button__purp"
+              onClick={() => openStripeManagement(user.email)}
+            >
+              Manage Billing
+            </button>
+          </div>
         </div>
-        <div className="page-layout__focus">
-          <button
-            disabled={!user.email}
-            className="button__purp"
-            onClick={() => openStripeManagement(user.email)}
-          >
-            Manage Billing
-          </button>
+      ) : (
+        <div>
+          <NoticeBox
+            iconSrc={profileIcon}
+            title="No Profile found"
+            description="There might have been an error"
+            actions={
+              <>
+                <a
+                  href="https://www.moesif.com/docs/developer-portal/developer-portal-overview/"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <button className="button button__link">See Docs</button>
+                </a>
+                <a
+                  href="https://www.moesif.com"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <button className="button button--outline-secondary">
+                    Go to Moesif
+                  </button>
+                </a>
+              </>
+            }
+          />
         </div>
-      </PageLayout>
-    )
+      )}
+    </PageLayout>
   );
 }
 

@@ -6,7 +6,7 @@ import MoesifPlans from "./MoesifPlans";
 function Plans(props) {
   return (
     <PageLayout>
-      <MoesifPlans />
+      <MoesifPlans skipExample />
     </PageLayout>
   );
 }

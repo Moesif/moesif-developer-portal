@@ -23,6 +23,7 @@ function Checkout(props) {
 
   return (
     <PageLayout>
+      <h1>Subscribe</h1>
       <div className="page-layout__focus">
         <CheckoutForm
           key={urlPriceIdToPurchase}
