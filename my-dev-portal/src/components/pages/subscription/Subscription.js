@@ -12,10 +12,13 @@ import SubDisplay from "./SubDisplay";
 
 function Subscription(props) {
   const { isAuthenticated, isLoading, user, idToken } = useAuthCombined();
-  const { subscriptions, finishedLoading } = useSubscriptions({ user, idToken });
+  const { subscriptions, finishedLoading } = useSubscriptions({
+    user,
+    idToken,
+  });
   const { plansLoading, plans } = usePlans();
 
-  if (isLoading || !finishedLoading || !isAuthenticated || plansLoading) {
+  if (isLoading || !finishedLoading || !isAuthenticated || plansLoading || idToken) {
     return <PageLoader />;
   }
 
@@ -66,9 +69,10 @@ function Subscription(props) {
         </div>
       )}
       <p className="text-muted">
-        Newly created subscriptions may take up to 10 to 15 minutes to sync. For developers, if you want subscriptions to sync faster, you can
-        locally cache the subscription in your system. In this example project,
-        there is no local database or storage.
+        Newly created subscriptions may take up to 10 to 15 minutes to sync. For
+        developers, if you want subscriptions to sync faster, you can locally
+        cache the subscription in your system. In this example project, there is
+        no local database or storage.
       </p>
     </PageLayout>
   );

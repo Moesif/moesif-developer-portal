@@ -1,4 +1,5 @@
-import { useAuth0, useEffect, useState } from "@auth0/auth0-react";
+import { useState, useEffect } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { useOktaAuth } from "@okta/okta-react";
 import { useNavigate } from "react-router-dom";
 
@@ -30,16 +31,20 @@ function useAuthOktaVersion() {
 
 function useAuthAuth0Version() {
   const {
-    idToken,
     user: auth0User,
     isLoading: auth0IsLoading,
     isAuthenticated,
     loginWithRedirect,
+    getAccessTokenSilently,
+    getIdTokenClaims,
     ...rest
   } = useAuth0();
 
   let isLoading = auth0IsLoading;
   let user = auth0User;
+
+  const [idToken, setIdToken] = useState();
+  const [accessToken, setAccessToken] = useState();
 
   const handleSignUp = async ({ returnTo }) => {
     await loginWithRedirect({
@@ -54,12 +59,36 @@ function useAuthAuth0Version() {
     });
   };
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      getAccessTokenSilently()
+        .then((result) => {
+          console.log(result);
+          setAccessToken(result);
+        })
+        .catch((err) => {
+          console.error("failed to load access token", err);
+        });
+
+      getIdTokenClaims()
+        .then((result) => {
+          console.log("idTokenClaims");
+          console.log(result);
+          setIdToken(result.__raw);
+        })
+        .catch((err) => {
+          console.error("failed to load id token", err);
+        });
+    }
+  }, [isAuthenticated, getAccessTokenSilently, getIdTokenClaims]);
+
   return {
     isAuthenticated,
     user,
     isLoading,
     handleSignUp,
     idToken,
+    accessToken,
     ...rest,
   };
 }
