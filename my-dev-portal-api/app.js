@@ -222,9 +222,9 @@ app.post("/okta/register", jsonParser, async (req, res) => {
   }
 });
 
-// This handled after user success checked out from Moesif
-// - handles syncing the ids to Moesif.
-// - and creates customers to API Management platform if need.
+// This handles Provision after user success checked out from Moesif
+// - syncing the Stripe ids to Moesif.
+// - creates customers to API Management platform if need.
 // - Please see DATA-MODEL.md see the assumptions and background on data mapping.
 app.post(
   "/register/stripe/:checkout_session_id",
