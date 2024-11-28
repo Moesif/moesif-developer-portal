@@ -11,15 +11,23 @@ import noPriceIcon from "../../../images/icons/empty-state-price.svg";
 import SubDisplay from "./SubDisplay";
 
 function Subscription(props) {
-  const { isAuthenticated, isLoading, user, idToken, accessToken } = useAuthCombined();
-  const { subscriptions, finishedLoading } = useSubscriptions({
-    user,
-    idToken,
-    accessToken,
-  });
+  const { isAuthenticated, isLoading, user, idToken, accessToken } =
+    useAuthCombined();
+  const { subscriptions, finishedLoading, subscriptionsError } =
+    useSubscriptions({
+      user,
+      idToken,
+      accessToken,
+    });
   const { plansLoading, plans } = usePlans();
 
-  if (isLoading || !finishedLoading || !isAuthenticated || plansLoading || !idToken) {
+  if (
+    isLoading ||
+    !finishedLoading ||
+    !isAuthenticated ||
+    plansLoading ||
+    !idToken
+  ) {
     return <PageLoader />;
   }
 
@@ -30,7 +38,7 @@ function Subscription(props) {
         <>
           <NoticeBox
             iconSrc={noPriceIcon}
-            title="No Subscription found"
+            title={subscriptionsError?.toString() || "No Subscription found"}
             description={
               <span>
                 If you just purchased a plan, please{" "}
@@ -61,7 +69,6 @@ function Subscription(props) {
           />
         </>
       )}
-
       {subscriptions?.length > 0 && (
         <div className="plans--container">
           {subscriptions.map((sub) => (

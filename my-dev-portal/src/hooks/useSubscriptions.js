@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 export default function useSubscriptions({ user, idToken, accessToken }) {
   const [subscriptions, setSubscriptions] = useState(null);
   const [finishedLoading, setFinishedLoading] = useState(false);
+  const [subscriptionsError, setSubscriptionsError] = useState(null);
 
   useEffect(() => {
     if (user?.email && idToken) {
@@ -26,13 +27,19 @@ export default function useSubscriptions({ user, idToken, accessToken }) {
           },
         }
       )
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`Error fetching subscriptions: ${res.status}`);
+          }
+          return res.json();
+        })
         .then((result) => {
           setFinishedLoading(true);
           setSubscriptions(result);
         })
         .catch((err) => {
           setFinishedLoading(true);
+          setSubscriptionsError(err);
           console.error("failed to load subscriptions", err);
         });
     }
@@ -41,5 +48,6 @@ export default function useSubscriptions({ user, idToken, accessToken }) {
   return {
     subscriptions,
     finishedLoading,
+    subscriptionsError,
   };
 }
