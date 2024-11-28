@@ -131,7 +131,8 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
   //   using companyId, userId or email as in this example
   // - It all can vary depends on your profile.
 
-  console.log("query email " + req.query.email);
+  const sanitizedEmail = req.query.email.replace(/\n|\r/g, "");
+  console.log("query email " + sanitizedEmail);
   console.log("verified email from claims " + req.user.email);
   const email = req.user?.email || req.query.email;
 
