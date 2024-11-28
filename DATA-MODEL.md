@@ -39,8 +39,8 @@ For the purpose of this project, the data model is based on below. This is just 
 
 - User
   - Usually uniq by email.
-  - There is concept of user_id in auth provider.
-  - In case of Auth0 and Okta, the jwt generated also include the email as part of the claim.
+  - There is concept of user_id in auth provider, since since email is unique.
+  - For Okta and Auth0, the jwt generated for idToken include the email as part of the claim, which will be used as mapping to the corresponding "Stripe Customer".
 
 ## API gateways
 
