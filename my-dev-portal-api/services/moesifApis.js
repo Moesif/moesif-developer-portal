@@ -1,6 +1,6 @@
 const moesif = require("moesif-nodejs");
 
-const moesifManagementToken = process.env.MOESIF_MANAGEMENT_TOKEN
+const moesifManagementToken = process.env.MOESIF_MANAGEMENT_TOKEN;
 const moesifApiEndPoint = "https://api.moesif.com";
 
 const moesifMiddleware = moesif({
@@ -75,11 +75,10 @@ function extractSubscriptionsFromCompanyObject(companyObject) {
     return companyObject?.subscriptions;
   } else if (companyObject?.metadata?.stripe?.subscription) {
     // for MOESIF_MONETIZATION_VERSION V2, the subscription is under metadata billing provider
-    return [companyObject?.metadata?.stripe?.subscription]
+    return [companyObject?.metadata?.stripe?.subscription];
   }
   return null;
 }
-
 
 function getSubscriptionsForCompanyId({ companyId }) {
   return getCompany({ companyId }).then((companyObject) => {
@@ -95,7 +94,6 @@ function getSubscriptionsForUserId({ userId }) {
   });
 }
 
-
 function getSubscriptionForUserEmail({ email }) {
   const query = {
     query: { term: { "email.raw": email } },
@@ -109,6 +107,7 @@ function getSubscriptionForUserEmail({ email }) {
       "name",
     ],
   };
+
   return fetch(`https://api.moesif.com/v1/search/~/search/users`, {
     method: "POST",
     headers: {
@@ -117,7 +116,16 @@ function getSubscriptionForUserEmail({ email }) {
     },
     body: JSON.stringify(query),
   })
-    .then((res) => res.json())
+    .then(async (res) => {
+      if (!res.ok) {
+        const body = await res.json();
+        console.log('error fetching this');
+        throw new Error(
+          `Error fetching subscriptions: ${res.status} ${JSON.stringify(body)}`
+        );
+      }
+      return res.json();
+    })
     .then((data) => {
       console.log(`got moesif user object for ${email}`);
       console.log(JSON.stringify(data));

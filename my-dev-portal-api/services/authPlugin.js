@@ -1,33 +1,6 @@
 const jwt = require("jsonwebtoken");
 const jwksRsa = require("jwks-rsa");
 
-// const oktaJwtVerifier =
-//   process.env.AUTH_PROVIDER === "Okta"
-//     ? new OktaJwtVerifier({
-//         issuer: process.env.OKTA_DOMAIN,
-//         clientId: process.env.OKTA_APPLICATION_ID,
-//       })
-//     : null;
-
-// const verifyIdTokenIdOkta = async (req, res, next) => {
-//   const token = req.headers.authorization;
-
-//   try {
-//     const { claims } = await oktaJwtVerifier.verifyAccessToken(token);
-
-//     req.user = claims;
-
-//     // the sub is usually the user id in tokens.
-//     req.user.id = claims.id || claims.sub;
-//     next();
-//   } catch (err) {
-//     return res.status(403).json({
-//       error: "invalid_token",
-//       message: err.message,
-//     });
-//   }
-// };
-
 // In order auth0 setup you may have set up symmetric key.
 const verifyTokenJWTSymmetricKey = (req, res, next) => {
   const token = req.headers.authorization;
@@ -104,8 +77,6 @@ const verifyTokenJWTPublicKey = async (req, res, next) => {
       algorithms: ["RS256"],
       issuer,
     });
-    console.log("Token is valid. Claims:", verifiedClaims);
-
     req.user = verifiedClaims;
     // the sub is usually the user id in tokens.
     req.user.id = verifiedClaims.id || verifiedClaims.sub;
@@ -117,6 +88,7 @@ const verifyTokenJWTPublicKey = async (req, res, next) => {
 };
 
 const skipAuthCheck = (req, res, next) => {
+  console.log('skip auth check in dev portal apis do to not configured');
   req.user = {};
   next();
 };

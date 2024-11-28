@@ -118,9 +118,9 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
   //   using companyId, userId or email as in this example
   // - It all can vary depends on your profile.
 
-  console.log("here");
-
-  const email = req.query.email;
+  console.log('query email ' + req.query.email);
+  console.log('verified email from claims ' + req.user.email);
+  const email = req.user?.email || req.query.email;
 
   try {
     const subscriptions = await getSubscriptionForUserEmail({ email });
@@ -130,7 +130,7 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
     res.status(200).json(subscriptions);
   } catch (err) {
     console.error("Error getting subscription from moesif for " + email, err);
-    res.status(404).json({ message: "Error" });
+    res.status(404).json({ message: err.toString() });
   }
 });
 
