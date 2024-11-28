@@ -23,7 +23,7 @@ export default async function fetchEmbedChartUrls({
 }) {
   const response = await fetch(
     `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/embed-charts/` +
-      encodeURIComponent(authUserId) + `?` + encodeURIComponent(email),
+      encodeURIComponent(authUserId) + `?email=` + encodeURIComponent(email),
     {
       method: "GET",
       headers: {

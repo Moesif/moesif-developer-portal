@@ -102,5 +102,5 @@ module.exports = {
   verifyAccessTokenOkta,
   verifyTokenAuth0,
   skipAuthCheck,
-  authMiddleware: getFinalChecker(),
+  authMiddleware: skipAuthCheck,
 };

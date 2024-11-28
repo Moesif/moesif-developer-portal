@@ -330,18 +330,27 @@ app.get(
     // the most important aspect is the user_id used in your identifyUser hook
     try {
       const stripeCustomer = await getStripeCustomer(email);
-      const stripeCustomerId = stripeCustomer.id;
+      const stripeCustomerId =
+      stripeCustomer.data && stripeCustomer.data[0]
+        ? stripeCustomer.data[0].id
+        : undefined;
+
+      if (!stripeCustomerId) {
+        console.error('stripe customer not found when fetching for ' + email);
+      }
 
       const embedInfoArray = await Promise.all([
         getInfoForEmbeddedWorkspaces({
           workspaceId: templateWorkspaceIdTimeSeries,
-          userId: stripeCustomerId,
+          userId: stripeCustomerId || authUserId,
         }),
         getInfoForEmbeddedWorkspaces({
           workspaceId: templateWorkspaceIdLiveEvent,
-          userId: stripeCustomerId,
+          userId: stripeCustomerId || authUserId,
         }),
       ]);
+
+      console.log(embedInfoArray);
 
       res.status(200).json(embedInfoArray);
     } catch (err) {
@@ -350,52 +359,6 @@ app.get(
     }
   }
 );
-
-app.get("/embed-dash-time-series(/:userId)", function (req, res) {
-  try {
-    // FIXME needs validation on userId
-    const userId = req.params.userId;
-
-    getInfoForEmbeddedWorkspaces({
-      workspaceId: templateWorkspaceIdTimeSeries,
-      userId,
-    })
-      .then((info) => {
-        res.json(info);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send({
-          error: "something went wrong",
-        });
-      });
-  } catch (error) {
-    console.error("Error generating embedded template:", error);
-    res.status(500).json({ message: "Failed to retrieve embedded template" });
-  }
-});
-
-app.get("/embed-dash-live-event(/:userId)", function (req, res) {
-  try {
-    const userId = req.params.userId;
-    getInfoForEmbeddedWorkspaces({
-      workspaceId: templateWorkspaceIdLiveEvent,
-      userId,
-    })
-      .then((info) => {
-        res.json(info);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send({
-          error: "something went wrong",
-        });
-      });
-  } catch (error) {
-    console.error("Error generating embedded template:", error);
-    res.status(500).json({ message: "Failed to retrieve embedded template" });
-  }
-});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
