@@ -16,12 +16,14 @@ export default function useSubscriptions({ user, idToken, accessToken }) {
         }/subscriptions?email=${encodeURIComponent(user.email)}`,
         {
           headers: {
-            // for this demo, we decide to use idToken
+            // for this project, we decide to use idToken
             // for two reasons:
             // - idToken already have email in the claim, and typically for user administrative related
-            //   things like subscription, it is perfect reasonable approach to use idToken.
-            // - accessToken is more used with scopes, to respect the scopes in accessToken and
-            //   create the scopes, it will require a lot more configuration.
+            //   things like subscription, where the identify of user needs to be verify,
+            //   it is perfect reasonable approach to use idToken.
+            // - accessToken is more used with scopes, respect the scopes in accessToken and
+            //   create the scopes, it will require a lot more configuration. and it is used more for
+            //   machine to machine communication.
             "Content-Type": `application/json`,
             Authorization: `Bearer ${idToken}`,
           },
