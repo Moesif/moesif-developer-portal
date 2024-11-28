@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-require("dotenv").config({ path: ['.env', '.env.template'] })
+require("dotenv").config({ path: [".env", ".env.template"] });
 const bodyParser = require("body-parser");
 const moesif = require("moesif-nodejs");
 const cors = require("cors");
@@ -118,7 +118,7 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
   //   using companyId, userId or email as in this example
   // - It all can vary depends on your profile.
 
-  console.log('here');
+  console.log("here");
 
   const email = req.query.email;
 
@@ -296,9 +296,10 @@ app.get("/stripe/customer", authMiddleware, function (req, res) {
     });
 });
 
-app.post("/create-key", jsonParser, async function (req, res) {
+app.post("/create-key", authMiddleware, jsonParser, async function (req, res) {
   try {
-    // FIXME needs validation on email
+    // if authentication used, email can come from idToken claims,
+    // otherwise we use email from body.
     const email = req.user?.email || req.body.email;
     const stripeCustomer = await getStripeCustomer(email);
     const customerId =
@@ -307,7 +308,9 @@ app.post("/create-key", jsonParser, async function (req, res) {
         : undefined;
 
     if (!customerId) {
-      throw new Error(`Customer Id unknown. Ensure you're subscribed to a plan. If you just subscribed, try again.`);
+      throw new Error(
+        `Customer Id unknown. Ensure you're subscribed to a plan. If you just subscribed, try again.`
+      );
     }
 
     // Provision new key for access to API
@@ -337,27 +340,23 @@ app.get(
     try {
       const stripeCustomer = await getStripeCustomer(email);
       const stripeCustomerId =
-      stripeCustomer.data && stripeCustomer.data[0]
-        ? stripeCustomer.data[0].id
-        : undefined;
+        stripeCustomer.data && stripeCustomer.data[0]
+          ? stripeCustomer.data[0].id
+          : undefined;
 
       if (!stripeCustomerId) {
-        console.error('stripe customer not found when fetching for ' + email);
+        console.error("stripe customer not found when fetching for " + email);
       }
 
-      const embedInfoArray = await Promise.all([
-        getInfoForEmbeddedWorkspaces({
-          workspaceId: templateWorkspaceIdTimeSeries,
-          userId: stripeCustomerId || authUserId,
-        }),
-        getInfoForEmbeddedWorkspaces({
-          workspaceId: templateWorkspaceIdLiveEvent,
-          userId: stripeCustomerId || authUserId,
-        }),
-      ]);
-
-      console.log(embedInfoArray);
-
+      const embedInfoArray = await Promise.all(
+        [templateWorkspaceIdTimeSeries, templateWorkspaceIdLiveEvent].map(
+          (workspaceId) =>
+            getInfoForEmbeddedWorkspaces({
+              workspaceId: templateWorkspaceIdTimeSeries,
+              userId: stripeCustomerId || authUserId,
+            })
+        )
+      );
       res.status(200).json(embedInfoArray);
     } catch (err) {
       console.error("Error generating embedded templates:", error);

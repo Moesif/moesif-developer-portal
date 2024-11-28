@@ -25,8 +25,8 @@ const CombinedKeys = () => {
   const {
     user,
     isLoading,
-    accessToken,
     userEmail,
+    idToken,
   } = useAuthCombined();
 
   const [APIKey, setAPIKey] = useState("");
@@ -43,7 +43,7 @@ const CombinedKeys = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`, // Include the Auth0 access token in the Authorization header
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify({
         email: resolvedEmail,

@@ -64,7 +64,7 @@ const verifyAccessTokenOkta = async (req, res, next) => {
   }
 };
 
-const verifyTokenAuth0 = (req, res, next) => {
+const verifyTokenAuth0Legacy = (req, res, next) => {
   const token = req.headers.authorization;
 
   if (!token) {
@@ -98,7 +98,7 @@ function getKey(header, callback) {
   });
 }
 
-const verifyTokenAuth02 = (req, res, next) => {
+const verifyTokenAuth0PublicKey = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Extract Bearer token
 
   if (!token) {
@@ -132,7 +132,7 @@ const skipAuthCheck = (req, res, next) => {
 function getFinalChecker() {
   switch (process.env.AUTH_PROVIDER) {
     case "Auth0":
-      return verifyTokenAuth02;
+      return verifyTokenAuth0PublicKey;
     case "Okta":
       return verifyIdTokenIdOkta;
     default:
@@ -143,7 +143,8 @@ function getFinalChecker() {
 module.exports = {
   verifyIdTokenIdOkta,
   verifyAccessTokenOkta,
-  verifyTokenAuth0,
+  verifyTokenAuth0Legacy,
+  verifyTokenAuth0PublicKey,
   skipAuthCheck,
   authMiddleware: getFinalChecker(),
 };
