@@ -20,12 +20,16 @@ const CombinedDashboard = (props) => {
   const [iFrameSrcTimeSeries, setIFrameSrcTimeSeries] = useState();
 
   useEffect(() => {
+    if (!idToken) {
+      return;
+    }
     if (checkout_session_id) {
       fetch(
         `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${checkout_session_id}`,
         {
           method: "POST",
           headers: {
+            "Content-Type": `application/json`,
             Authorization: `Bearer ${idToken}`,
           },
         }
@@ -69,7 +73,7 @@ const CombinedDashboard = (props) => {
     }
   }, [idToken, isLoading, navigate, checkout_session_id, user, fetchEmbedInfo]);
 
-  if (isLoading) {
+  if (isLoading || !idToken) {
     return <PageLoader />;
   }
 

@@ -14,6 +14,8 @@ function useAuthOktaVersion() {
   let isLoading = !authState || authState?.isPending;
   let user = authState?.idToken?.claims;
 
+  const userEmail = user?.email || authState?.accessToken?.claims?.sub;
+
   const handleSignUp = async ({ returnTo }) => {
     navigate(`/signup?return_to=${encodeURIComponent(returnTo)}`);
   };
@@ -25,6 +27,7 @@ function useAuthOktaVersion() {
     idToken: authState?.idToken,
     accessToken: authState?.idToken,
     oktaAuthState: authState,
+    userEmail,
     handleSignUp,
   };
 }

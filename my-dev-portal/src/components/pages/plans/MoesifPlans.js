@@ -10,7 +10,7 @@ import usePlans from '../../../hooks/usePlans';
 
 const SHOW_EXAMPLE_PLANS = false;
 
-function MoesifPlans({ skipExample }) {
+function MoesifPlans({ showExample }) {
   const { isAuthenticated } = useAuth0();
 
   const { plans, plansLoading: loading, plansError: error } = usePlans();
@@ -66,7 +66,7 @@ function MoesifPlans({ skipExample }) {
             )
             .flat()}
       </div>
-      {SHOW_EXAMPLE_PLANS && !skipExample && (
+      {showExample && (
         <>
         <h3>Example Plans</h3>
         <div className="plans--container">

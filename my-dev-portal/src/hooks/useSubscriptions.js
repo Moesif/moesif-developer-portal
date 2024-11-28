@@ -21,6 +21,7 @@ export default function useSubscriptions({ user, idToken, accessToken }) {
             //   things like subscription, it is perfect reasonable approach to use idToken.
             // - accessToken is more used with scopes, to respect the scopes in accessToken and
             //   create the scopes, it will require a lot more configuration.
+            "Content-Type": `application/json`,
             Authorization: `Bearer ${idToken}`,
           },
         }
