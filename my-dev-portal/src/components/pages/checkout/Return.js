@@ -4,7 +4,7 @@ import { PageLayout } from "../../page-layout";
 import { Link } from "react-router-dom";
 import noPriceIcon from "../../../images/icons/empty-state-price.svg";
 import NoticeBox from "../../notice-box";
-import useAuthCombined from '../../../hooks/useAuthCombined';
+import useAuthCombined from "../../../hooks/useAuthCombined";
 
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
@@ -15,6 +15,7 @@ import useAuthCombined from '../../../hooks/useAuthCombined';
 function Return(props) {
   const [status, setStatus] = useState(null);
   const [customerEmail, setCustomerEmail] = useState("");
+  const [provisionError, setProvisionError] = useState(null);
   const { idToken } = useAuthCombined();
 
   const queryString = window.location.search;
@@ -29,14 +30,27 @@ function Return(props) {
         {
           method: "POST",
           headers: {
-            'Authorization': `Bearer ${idToken}`,
+            Authorization: `Bearer ${idToken}`,
           },
         }
       )
-        .then((res) => res.json())
+        .then(async (res) => {
+          if (!res.ok) {
+            const errorBody = await res.json();
+            throw new Error(
+              `Failed provision: ${res.status}, body: ${JSON.stringify(
+                errorBody
+              )}`
+            );
+          }
+          return res.json();
+        })
         .then((data) => {
           setStatus(data.status);
           setCustomerEmail(data.customer_email);
+        })
+        .catch((err) => {
+          setProvisionError(err);
         });
     } else {
       console.error("no session id found");
@@ -81,8 +95,13 @@ function Return(props) {
       <h1>Subscribe Status</h1>
       <NoticeBox
         iconSrc={noPriceIcon}
-        title="Checkout Failed"
-        description="Seems you didn't checkout successfully?"
+        title={provisionError ? "Provision Service Failed" : "Checkout Failed"}
+        description={
+          provisionError
+            ? provisionError.toString() +
+              " Please check route /register/stripe/, and see if you set up provision plugin correctly for your API gateway"
+            : "Seems you didn't checkout successfully?"
+        }
         actions={
           <>
             <a

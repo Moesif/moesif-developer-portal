@@ -237,7 +237,7 @@ app.post(
                 email: email,
               });
             }
-            // V1 as fallback
+            // V2 as fallback
             else {
               console.log("updating company and user with V2");
 
@@ -271,7 +271,7 @@ app.post(
       .catch((err) => {
         console.error("Error registering user", err);
         res.status(500).json({
-          message: "Failed to register user. Contact support for assistance",
+          message: "Failed to provision user. " + err.toString(),
         });
       });
   }
