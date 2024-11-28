@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { LineLoader } from "../../line-loader";
 import NoPriceFound from "./NoPriceFound";
@@ -6,18 +6,26 @@ import PriceTile from "./PriceTile";
 import { useAuth0 } from "@auth0/auth0-react";
 import { SignupButton } from "../../buttons/signup-button";
 import { examplePlansFromStripe } from "./examplePlansFromStripe";
-import usePlans from '../../../hooks/usePlans';
+import usePlans from "../../../hooks/usePlans";
 
 const SHOW_EXAMPLE_PLANS = false;
 
-function MoesifPlans({ skipExample }) {
+function MoesifPlans(props) {
   const { isAuthenticated } = useAuth0();
 
+  const [showExample, setShowExample] = useState();
   const { plans, plansLoading: loading, plansError: error } = usePlans();
 
   const getActionButton = (price, plan, options) => {
     if (options?.disable) {
-      return <button disabled className="button__price-action">Sign Up <span style={{ fontSize: "x-small", fontWeight: '300'}}>example</span></button>
+      return (
+        <button disabled className="button__price-action">
+          Sign Up{" "}
+          <span style={{ fontSize: "x-small", fontWeight: "300" }}>
+            example
+          </span>
+        </button>
+      );
     }
     if (isAuthenticated) {
       return (
@@ -40,14 +48,17 @@ function MoesifPlans({ skipExample }) {
         <h3 className="plans-title">API Products and Plans</h3>
         <div className="plans-hint">
           <div>
-            Developers: See README.md file in <a href="https://github.com/Moesif/moesif-developer-portal">this repo</a> for setup instructions
+            Developers: See README.md file in{" "}
+            <a href="https://github.com/Moesif/moesif-developer-portal">
+              this repo
+            </a>{" "}
+            for setup instructions
           </div>
           <div>
             Or, jump to <Link to={"/setup"}>setup</Link> page to get started
           </div>
         </div>
       </div>
-      {/* <NoPriceFound /> */}
       {error && <p>Error loading plans</p>}
       {!loading && !error && (!plans || plans.length === 0) && <NoPriceFound />}
       <div className="plans--container">
@@ -66,9 +77,17 @@ function MoesifPlans({ skipExample }) {
             )
             .flat()}
       </div>
-      {SHOW_EXAMPLE_PLANS && !skipExample && (
-        <>
-        <h3>Example Plans</h3>
+      <div>
+        <button
+          className="button"
+          onClick={() => {
+            setShowExample(!showExample);
+          }}
+        >
+          {showExample ? "Hide " : "Show "}example plans
+        </button>
+      </div>
+      {showExample && (
         <div className="plans--container">
           {examplePlansFromStripe.hits
             .map((plan) =>
@@ -83,7 +102,6 @@ function MoesifPlans({ skipExample }) {
             )
             .flat()}
         </div>
-        </>
       )}
     </div>
   );

@@ -11,7 +11,7 @@ const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
 
-function CheckoutForm({ priceId, user }) {
+function CheckoutForm({ priceId, user, idToken }) {
   const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
@@ -24,6 +24,9 @@ function CheckoutForm({ priceId, user }) {
       )}`,
       {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
       }
     )
       .then((res) => res.json())

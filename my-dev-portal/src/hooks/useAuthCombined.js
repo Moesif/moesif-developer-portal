@@ -1,8 +1,10 @@
+import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useOktaAuth } from "@okta/okta-react";
 import { useNavigate } from "react-router-dom";
 
 // purpose to consolidate the different hooks from auth provider.
+// and have a consistent interface to get idToken, accessToken, and userObject
 
 function useAuthOktaVersion() {
   const navigate = useNavigate();
@@ -13,6 +15,8 @@ function useAuthOktaVersion() {
   let isLoading = !authState || authState?.isPending;
   let user = authState?.idToken?.claims;
 
+  const userEmail = user?.email || authState?.accessToken?.claims?.sub;
+
   const handleSignUp = async ({ returnTo }) => {
     navigate(`/signup?return_to=${encodeURIComponent(returnTo)}`);
   };
@@ -21,7 +25,10 @@ function useAuthOktaVersion() {
     isAuthenticated,
     isLoading,
     user,
+    idToken: authState?.idToken,
+    accessToken: authState?.idToken,
     oktaAuthState: authState,
+    userEmail,
     handleSignUp,
   };
 }
@@ -32,10 +39,16 @@ function useAuthAuth0Version() {
     isLoading: auth0IsLoading,
     isAuthenticated,
     loginWithRedirect,
+    getAccessTokenSilently,
+    getIdTokenClaims,
+    ...rest
   } = useAuth0();
 
   let isLoading = auth0IsLoading;
   let user = auth0User;
+
+  const [idToken, setIdToken] = useState();
+  const [accessToken, setAccessToken] = useState();
 
   const handleSignUp = async ({ returnTo }) => {
     await loginWithRedirect({
@@ -50,14 +63,40 @@ function useAuthAuth0Version() {
     });
   };
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      getAccessTokenSilently()
+        .then((result) => {
+          setAccessToken(result);
+        })
+        .catch((err) => {
+          console.error("failed to load access token", err);
+        });
+
+      getIdTokenClaims()
+        .then((result) => {
+          setIdToken(result.__raw);
+        })
+        .catch((err) => {
+          console.error("failed to load id token", err);
+        });
+    }
+  }, [isAuthenticated, getAccessTokenSilently, getIdTokenClaims]);
+
   return {
     isAuthenticated,
     user,
     isLoading,
     handleSignUp,
+    idToken,
+    accessToken,
+    ...rest,
   };
 }
 
-const finalResolved =  process.env.REACT_APP_AUTH_PROVIDER === "Okta" ? useAuthOktaVersion : useAuthAuth0Version;
+const useAuthCombined =
+  process.env.REACT_APP_AUTH_PROVIDER === "Okta"
+    ? useAuthOktaVersion
+    : useAuthAuth0Version;
 
-export default finalResolved;
+export default useAuthCombined;

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import Modal from "react-modal";
 import SVG from "react-inlinesvg";
 import copy from "copy-to-clipboard";
@@ -9,6 +8,7 @@ import { PageLoader } from "../../page-loader";
 import copyIcon from "../../../images/icons/copy.svg";
 import successIcon from "../../../images/icons/success.svg";
 import apiKeyIcon from "../../../images/icons/api-key.svg";
+import useAuthCombined from '../../../hooks/useAuthCombined';
 
 const customStyles = {
   content: {
@@ -21,43 +21,32 @@ const customStyles = {
   },
 };
 
-const Auth0Keys = () => {
+const CombinedKeys = () => {
   const {
-    user: auth0User,
-    isLoading: auth0IsLoading,
-    getAccessTokenSilently,
-  } = useAuth0();
+    user,
+    isLoading,
+    userEmail,
+    idToken,
+  } = useAuthCombined();
+
   const [APIKey, setAPIKey] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
-  let isLoading = auth0IsLoading;
-  let userEmail = auth0User?.email;
+
+  let resolvedEmail = user?.email || userEmail;
 
   Modal.setAppElement("#root");
 
   async function createKey() {
-    let token;
-    try {
-      token = await getAccessTokenSilently({
-        audience: process.env.REACT_APP_AUTH0_AUDIENCE,
-        ignoreCache: true,
-      });
-
-      console.log(token);
-    } catch (e) {
-      console.error(e);
-      // handle error, return, or throw e
-    }
-
     fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/create-key`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Include the Auth0 access token in the Authorization header
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify({
-        email: userEmail,
+        email: resolvedEmail,
       }),
     })
       .then((res) => {
@@ -98,7 +87,7 @@ const Auth0Keys = () => {
       <div className="keys-description">
         <h1>My API Keys</h1>
         <p className="description">
-          On this page, you can generate an API key to access{"\n"}the APIs 
+          On this page, you can generate an API key to access{"\n"}the APIs
           you're subscribed to.
         </p>
         <div>
@@ -186,4 +175,4 @@ const Auth0Keys = () => {
   );
 };
 
-export default Auth0Keys;
+export default CombinedKeys;
