@@ -1,0 +1,14 @@
+version: '2'
+services:
+  nginx:
+    image: openresty-docker-demo
+    build: .
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./nginx.conf.d/:/usr/local/openresty/nginx/conf/conf.d/
+      - ./lua:/usr/local/openresty/nginx/lua
+    environment:
+      - MOESIF_APPLICATION_ID=eyJhcHAiOiIxOTg6MTc2OSIsInZlciI6IjIuMSIsIm9yZyI6Ijg4OjIxMCIsImlhdCI6MTczMDQxOTIwMH0.8gCV9RNZSwAYsqe0OLaulkEmXY2LvqPzcloP1Cr-Z94
+      - JWT_SECRET=MwCMzU1cBRnKN9ohVOBxarUiT1DgRAQ57JJKxw3Wc789tv62/MpG1tXfwnF7wBnpqNFZTFAz2p+rxt4xiqE2hg==
