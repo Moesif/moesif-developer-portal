@@ -2,7 +2,7 @@
     "name": "dev-portal-jwt-plugin",
     "version": "1.0.0",
     "description": "",
-    "main": "JwtProvisioningPlugin.js",
+    "main": "jwtProvisioningPlugin.js",
     "author": "",
     "license": " Apache-2.0",
     "dependencies": {

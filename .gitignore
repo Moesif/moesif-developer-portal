@@ -9,9 +9,6 @@ npm-debug.log
 npm-debug*
 .vscode/
 .devcontainer
-my-dev-portal/.env
-my-dev-portal-api/.env
-my-dev-portal-api/.env
-my-dev-portal-authorizer/.env
 .DS_Store
 *.zip
+*.env
