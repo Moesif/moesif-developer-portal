@@ -88,7 +88,9 @@ const verifyTokenJWTPublicKey = async (req, res, next) => {
 };
 
 const skipAuthCheck = (req, res, next) => {
-  console.log('skip auth check in dev portal apis do to not configured');
+  console.log(
+    "skip authentication check in dev portal apis, enable by configure AUTH_PROVIDER in .env."
+  );
   req.user = {};
   next();
 };
