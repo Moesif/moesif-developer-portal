@@ -1,78 +1,49 @@
-const { OktaJwtVerifier } = require("@okta/jwt-verifier");
 const jwt = require("jsonwebtoken");
-const jwksClient = require("jwks-rsa");
+const jwksRsa = require("jwks-rsa");
 
-const oktaJwtVerifier =
-  process.env.AUTH_PROVIDER === "Okta"
-    ? new OktaJwtVerifier({
-        issuer: process.env.OKTA_DOMAIN,
-        clientId: process.env.OKTA_APPLICATION_ID,
-      })
-    : null;
+// const oktaJwtVerifier =
+//   process.env.AUTH_PROVIDER === "Okta"
+//     ? new OktaJwtVerifier({
+//         issuer: process.env.OKTA_DOMAIN,
+//         clientId: process.env.OKTA_APPLICATION_ID,
+//       })
+//     : null;
 
-const verifyIdTokenIdOkta = async (req, res, next) => {
+// const verifyIdTokenIdOkta = async (req, res, next) => {
+//   const token = req.headers.authorization;
+
+//   try {
+//     const { claims } = await oktaJwtVerifier.verifyAccessToken(token);
+
+//     req.user = claims;
+
+//     // the sub is usually the user id in tokens.
+//     req.user.id = claims.id || claims.sub;
+//     next();
+//   } catch (err) {
+//     return res.status(403).json({
+//       error: "invalid_token",
+//       message: err.message,
+//     });
+//   }
+// };
+
+// In order auth0 setup you may have set up symmetric key.
+const verifyTokenJWTSymmetricKey = (req, res, next) => {
   const token = req.headers.authorization;
 
-  try {
-    const { claims } = await oktaJwtVerifier.verifyAccessToken(token);
-
-    req.user = claims;
-
-    // the sub is usually the user id in tokens.
-    req.user.id = claims.id || claims.sub;
-    next();
-  } catch (err) {
-    return res.status(403).json({
-      error: "invalid_token",
-      message: err.message,
-    });
-  }
-};
-
-const verifyAccessTokenOkta = async (req, res, next) => {
-  const accessToken = req.headers.authorization;
-
-  try {
-    const response = await fetch(
-      `${process.env.OKTA_DOMAIN}/oauth2/default/introspect`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Basic ${process.env.OKTA_API_TOKEN}`,
-        },
-        body: `token=${accessToken}`,
-      }
+  if (!process.env.PORTAL_JWT_CLIENT_SECRET) {
+    throw new Error(
+      "using JWT symmetric key verification, the PORTAL_JWT_CLIENT_SECRET must be provided"
     );
-
-    const tokenInfo = await response.json();
-
-    if (tokenInfo.active) {
-      req.user = tokenInfo;
-      next();
-    } else {
-      return res.status(403).json({
-        error: "invalid_token",
-        message: "The access token is invalid or expired",
-      });
-    }
-  } catch (err) {
-    return res.status(500).json({
-      error: "internal_server_error",
-      message: err.message,
-    });
   }
-};
-
-const verifyTokenAuth0Legacy = (req, res, next) => {
-  const token = req.headers.authorization;
 
   if (!token) {
     return res.status(401).json({ error: "No token provided" });
   }
 
   try {
-    const decoded = jwt.verify(idToken, process.env.AUTH0_CLIENT_SECRET);
+    const decoded = jwt.verify(idToken, process.env.PORTAL_JWT_CLIENT_SECRET);
     req.user = decoded;
     // the sub is usually the user id in tokens.
     req.user.id = decoded.id || decoded.sub;
@@ -82,46 +53,67 @@ const verifyTokenAuth0Legacy = (req, res, next) => {
   }
 };
 
-const client = jwksClient({
-  jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`, // URL to fetch signing keys
-});
-
-function getKey(header, callback) {
-  client.getSigningKey(header.kid, (err, key) => {
-    if (err) {
-      console.error('error get public key to verify jwt', err);
-      return callback(err);
-    }
-    console.error('no error get key', key);
-    const signingKey = key.getPublicKey();
-    callback(null, signingKey);
-  });
-}
-
-const verifyTokenAuth0PublicKey = (req, res, next) => {
+const verifyTokenJWTPublicKey = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Extract Bearer token
 
   if (!token) {
     return res.status(401).json({ message: "Authorization token is required" });
   }
 
-  jwt.verify(
-    token,
-    getKey,
-    {
-      audience: process.env.AUTH0_CLIENT_ID,
-      issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-      algorithms: ["RS256"]
-    },
-    (err, decoded) => {
-      if (err) {
-        console.error('error from jwt verify', err);
-        return res.status(401).json({ message: "Invalid token", error: err });
-      }
-      req.user = decoded; // Attach decoded payload to the request object
-      next();
-    }
-  );
+  const provider = process.env.AUTH_PROVIDER;
+  let issuer;
+  let jwksClient;
+
+  if (provider === "Auth0") {
+    issuer = `https://${process.env.AUTH0_DOMAIN}/`;
+    // jwksClient.jwksUri = `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`;
+
+    jwksClient = jwksRsa({
+      cache: true, // Enable caching
+      rateLimit: true, // Prevent excessive requests
+      jwksRequestsPerMinute: 10, // Limit requests per minute
+      jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+    });
+  } else if (provider === "Okta") {
+    issuer = `${process.env.OKTA_ORG_URL}/oauth2/default`;
+    // jwksClient.jwksUri = `${issuer}/v1/keys`;
+    jwksClient = jwksRsa({
+      cache: true, // Enable caching
+      rateLimit: true, // Prevent excessive requests
+      jwksRequestsPerMinute: 10, // Limit requests per minute
+      jwksUri: `${issuer}/v1/keys`,
+    });
+  } else {
+    throw new Error("Unsupported authentication provider");
+  }
+
+  const decodedHeader = jwt.decode(token, { complete: true });
+  const kid = decodedHeader.header.kid;
+  console.log("issuer " + issuer);
+  console.log("jwt public key url " + jwksClient.jwksUri);
+
+  try {
+    // Get the signing key from the JWKS
+    const key = await jwksClient.getSigningKey(kid);
+    const publicKey = key.getPublicKey(); // This is the public key used for verification
+
+    console.log("getting public key");
+
+    // Verify the toke
+    const verifiedClaims = jwt.verify(token, publicKey, {
+      algorithms: ["RS256"],
+      issuer,
+    });
+    console.log("Token is valid. Claims:", verifiedClaims);
+
+    req.user = verifiedClaims;
+    // the sub is usually the user id in tokens.
+    req.user.id = verifiedClaims.id || verifiedClaims.sub;
+    next();
+  } catch (err) {
+    console.error("error from jwt verify", err);
+    return res.status(401).json({ message: "Invalid token", error: err });
+  }
 };
 
 const skipAuthCheck = (req, res, next) => {
@@ -131,20 +123,33 @@ const skipAuthCheck = (req, res, next) => {
 
 function getFinalChecker() {
   switch (process.env.AUTH_PROVIDER) {
-    case "Auth0":
-      return verifyTokenAuth0PublicKey;
     case "Okta":
-      return verifyIdTokenIdOkta;
+      if (!process.env.OKTA_ORG_URL) {
+        throw new Error(
+          "using Okta provider, the OKTA_ORG_URL must be provided in .env"
+        );
+      }
+      jwksRsa({
+        cache: true, // Enable caching
+        rateLimit: true, // Prevent excessive requests
+        jwksRequestsPerMinute: 10, // Limit requests per minute
+      });
+      return verifyTokenJWTPublicKey;
+    case "Auth0":
+      if (!process.env.AUTH0_DOMAIN) {
+        throw new Error(
+          "using Auth0 provider, the AUTH0_DOMAIN must be provided in .env"
+        );
+      }
+      return verifyTokenJWTPublicKey;
     default:
       return skipAuthCheck;
   }
 }
 
 module.exports = {
-  verifyIdTokenIdOkta,
-  verifyAccessTokenOkta,
-  verifyTokenAuth0Legacy,
-  verifyTokenAuth0PublicKey,
+  verifyTokenJWTSymmetricKey,
+  verifyTokenJWTPublicKey,
   skipAuthCheck,
   authMiddleware: getFinalChecker(),
 };

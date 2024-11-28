@@ -12,7 +12,6 @@
   "author": "",
   "license": " Apache-2.0",
   "dependencies": {
-    "@okta/jwt-verifier": "^4.0.1",
     "@okta/okta-auth-js": "^7.8.1",
     "@okta/okta-sdk-nodejs": "^7.1.1",
     "@stripe/stripe-js": "^1.29.0",
