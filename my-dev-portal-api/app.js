@@ -121,15 +121,14 @@ app.get("/plans", jsonParser, async (req, res) => {
 });
 
 app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
-  // !IMPORTANT, depends on your authentication scheme
-  // you may want to authenticate your user first
-
-  // - you can get subscription from moesif or stripe
-  // since they are synced. But in this example, we get from Moesif, because
+  // But in this project, we get from Moesif, because
   // Moesif syncs subscriptions from several billing providers.
   // - from moesif, you can get a list of associated subscriptions
-  //   using companyId, userId or email as in this example
-  // - It all can vary depends on your profile.
+  //   using companyId, userId or email.
+  // - Your use case needs and data model/mapping inform the best approach. (See DATA_MODEL.md)
+  //   for assumptions in this project.
+  // - In this project, since Stripe customer id is mapped to user_id in Moesif,
+  //   We use that as the user_id to fetch subscriptions.
 
   const sanitizedEmail = req.query.email.replace(/\n|\r/g, "");
   console.log("query email " + sanitizedEmail);
@@ -223,9 +222,9 @@ app.post("/okta/register", jsonParser, async (req, res) => {
   }
 });
 
-// This handled after user success checked out from Moesif
-// - handles syncing the ids to Moesif.
-// - and creates customers to API Management platform if need.
+// This handles Provision after user success checked out from Moesif
+// - syncing the Stripe ids to Moesif.
+// - creates customers to API Management platform if need.
 // - Please see DATA-MODEL.md see the assumptions and background on data mapping.
 app.post(
   "/register/stripe/:checkout_session_id",
