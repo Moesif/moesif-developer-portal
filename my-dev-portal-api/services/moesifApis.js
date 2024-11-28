@@ -1,6 +1,6 @@
 const moesif = require("moesif-nodejs");
 
-const moesifManagementToken = process.env.MOESIF_MANAGEMENT_TOKEN;
+const moesifManagementToken = process.env.MOESIF_MANAGEMENT_TOKEN
 const moesifApiEndPoint = "https://api.moesif.com";
 
 const moesifMiddleware = moesif({
@@ -39,7 +39,7 @@ function getPlansFromMoesif() {
     `https://api.moesif.com/v1/~/billing/catalog/plans?includes=prices&provider=${process.env.APP_PAYMENT_PROVIDER}`,
     {
       headers: {
-        Authorization: `Bearer ${process.env.MOESIF_MANAGEMENT_TOKEN}`,
+        Authorization: `Bearer ${moesifManagementToken}`,
       },
     }
   ).then((res) => res.json());
@@ -52,7 +52,7 @@ function getCompany({ companyId }) {
     )}`,
     {
       headers: {
-        Authorization: `Bearer ${process.env.MOESIF_MANAGEMENT_TOKEN}`,
+        Authorization: `Bearer ${moesifManagementToken}`,
       },
     }
   ).then((res) => res.json());
@@ -63,7 +63,7 @@ function getUser({ userId }) {
     `https://api.moesif.com/v1/search/~/users/${encodeURIComponent(userId)}`,
     {
       headers: {
-        Authorization: `Bearer ${process.env.MOESIF_MANAGEMENT_TOKEN}`,
+        Authorization: `Bearer ${moesifManagementToken}`,
       },
     }
   ).then((res) => res.json());
@@ -112,7 +112,7 @@ function getSubscriptionForUserEmail({ email }) {
   return fetch(`https://api.moesif.com/v1/search/~/search/users`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${process.env.MOESIF_MANAGEMENT_TOKEN}`,
+      Authorization: `Bearer ${moesifManagementToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(query),

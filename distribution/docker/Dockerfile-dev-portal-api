@@ -1,0 +1,18 @@
+FROM node:18
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+RUN mkdir -p /usr/src/plugins
+WORKDIR /usr/src/app
+
+RUN apt-get update && apt-get upgrade -y && \
+	apt-get install -y \
+	zip
+
+# Bundle app source
+COPY ./my-dev-portal-api /usr/src/app
+COPY ./plugins /usr/src/plugins
+RUN npm install
+
+EXPOSE 3030
+CMD [ "node", "app.js" ]
