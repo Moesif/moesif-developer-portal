@@ -16,6 +16,7 @@ const {
   getInfoForEmbeddedWorkspaces,
   getPlansFromMoesif,
   getSubscriptionForUserEmail,
+  getSubscriptionsForUserId,
 } = require("./services/moesifApis");
 
 const { authMiddleware } = require("./services/authPlugin");
@@ -69,6 +70,23 @@ app.post(
     // https://docs.stripe.com/checkout/quickstart?client=react
     // for embedded checkout.
 
+    // make sure only one stripe customer per email
+    let customer;
+    const customers = await stripe.customers.list({
+      email: email,
+      limit: 1, // Limit to 1 result for efficiency
+    });
+
+    if (customers.data.length > 0) {
+      // If a customer exists, use the first one
+      customer = customers.data[0];
+    } else {
+      // If no customer exists, create a new one
+      customer = await stripe.customers.create({
+        email: email,
+      });
+    }
+
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: "embedded",
@@ -78,7 +96,7 @@ app.post(
             price: priceId,
           },
         ],
-        customer_email: email || undefined,
+        customer: customer.id,
         mode: "subscription",
         return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`,
       });

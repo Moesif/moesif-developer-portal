@@ -99,7 +99,7 @@ function Return(props) {
         description={
           provisionError
             ? provisionError.toString() +
-              " Please check route /register/stripe/, and see if you set up provision plugin correctly for your API gateway"
+              " Please check the route /register/stripe/, and see if you set up provision plugin correctly for your API gateway."
             : "Seems you didn't checkout successfully?"
         }
         actions={
