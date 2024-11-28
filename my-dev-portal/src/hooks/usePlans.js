@@ -12,7 +12,6 @@ export default function usePlans() {
     fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/plans`)
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
         const loadedPlans = result?.hits || [];
         const activePlans = loadedPlans.filter(
           (item) => item.status === "active"

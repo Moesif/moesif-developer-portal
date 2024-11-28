@@ -11,14 +11,15 @@ import noPriceIcon from "../../../images/icons/empty-state-price.svg";
 import SubDisplay from "./SubDisplay";
 
 function Subscription(props) {
-  const { isAuthenticated, isLoading, user, idToken } = useAuthCombined();
+  const { isAuthenticated, isLoading, user, idToken, accessToken } = useAuthCombined();
   const { subscriptions, finishedLoading } = useSubscriptions({
     user,
     idToken,
+    accessToken,
   });
   const { plansLoading, plans } = usePlans();
 
-  if (isLoading || !finishedLoading || !isAuthenticated || plansLoading || idToken) {
+  if (isLoading || !finishedLoading || !isAuthenticated || plansLoading || !idToken) {
     return <PageLoader />;
   }
 

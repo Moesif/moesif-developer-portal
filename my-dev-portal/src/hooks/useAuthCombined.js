@@ -63,7 +63,6 @@ function useAuthAuth0Version() {
     if (isAuthenticated) {
       getAccessTokenSilently()
         .then((result) => {
-          console.log(result);
           setAccessToken(result);
         })
         .catch((err) => {
@@ -72,8 +71,6 @@ function useAuthAuth0Version() {
 
       getIdTokenClaims()
         .then((result) => {
-          console.log("idTokenClaims");
-          console.log(result);
           setIdToken(result.__raw);
         })
         .catch((err) => {
