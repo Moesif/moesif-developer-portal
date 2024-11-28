@@ -2,7 +2,7 @@
     "name": "dev-portal-auth0-m2m-plugin",
     "version": "1.0.0",
     "description": "",
-    "main": "Auth0M2MProvisioningPlugin.js",
+    "main": "auth0M2MProvisioningPlugin.js",
     "author": "",
     "license": " Apache-2.0",
     "dependencies": {

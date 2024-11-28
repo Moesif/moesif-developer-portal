@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-require("dotenv").config();
+require("dotenv").config({ path: ['.env', '.env.template'] })
 const bodyParser = require("body-parser");
 const moesif = require("moesif-nodejs");
 const cors = require("cors");
@@ -286,6 +286,10 @@ app.post("/create-key", jsonParser, async function (req, res) {
     const email = req.body.email;
     const stripeCustomer = await getStripeCustomer(email);
     const customerId = (stripeCustomer.data && stripeCustomer.data[0]) ? stripeCustomer.data[0].id : undefined;
+
+    if (!customerId) {
+      throw new Error(`Customer Id unknown. Ensure you're subscribed to a plan. If you just subscribed, try again.`);
+    }
 
     // Provision new key for access to API
     const apiKey = await provisioningService.createApiKey(customerId, email);

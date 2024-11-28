@@ -1,0 +1,14 @@
+FROM node:18
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Bundle app source
+COPY ./my-dev-portal /usr/src/app
+RUN npm install
+RUN npm run build
+RUN npm install -g serve
+
+EXPOSE 4000
+CMD [ "serve", "-p", "4000", "-s", "build"]
