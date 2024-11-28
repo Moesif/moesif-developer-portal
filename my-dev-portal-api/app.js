@@ -118,6 +118,8 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
   //   using companyId, userId or email as in this example
   // - It all can vary depends on your profile.
 
+  console.log('here');
+
   const email = req.query.email;
 
   try {
@@ -361,5 +363,5 @@ app.get(
 );
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`My Dev Portal Backend is listening at http://localhost:${port}`);
 });

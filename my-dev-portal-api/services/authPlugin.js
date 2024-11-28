@@ -1,5 +1,6 @@
 const { OktaJwtVerifier } = require("@okta/jwt-verifier");
 const jwt = require("jsonwebtoken");
+const jwksClient = require("jwks-rsa");
 
 const oktaJwtVerifier =
   process.env.AUTH_PROVIDER === "Okta"
@@ -81,6 +82,48 @@ const verifyTokenAuth0 = (req, res, next) => {
   }
 };
 
+const client = jwksClient({
+  jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`, // URL to fetch signing keys
+});
+
+function getKey(header, callback) {
+  client.getSigningKey(header.kid, (err, key) => {
+    if (err) {
+      console.error('error get public key to verify jwt', err);
+      return callback(err);
+    }
+    console.error('no error get key', key);
+    const signingKey = key.getPublicKey();
+    callback(null, signingKey);
+  });
+}
+
+const verifyTokenAuth02 = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1]; // Extract Bearer token
+
+  if (!token) {
+    return res.status(401).json({ message: "Authorization token is required" });
+  }
+
+  jwt.verify(
+    token,
+    getKey,
+    {
+      audience: process.env.AUTH0_CLIENT_ID,
+      issuer: `https://${process.env.AUTH0_DOMAIN}/`,
+      algorithms: ["RS256"]
+    },
+    (err, decoded) => {
+      if (err) {
+        console.error('error from jwt verify', err);
+        return res.status(401).json({ message: "Invalid token", error: err });
+      }
+      req.user = decoded; // Attach decoded payload to the request object
+      next();
+    }
+  );
+};
+
 const skipAuthCheck = (req, res, next) => {
   req.user = {};
   next();
@@ -89,7 +132,7 @@ const skipAuthCheck = (req, res, next) => {
 function getFinalChecker() {
   switch (process.env.AUTH_PROVIDER) {
     case "Auth0":
-      return verifyTokenAuth0;
+      return verifyTokenAuth02;
     case "Okta":
       return verifyIdTokenIdOkta;
     default:
@@ -102,5 +145,5 @@ module.exports = {
   verifyAccessTokenOkta,
   verifyTokenAuth0,
   skipAuthCheck,
-  authMiddleware: skipAuthCheck,
+  authMiddleware: getFinalChecker(),
 };
