@@ -23,7 +23,7 @@ function Return(props) {
   const priceId = urlParams.get("price_id");
 
   useEffect(() => {
-    if (sessionId) {
+    if (sessionId && idToken) {
       fetch(
         `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${sessionId}`,
         {
@@ -41,7 +41,7 @@ function Return(props) {
     } else {
       console.error("no session id found");
     }
-  }, [sessionId]);
+  }, [sessionId, idToken]);
 
   if (status === "open") {
     return <Navigate to={`/checkout?price_id_to_purchase=${priceId}`} />;

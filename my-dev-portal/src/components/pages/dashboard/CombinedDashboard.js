@@ -6,74 +6,34 @@ import MoesifEmbeddedTemplate from "../../moesif/moesif-embedded-template";
 import NoticeBox from "../../notice-box";
 import dashIcon from "../../../images/icons/bar-chart.svg";
 import useAuthCombined from "../../../hooks/useAuthCombined";
+import fetchEmbedChartUrls from "./fetchEmbedChartUrls";
 
 const CombinedDashboard = (props) => {
-  const { user, isLoading, idToken } = useAuthCombined();
-
-  const { fetchEmbedInfo } = props;
-
-  const [searchParams] = useSearchParams();
+  const { user, isLoading, idToken, userEmail } = useAuthCombined();
   const navigate = useNavigate();
-  const checkout_session_id = searchParams.get("checkout-session");
   const [error, setError] = useState();
-  const [iFrameSrcLiveEvent, setIFrameSrcLiveEvent] = useState();
-  const [iFrameSrcTimeSeries, setIFrameSrcTimeSeries] = useState();
+  const [embedTemplateUrls, setEmbedTemplateUrls] = useState(null);
+
+  const email = user?.email || userEmail;
 
   useEffect(() => {
-    if (!idToken) {
-      return;
-    }
-    if (checkout_session_id) {
-      fetch(
-        `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${checkout_session_id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": `application/json`,
-            Authorization: `Bearer ${idToken}`,
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          fetchEmbedInfo({
-            stripCustomerId: result.customer,
-            authUserId: user?.id,
-            setIFrameSrcLiveEvent,
-            setIFrameSrcTimeSeries,
-            setError,
-          });
+    if (idToken) {
+      fetchEmbedChartUrls({
+        authUserId: user?.user_id || user.id || user?.sub,
+        idToken,
+        email,
+      })
+        .then((embedInfos) => {
+          setEmbedTemplateUrls(embedInfos);
         })
         .catch((err) => {
-          setError(err);
-        });
-    } else {
-      fetch(
-        `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=` +
-          encodeURIComponent(user.email),
-        {
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((stripeCustomerObject) => {
-          fetchEmbedInfo({
-            stripeCustomerId: stripeCustomerObject?.id,
-            authUserId: user?.id,
-            setIFrameSrcLiveEvent,
-            setIFrameSrcTimeSeries,
-            setError,
-          });
-        })
-        .catch((err) => {
+          console.error("failed to load embed dash", err);
           setError(err);
         });
     }
-  }, [idToken, isLoading, navigate, checkout_session_id, user, fetchEmbedInfo]);
+  }, [idToken, user, email]);
 
-  if (isLoading || !idToken) {
+  if (isLoading || !idToken || (!error && !embedTemplateUrls)) {
     return <PageLoader />;
   }
 
@@ -100,11 +60,7 @@ const CombinedDashboard = (props) => {
         , and setup instructions.
       </p>
       {!error && (
-        <MoesifEmbeddedTemplate
-          iFrameSrcLiveEvent={iFrameSrcLiveEvent}
-          iFrameSrcTimeSeries={iFrameSrcTimeSeries}
-          error={error}
-        />
+        <MoesifEmbeddedTemplate embedTemplateUrls={embedTemplateUrls || []} />
       )}
       {error && (
         <NoticeBox

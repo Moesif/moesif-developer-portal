@@ -18,8 +18,10 @@ const {
   getSubscriptionForUserEmail,
 } = require("./services/moesifApis");
 
+const { authMiddleware } = require("./services/authPlugin");
+
 const StripeSDK = require("stripe");
-const { getApimProvisioningPlugin } = require("./config/pluginLoader")
+const { getApimProvisioningPlugin } = require("./config/pluginLoader");
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -57,36 +59,40 @@ const moesifMiddleware = moesif({
 
 app.use(moesifMiddleware, cors());
 
-app.post("/create-stripe-checkout-session", async (req, res) => {
-  const stripe = StripeSDK(process.env.STRIPE_API_KEY);
-  const priceId = req.query?.price_id;
-  const email = req.query?.email;
-  // https://docs.stripe.com/checkout/quickstart?client=react
-  // for embedded checkout.
+app.post(
+  "/create-stripe-checkout-session",
+  authMiddleware,
+  async (req, res) => {
+    const stripe = StripeSDK(process.env.STRIPE_API_KEY);
+    const priceId = req.query?.price_id;
+    const email = req.user?.email || req.query?.email;
+    // https://docs.stripe.com/checkout/quickstart?client=react
+    // for embedded checkout.
 
-  try {
-    const session = await stripe.checkout.sessions.create({
-      ui_mode: "embedded",
-      line_items: [
-        {
-          // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-          price: priceId,
-        },
-      ],
-      customer_email: email || undefined,
-      mode: "subscription",
-      return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`,
-    });
+    try {
+      const session = await stripe.checkout.sessions.create({
+        ui_mode: "embedded",
+        line_items: [
+          {
+            // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+            price: priceId,
+          },
+        ],
+        customer_email: email || undefined,
+        mode: "subscription",
+        return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`,
+      });
 
-    console.log("got session back from stripe session");
-    console.log(JSON.stringify(session));
+      console.log("got session back from stripe session");
+      console.log(JSON.stringify(session));
 
-    res.send({ clientSecret: session.client_secret });
-  } catch (err) {
-    console.error("Failed to create stripe checkout session", err);
-    res.status(400).json({ message: "Error creating check out session" });
+      res.send({ clientSecret: session.client_secret });
+    } catch (err) {
+      console.error("Failed to create stripe checkout session", err);
+      res.status(400).json({ message: "Error creating check out session" });
+    }
   }
-});
+);
 
 app.get("/plans", jsonParser, async (req, res) => {
   // if you created your "stripe" or "zoura" plans through moesif.
@@ -101,7 +107,7 @@ app.get("/plans", jsonParser, async (req, res) => {
     });
 });
 
-app.get("/subscriptions", jsonParser, async (req, res) => {
+app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
   // !IMPORTANT, depends on your authentication scheme
   // you may want to authenticate your user first
 
@@ -200,69 +206,77 @@ app.post("/okta/register", jsonParser, async (req, res) => {
 // - handles syncing the ids to Moesif.
 // - and creates customers to API Management platform if need.
 // - Please see DATA-MODEL.md see the assumptions and background on data mapping.
-app.post("/register/stripe/:checkout_session_id", function (req, res) {
-  const checkout_session_id = req.params.checkout_session_id;
+app.post(
+  "/register/stripe/:checkout_session_id",
+  authMiddleware,
+  function (req, res) {
+    const checkout_session_id = req.params.checkout_session_id;
 
-  verifyStripeSession(checkout_session_id)
-    .then(async (result) => {
-      const stripeCheckOutSessionInfo = result;
-      console.log("in register");
-      if (result.customer && result.subscription) {
-        console.log("customer and subscription present");
-        const email = result.customer_details.email;
-        const stripe_customer_id = result.customer;
-        const stripe_subscription_id = result.subscription;
-        try {
-          if (
-            process.env.MOESIF_MONETIZATION_VERSION &&
-            process.env.MOESIF_MONETIZATION_VERSION.toUpperCase() === "V1"
-          ) {
-            console.log("updating company and user with V1");
-            // in v1, companyId and subscription id is one to one mapping.
-            syncToMoesif({
-              companyId: stripe_subscription_id,
-              subscriptionId: stripe_subscription_id,
-              userId: stripe_customer_id,
-              email: email,
-            });
-          }
-          // V1 as fallback
-          else {
-            console.log("updating company and user with V2");
+    verifyStripeSession(checkout_session_id)
+      .then(async (result) => {
+        const stripeCheckOutSessionInfo = result;
+        console.log("in register");
+        if (result.customer && result.subscription) {
+          console.log("customer and subscription present");
+          const email = result.customer_details.email;
+          const stripe_customer_id = result.customer;
+          const stripe_subscription_id = result.subscription;
+          try {
+            if (
+              process.env.MOESIF_MONETIZATION_VERSION &&
+              process.env.MOESIF_MONETIZATION_VERSION.toUpperCase() === "V1"
+            ) {
+              console.log("updating company and user with V1");
+              // in v1, companyId and subscription id is one to one mapping.
+              syncToMoesif({
+                companyId: stripe_subscription_id,
+                subscriptionId: stripe_subscription_id,
+                userId: stripe_customer_id,
+                email: email,
+              });
+            }
+            // V1 as fallback
+            else {
+              console.log("updating company and user with V2");
 
-            // assume you have one user per subscription
-            // but if you have multiple users per each subscription
-            // please check out https://www.moesif.com/docs/getting-started/overview/
-            // for the different entities how they are related to each other.
-            syncToMoesif({
-              companyId: stripe_customer_id,
-              subscriptionId: stripe_subscription_id,
-              userId: stripe_customer_id,
-              email: email,
-            });
+              // assume you have one user per subscription
+              // but if you have multiple users per each subscription
+              // please check out https://www.moesif.com/docs/getting-started/overview/
+              // for the different entities how they are related to each other.
+              syncToMoesif({
+                companyId: stripe_customer_id,
+                subscriptionId: stripe_subscription_id,
+                userId: stripe_customer_id,
+                email: email,
+              });
+            }
+          } catch (error) {
+            console.error("Error updating user/company/sub:", error);
           }
-        } catch (error) {
-          console.error("Error updating user/company/sub:", error);
+
+          // Provision new user for access to API
+          const user = await provisioningService.provisionUser(
+            stripe_customer_id,
+            email,
+            stripe_subscription_id
+          );
+          console.log(JSON.stringify(user));
         }
-
-        // Provision new user for access to API
-        const user = await provisioningService.provisionUser(stripe_customer_id, email, stripe_subscription_id);
-        console.log(JSON.stringify(user));
-      }
-      // we still pass on result.
-      console.log(JSON.stringify(stripeCheckOutSessionInfo));
-      res.status(201).json(stripeCheckOutSessionInfo);
-    })
-    .catch((err) => {
-      console.error("Error registering user", err);
-      res.status(500).json({
-        message: "Failed to register user. Contact support for assistance",
+        // we still pass on result.
+        console.log(JSON.stringify(stripeCheckOutSessionInfo));
+        res.status(201).json(stripeCheckOutSessionInfo);
+      })
+      .catch((err) => {
+        console.error("Error registering user", err);
+        res.status(500).json({
+          message: "Failed to register user. Contact support for assistance",
+        });
       });
-    });
-});
+  }
+);
 
-app.get("/stripe/customer", function (req, res) {
-  const email = req.query.email;
+app.get("/stripe/customer", authMiddleware, function (req, res) {
+  const email = req.user?.email || req.query.email;
   console.log("get stripe customer " + typeof getStripeCustomer);
   getStripeCustomer(email)
     .then((result) => {
@@ -283,9 +297,12 @@ app.get("/stripe/customer", function (req, res) {
 app.post("/create-key", jsonParser, async function (req, res) {
   try {
     // FIXME needs validation on email
-    const email = req.body.email;
+    const email = req.user?.email || req.body.email;
     const stripeCustomer = await getStripeCustomer(email);
-    const customerId = (stripeCustomer.data && stripeCustomer.data[0]) ? stripeCustomer.data[0].id : undefined;
+    const customerId =
+      stripeCustomer.data && stripeCustomer.data[0]
+        ? stripeCustomer.data[0].id
+        : undefined;
 
     // Provision new key for access to API
     const apiKey = await provisioningService.createApiKey(customerId, email);
@@ -296,6 +313,43 @@ app.post("/create-key", jsonParser, async function (req, res) {
     res.status(500).json({ message: "Failed to create key" });
   }
 });
+
+app.get(
+  "/embed-charts(/:authUserId)",
+  authMiddleware,
+  async function (req, res) {
+    // if authMiddleware is enabled, the data for user should come from the auth data.
+    // otherwise use query param.
+    const authUserId = req.user?.sub || req.params?.authUserId;
+    const email = req.user?.email || req.query?.email;
+
+    // depends your data model (see assumptions in DATA_MODEL.md),
+    // and if in your API gateway if you identifyUser using stripeCustomerId
+    // or the userId from authorization provider.
+    // Perhaps, you have your own userId for your own system.
+    // the most important aspect is the user_id used in your identifyUser hook
+    try {
+      const stripeCustomer = await getStripeCustomer(email);
+      const stripeCustomerId = stripeCustomer.id;
+
+      const embedInfoArray = await Promise.all([
+        getInfoForEmbeddedWorkspaces({
+          workspaceId: templateWorkspaceIdTimeSeries,
+          userId: stripeCustomerId,
+        }),
+        getInfoForEmbeddedWorkspaces({
+          workspaceId: templateWorkspaceIdLiveEvent,
+          userId: stripeCustomerId,
+        }),
+      ]);
+
+      res.status(200).json(embedInfoArray);
+    } catch (err) {
+      console.error("Error generating embedded templates:", error);
+      res.status(500).json({ message: "Failed to retrieve embedded template" });
+    }
+  }
+);
 
 app.get("/embed-dash-time-series(/:userId)", function (req, res) {
   try {

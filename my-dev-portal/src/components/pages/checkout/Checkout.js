@@ -7,13 +7,13 @@ import CheckoutForm from "./CheckoutForm";
 import { Navigate } from "react-router-dom";
 
 function Checkout(props) {
-  const { isLoading, user } = useAuthCombined();
+  const { isLoading, user, idToken } = useAuthCombined();
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const urlPriceIdToPurchase = urlParams.get("price_id_to_purchase");
 
-  if (isLoading) {
+  if (isLoading || !idToken) {
     return <PageLoader />;
   }
 
@@ -29,6 +29,7 @@ function Checkout(props) {
           key={urlPriceIdToPurchase}
           priceId={urlPriceIdToPurchase}
           user={user}
+          idToken={idToken}
         />
       </div>
     </PageLayout>

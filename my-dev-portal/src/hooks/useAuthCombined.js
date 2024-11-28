@@ -4,6 +4,7 @@ import { useOktaAuth } from "@okta/okta-react";
 import { useNavigate } from "react-router-dom";
 
 // purpose to consolidate the different hooks from auth provider.
+// and have a consistent interface to get idToken, accessToken, and userObject
 
 function useAuthOktaVersion() {
   const navigate = useNavigate();
