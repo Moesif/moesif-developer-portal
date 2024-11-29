@@ -48,6 +48,7 @@ if (!templateWorkspaceIdLiveEvent) {
   );
 }
 
+
 const provisioningService = getApimProvisioningPlugin();
 
 const moesifMiddleware = moesif({
@@ -66,7 +67,7 @@ app.post(
   async (req, res) => {
     const stripe = StripeSDK(process.env.STRIPE_API_KEY);
     const priceId = req.query?.price_id;
-    const email = req.user?.email || req.query?.email;
+    const email = req.user?.email;
     // https://docs.stripe.com/checkout/quickstart?client=react
     // for embedded checkout.
 
@@ -133,7 +134,7 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
   const sanitizedEmail = req.query.email.replace(/\n|\r/g, "");
   console.log("query email " + sanitizedEmail);
   console.log("verified email from claims " + req.user.email);
-  const email = req.user?.email || req.query.email;
+  const email = req.user?.email;
 
   try {
     const stripeCustomerId = await getStripeCustomerId(email);
@@ -296,7 +297,7 @@ app.post(
 );
 
 app.get("/stripe/customer", authMiddleware, function (req, res) {
-  const email = req.user?.email || req.query.email;
+  const email = req.user?.email;
 
   getStripeCustomer(email)
     .then((result) => {
@@ -318,7 +319,7 @@ app.post("/create-key", authMiddleware, jsonParser, async function (req, res) {
   try {
     // if authentication used, email can come from idToken claims,
     // otherwise we use email from body.
-    const email = req.user?.email || req.body.email;
+    const email = req.user?.email;
 
     const customerId = await getStripeCustomerId(email);
     if (!customerId) {
@@ -343,8 +344,8 @@ app.get(
   async function (req, res) {
     // if authMiddleware is enabled, the data for user should come from the auth data.
     // otherwise use query param.
-    const authUserId = req.user?.sub || req.params?.authUserId;
-    const email = req.user?.email || req.query?.email;
+    const authUserId = req.user?.sub;
+    const email = req.user?.email;
 
     // depends your data model (see assumptions in DATA_MODEL.md),
     // and if in your API gateway if you identifyUser using stripeCustomerId

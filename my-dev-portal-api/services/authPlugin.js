@@ -20,6 +20,14 @@ const verifyTokenJWTSymmetricKey = (req, res, next) => {
     req.user = decoded;
     // the sub is usually the user id in tokens.
     req.user.id = decoded.id || decoded.sub;
+
+    if (!decoded.email) {
+      return res.status(401).json({
+        message:
+          "the jwt token provided do not have an email claim, are you using idToken? If using accessToken be sure to configure in your identify provider to add email in the claim.",
+      });
+    }
+
     next();
   } catch (error) {
     return res.status(403).json({ error: "Invalid ID token" });
@@ -62,8 +70,6 @@ const verifyTokenJWTPublicKey = async (req, res, next) => {
 
   const decodedHeader = jwt.decode(token, { complete: true });
   const kid = decodedHeader.header.kid;
-  console.log("issuer " + issuer);
-  console.log("jwt public key url " + jwksClient.jwksUri);
 
   try {
     // Get the signing key from the JWKS
@@ -79,6 +85,14 @@ const verifyTokenJWTPublicKey = async (req, res, next) => {
     });
     req.user = verifiedClaims;
     // the sub is usually the user id in tokens.
+
+    if (!verifiedClaims.email) {
+      return res.status(401).json({
+        message:
+          "the jwt token provided do not have an email claim, are you using idToken? If using accessToken be sure to configure in your identify provider to add email in the claim.",
+      });
+    }
+
     req.user.id = verifiedClaims.id || verifiedClaims.sub;
     next();
   } catch (err) {
@@ -103,11 +117,6 @@ function getFinalChecker() {
           "using Okta provider, the OKTA_ORG_URL must be provided in .env"
         );
       }
-      jwksRsa({
-        cache: true, // Enable caching
-        rateLimit: true, // Prevent excessive requests
-        jwksRequestsPerMinute: 10, // Limit requests per minute
-      });
       return verifyTokenJWTPublicKey;
     case "Auth0":
       if (!process.env.AUTH0_DOMAIN) {
@@ -117,7 +126,9 @@ function getFinalChecker() {
       }
       return verifyTokenJWTPublicKey;
     default:
-      return skipAuthCheck;
+      throw Error(
+        "Unsupported Auth Provider for dev-portal-api, please check AUTH_PROVIDER configuration in /my-dev-portal-api/.env"
+      );
   }
 }
 
