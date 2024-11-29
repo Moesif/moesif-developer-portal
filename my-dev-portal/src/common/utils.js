@@ -48,6 +48,8 @@ export function formatIsoTimestamp(isoString) {
   }
 }
 
+let stripeCustomerCache = {};
+
 export async function moesifIdentifyUserFrontEndIfPossible(idToken) {
   // we are using stripe customer id
   // and as the user_id mapped to moesif users.
@@ -55,20 +57,31 @@ export async function moesifIdentifyUserFrontEndIfPossible(idToken) {
   if (!window?.moesif || !idToken) {
     return;
   }
-  console.log('try to identifyUser for moesif using stripe customer id if exists');
 
-  fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${idToken}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((stripeCustomerObject) => {
-      if (stripeCustomerObject && stripeCustomerObject.id) {
-        window.moesif.identifyUser(stripeCustomerObject.id, {
-          ...stripeCustomerObject,
-        });
-      }
+  console.log(
+    "try to identifyUser for moesif using stripe customer id if exists"
+  );
+
+  if (stripeCustomerCache[idToken]) {
+    const stripeCustomerObject = stripeCustomerCache[idToken];
+    window.moesif.identifyUser(stripeCustomerObject.id, {
+      ...stripeCustomerObject,
     });
+  } else {
+    fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((stripeCustomerObject) => {
+        if (stripeCustomerObject && stripeCustomerObject.id) {
+          window.moesif.identifyUser(stripeCustomerObject.id, {
+            ...stripeCustomerObject,
+          });
+          stripeCustomerCache[idToken] = stripeCustomerObject;
+        }
+      });
+  }
 }
