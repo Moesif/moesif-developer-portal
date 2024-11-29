@@ -47,3 +47,28 @@ export function formatIsoTimestamp(isoString) {
     return "";
   }
 }
+
+export async function moesifIdentifyUserFrontEndIfPossible(idToken) {
+  // we are using stripe customer id
+  // and as the user_id mapped to moesif users.
+  // See DATA_MODEL.md
+  if (!window?.moesif || !idToken) {
+    return;
+  }
+  console.log('try to identifyUser for moesif using stripe customer id if exists');
+
+  fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((stripeCustomerObject) => {
+      if (stripeCustomerObject && stripeCustomerObject.id) {
+        window.moesif.identifyUser(stripeCustomerObject.id, {
+          ...stripeCustomerObject,
+        });
+      }
+    });
+}

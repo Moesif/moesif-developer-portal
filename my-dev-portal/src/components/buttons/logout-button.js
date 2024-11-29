@@ -6,7 +6,11 @@ const LogoutButtonWithOkta = () => {
   const { oktaAuth } = useOktaAuth();
 
   const handleLogout = async () => {
+    window.moesif?.track("clicked-logout", {
+      provider: "Okta",
+    });
     await oktaAuth.signOut();
+    window.moesif?.reset();
   };
 
   return (
@@ -20,11 +24,15 @@ const LogoutButtonWithAuth0 = () => {
   const { logout } = useAuth0();
 
   const handleLogout = async () => {
+    window.moesif?.track("clicked-logout", {
+      provider: "Auth0",
+    });
     logout({
       logoutParams: {
         returnTo: window.location.origin,
       },
     });
+    window.moesif?.reset();
   };
 
   return (

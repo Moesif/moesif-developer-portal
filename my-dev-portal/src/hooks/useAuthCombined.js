@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useOktaAuth } from "@okta/okta-react";
 import { useNavigate } from "react-router-dom";
+import { moesifIdentifyUserFrontEndIfPossible } from "../common/utils";
 
 // purpose to consolidate the different hooks from auth provider.
 // and have a consistent interface to get idToken, accessToken, and userObject
@@ -16,6 +17,12 @@ function useAuthOktaVersion() {
   let user = authState?.idToken?.claims;
 
   const userEmail = user?.email || authState?.accessToken?.claims?.sub;
+  const idToken = authState?.idToken;
+  useEffect(() => {
+    if (isAuthenticated && idToken) {
+      moesifIdentifyUserFrontEndIfPossible(idToken);
+    }
+  }, [isAuthenticated, idToken]);
 
   const handleSignUp = async ({ returnTo }) => {
     navigate(`/signup?return_to=${encodeURIComponent(returnTo)}`);
@@ -26,7 +33,7 @@ function useAuthOktaVersion() {
     isLoading,
     user,
     idToken: authState?.idToken,
-    accessToken: authState?.idToken,
+    accessToken: authState?.accessToken,
     oktaAuthState: authState,
     userEmail,
     handleSignUp,
@@ -75,7 +82,10 @@ function useAuthAuth0Version() {
 
       getIdTokenClaims()
         .then((result) => {
-          setIdToken(result.__raw);
+          const idToken = result.__raw;
+          // https://github.com/auth0/auth0-react/issues/262
+          setIdToken(idToken);
+          moesifIdentifyUserFrontEndIfPossible(idToken);
         })
         .catch((err) => {
           console.error("failed to load id token", err);

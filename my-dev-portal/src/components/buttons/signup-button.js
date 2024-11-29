@@ -6,6 +6,9 @@ const SignupButtonWithOkta = ({ isLink }) => {
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
+    window.moesif?.track("clicked-sign-up", {
+      provider: "Okta",
+    });
     navigate("/signup");
   };
 
@@ -22,6 +25,10 @@ const SignupButtonWithAuth0 = ({ isLink, isPriceAction }) => {
   const { loginWithRedirect } = useAuth0();
 
   const handleSignUp = async () => {
+    window.moesif?.track("clicked-sign-up", {
+      provider: "Auth0",
+    });
+
     await loginWithRedirect({
       appState: {
         returnTo: "/plans",
