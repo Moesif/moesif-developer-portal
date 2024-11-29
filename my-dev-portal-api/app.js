@@ -11,6 +11,7 @@ const {
   verifyStripeSession,
   getStripeCustomer,
   getStripeCustomerId,
+  getStripeCustomerIdFromCache,
 } = require("./services/stripeApis");
 const {
   syncToMoesif,
@@ -48,13 +49,15 @@ if (!templateWorkspaceIdLiveEvent) {
   );
 }
 
-
 const provisioningService = getApimProvisioningPlugin();
 
 const moesifMiddleware = moesif({
   applicationId: process.env.MOESIF_APPLICATION_ID,
 
   identifyUser: function (req, _res) {
+    if (req.user?.email) {
+      return getStripeCustomerIdFromCache(req.user?.email);
+    }
     return req.user ? req.user.id : undefined;
   },
 });
@@ -136,10 +139,16 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
   console.log("verified email from claims " + req.user.email);
   const email = req.user?.email;
 
+  let stripeCustomerId;
   try {
-    const stripeCustomerId = await getStripeCustomerId(email);
+    stripeCustomerId = await getStripeCustomerId(email);
     // since customerId is mapped to moesif user_id (see DATA_MODEL.md);
     // please modify if you decides to use some other data mapping model.
+
+    if (!stripeCustomerId) {
+      return res.status(200).json([]);
+    }
+
     const subscriptions = await getSubscriptionsForUserId({
       userId: stripeCustomerId,
     });
@@ -148,7 +157,13 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
     );
     res.status(200).json(subscriptions);
   } catch (err) {
-    console.error("Error getting subscription from moesif for " + email, err);
+    console.error(
+      "Error getting subscription from moesif for " +
+        email +
+        " " +
+        stripeCustomerId,
+      err
+    );
     res.status(404).json({ message: err.toString() });
   }
 });
@@ -236,7 +251,7 @@ app.post(
     verifyStripeSession(checkout_session_id)
       .then(async (result) => {
         const stripeCheckOutSessionInfo = result;
-        console.log("in register");
+        console.log("in stripe register");
         if (result.customer && result.subscription) {
           console.log("customer and subscription present");
           const email = result.customer_details.email;
@@ -299,6 +314,8 @@ app.post(
 app.get("/stripe/customer", authMiddleware, function (req, res) {
   const email = req.user?.email;
 
+  console.log("try to fetch stripe customer object for " + email);
+
   getStripeCustomer(email)
     .then((result) => {
       if (result.data && result.data[0]) {
@@ -359,10 +376,10 @@ app.get(
       }
 
       const embedInfoArray = await Promise.all(
-        [templateWorkspaceIdTimeSeries, templateWorkspaceIdLiveEvent].map(
+        [templateWorkspaceIdLiveEvent, templateWorkspaceIdTimeSeries].map(
           (workspaceId) =>
             getInfoForEmbeddedWorkspaces({
-              workspaceId: templateWorkspaceIdTimeSeries,
+              workspaceId: workspaceId,
               userId: stripeCustomerId || authUserId,
             })
         )

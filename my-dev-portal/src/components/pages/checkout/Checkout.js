@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import useAuthCombined from "../../../hooks/useAuthCombined";
 import { PageLoader } from "../../page-loader";
@@ -12,6 +12,12 @@ function Checkout(props) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const urlPriceIdToPurchase = urlParams.get("price_id_to_purchase");
+
+  useEffect(() => {
+    window.moesif?.track("about-to-checkout", {
+      price_id: urlPriceIdToPurchase,
+    });
+  }, [urlPriceIdToPurchase]);
 
   if (isLoading || !idToken) {
     return <PageLoader />;

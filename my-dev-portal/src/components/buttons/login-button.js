@@ -6,6 +6,9 @@ const LoginButtonWithOkta = ({ isLink }) => {
   const { oktaAuth } = useOktaAuth();
 
   const handleLogin = async () => {
+    window.moesif?.track("clicked-login", {
+      provider: "Okta",
+    });
     await oktaAuth.signInWithRedirect({ originalUri: "/dashboard" });
   };
 
@@ -22,6 +25,9 @@ const LoginButtonWithAuth0 = ({ isLink }) => {
   const { loginWithRedirect } = useAuth0();
 
   const handleLogin = async () => {
+    window.moesif?.track("clicked-login", {
+      provider: "Auth0",
+    });
     await loginWithRedirect({
       appState: {
         returnTo: "/dashboard",

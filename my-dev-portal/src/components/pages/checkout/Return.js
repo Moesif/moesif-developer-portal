@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import noPriceIcon from "../../../images/icons/empty-state-price.svg";
 import NoticeBox from "../../notice-box";
 import useAuthCombined from "../../../hooks/useAuthCombined";
+import { moesifIdentifyUserFrontEndIfPossible } from "../../../common/utils";
 
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
@@ -24,6 +25,12 @@ function Return(props) {
   const priceId = urlParams.get("price_id");
 
   useEffect(() => {
+    window.moesif?.track("stripe-checkout-returned", {
+      stripe_session_id: sessionId,
+      price_id: priceId,
+      status,
+    });
+
     if (sessionId && idToken) {
       fetch(
         `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${sessionId}`,
@@ -51,6 +58,9 @@ function Return(props) {
         })
         .catch((err) => {
           setProvisionError(err);
+
+        }).finally(() => {
+          moesifIdentifyUserFrontEndIfPossible(idToken);
         });
     } else {
       console.error("no session id found");

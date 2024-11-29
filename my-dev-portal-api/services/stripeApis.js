@@ -25,12 +25,28 @@ function getStripeCustomer(email) {
   ).then((res) => res.json());
 }
 
+// Developers: you might consider have something like reddis
+// make id/mapping look up easier and faster
+const EMAIL_TO_STRIPE_CUSTOMER_CACHE = {};
+
+function getStripeCustomerIdFromCache(email) {
+  return EMAIL_TO_STRIPE_CUSTOMER_CACHE[email];
+}
+
 async function getStripeCustomerId(email) {
+  if (EMAIL_TO_STRIPE_CUSTOMER_CACHE[email]) {
+    return EMAIL_TO_STRIPE_CUSTOMER_CACHE[email];
+  }
+
   const stripeCustomer = await getStripeCustomer(email);
   const stripeCustomerId =
     stripeCustomer.data && stripeCustomer.data[0]
       ? stripeCustomer.data[0].id
       : undefined;
+
+  if (stripeCustomerId) {
+    EMAIL_TO_STRIPE_CUSTOMER_CACHE[email] = stripeCustomerId;
+  }
 
   return stripeCustomerId;
 }
@@ -39,4 +55,5 @@ module.exports = {
   verifyStripeSession,
   getStripeCustomer,
   getStripeCustomerId,
+  getStripeCustomerIdFromCache,
 };
