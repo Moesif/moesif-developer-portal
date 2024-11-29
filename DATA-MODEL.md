@@ -1,10 +1,11 @@
 
 # Data Model
 
-For the purpose of this project, the data model is based on below. This is just one approach, as this repo is just glue code, if your data model needs are different, you may need to adjust some of the code.
+When integrating multiple systems together, the Data Model, i.e. how different objects from different systems are mapped to each other, is super important.
+
+For the purpose of this project, the data model is based on assumptions below. This is just one approach, if your data model needs are different, you may need to adjust some of the code.
 
 ## Moesif
-
 
 - Company
   - A company represent an organization that may have many users, and it may have one more subscription.
@@ -33,14 +34,16 @@ For the purpose of this project, the data model is based on below. This is just 
   - For this project, the `stripe_customer_id` mapped to Moesif `company_id`, and Moesif `user_id` because it is an simplification. And most use cases is only one user anyways.
   - If your have use cases where there is multiple "users" that uses same subscription, then you should still evaluation your data mapping.
   - We also ensure there is ONLY one stripe customer per email.
+  - While stripe do not enforce unique Customer per email, for this project, we'll assume and enforce one email per stripe customer, see reason below
 
 
 ## Auth/Identity Provider
 
 - User
-  - Usually uniq by email.
-  - There is concept of user_id in auth provider, since since email is unique.
-  - For Okta and Auth0, the jwt generated for idToken include the email as part of the claim, which will be used as mapping to the corresponding "Stripe Customer".
+  - There is concept of user_id in auth provider.
+  - Assume each user is uniq by email.
+  - For Okta and Auth0, the jwt generated for idToken include the email as part of the claim, which will be used look up corresponding "Stripe Customer".
+  - Thus, email is required as part of the idToken or accessToken generated.
 
 ## API gateways
 
@@ -55,4 +58,5 @@ Evaluate object mapping and adjust for your use case and your business:
     -  You may have concept of company and users object in your system. And they each may already an id. Sometimes those id are better suited for mapping, and you need to adjust mapping to ids in different systems as needed.
     -  You may decide to use user_id or company_id from identify provider or your system as source of truth. In which case you may need to add the id from identify provider to stripe customer's metadata. And adjust your company_id mapping in your Stripe Plugin configuration for Moesif,
   - It is important to be be aware of the data model in different systems, and how you want to map them together.
+  - It is possible that you decide not to use email to look up Stripe Customer, there are other ways of linking entity ids from the Identify Provider to Stripe Customer. For example, you could have a local database that maps between identify provider id to stripe customer id. But it is up to you to implement.
 
