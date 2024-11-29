@@ -76,8 +76,6 @@ const verifyTokenJWTPublicKey = async (req, res, next) => {
     const key = await jwksClient.getSigningKey(kid);
     const publicKey = key.getPublicKey(); // This is the public key used for verification
 
-    console.log("getting public key");
-
     // Verify the toke
     const verifiedClaims = jwt.verify(token, publicKey, {
       algorithms: ["RS256"],

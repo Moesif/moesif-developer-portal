@@ -314,8 +314,6 @@ app.post(
 app.get("/stripe/customer", authMiddleware, function (req, res) {
   const email = req.user?.email;
 
-  console.log("try to fetch stripe customer object for " + email);
-
   getStripeCustomer(email)
     .then((result) => {
       if (result.data && result.data[0]) {
