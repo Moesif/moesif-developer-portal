@@ -1,6 +1,5 @@
 import { PageLayout } from "../../page-layout";
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { PageLoader } from "../../page-loader";
 import MoesifEmbeddedTemplate from "../../moesif/moesif-embedded-template";
 import NoticeBox from "../../notice-box";
@@ -10,7 +9,7 @@ import fetchEmbedChartUrls from "./fetchEmbedChartUrls";
 
 const Dashboard = (props) => {
   const { user, isLoading, idToken, userEmail } = useAuthCombined();
-  const navigate = useNavigate();
+
   const [error, setError] = useState();
   const [embedTemplateUrls, setEmbedTemplateUrls] = useState(null);
 
