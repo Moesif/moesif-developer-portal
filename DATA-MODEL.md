@@ -7,6 +7,8 @@ For the purpose of this project, the data model is based on assumptions below. T
 
 ## Moesif
 
+Moesif have following "entities", for more info see https://www.moesif.com/docs/getting-started/overview/#moesif-data-structure.
+
 - Company
   - A company represent an organization that may have many users, and it may have one more subscription.
   - Since company object owns subscriptions in Moesif, company_id is mapped to Stripe's customer id.
@@ -44,6 +46,8 @@ For the purpose of this project, the data model is based on assumptions below. T
   - Assume each user is uniq by email.
   - For Okta and Auth0, the jwt generated for idToken include the email as part of the claim, which will be used look up corresponding "Stripe Customer".
   - Thus, email is required as part of the idToken or accessToken generated.
+- Organization:
+  - Some identity providers have a concept of organization, it is like a company with many users. Not used in this example. But if your business is B2B, you might leverage this feature.
 
 ## API gateways
 
@@ -57,6 +61,6 @@ Evaluate object mapping and adjust for your use case and your business:
   - You may have different entity mapping needs, for example:
     -  You may have concept of company and users object in your system. And they each may already an id. Sometimes those id are better suited for mapping, and you need to adjust mapping to ids in different systems as needed.
     -  You may decide to use user_id or company_id from identify provider or your system as source of truth. In which case you may need to add the id from identify provider to stripe customer's metadata. And adjust your company_id mapping in your Stripe Plugin configuration for Moesif,
-  - It is important to be be aware of the data model in different systems, and how you want to map them together.
-  - It is possible that you decide not to use email to look up Stripe Customer, there are other ways of linking entity ids from the Identify Provider to Stripe Customer. For example, you could have a local database that maps between identify provider id to stripe customer id. But it is up to you to implement.
+  - It is important to be be aware of the data model in different systems, and how you want to map them together and best fit your business use case.
+  - It is possible that you decide not to use email to look up Stripe Customer, there are other ways of linking entity ids from the Identify Provider to Stripe Customer. For example, you could have a local database that maps between identify provider user id to stripe customer id. But it is up to you to implement.
 

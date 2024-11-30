@@ -81,6 +81,15 @@ app.post(
       // If no customerId exists, create a new one
       const customer = await stripe.customers.create({
         email: email,
+        metadata: {
+          // add the user id from identify provider to
+          // stripe metadata for customer.
+          // Because, an alternative approach is to tie
+          // the identity provider's user id to stripe customer
+          // and look up customer object using user_id instead of
+          // email.
+          authUserId: req?.user?.sub,
+        }
       });
 
       customerId = customer.id;

@@ -8,8 +8,6 @@ import { SignupButton } from "../../buttons/signup-button";
 import { examplePlansFromStripe } from "./examplePlansFromStripe";
 import usePlans from "../../../hooks/usePlans";
 
-const SHOW_EXAMPLE_PLANS = false;
-
 function MoesifPlans(props) {
   const { isAuthenticated } = useAuth0();
 
