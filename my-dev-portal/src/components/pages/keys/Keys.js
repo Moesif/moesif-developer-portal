@@ -113,9 +113,9 @@ const Keys = () => {
         style={customStyles}
         contentLabel="API Key"
       >
-        <h3 className="modal-title">Copy API Key</h3>
+        <h3 className="modal-title">Get API Key</h3>
         <div className="modal-body">
-          <label>Your API Key</label>
+          <label>Your API Credentials</label>
           <div className="api-key-container">
             <span className="api-key-presentation">
               <SVG src={apiKeyIcon} />

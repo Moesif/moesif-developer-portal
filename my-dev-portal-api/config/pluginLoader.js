@@ -1,16 +1,17 @@
 function getApimProvisioningPlugin() {
-    const apimProvider = process.env.APIM_PROVIDER;
+    // Read both envvars for backwards compatibility
+    const apimProvider = process.env.PLUGIN_APIM_PROVIDER || process.env.APIM_PROVIDER;
     if (!apimProvider) {
       console.error(
-        "No APIM_PROVIDER found. Please create an .env file with APIM_PROVIDER one of the supported API management providers or edit the code to connect to your API Management."
+        "No PLUGIN_APIM_PROVIDER found. Please create an .env file with PLUGIN_APIM_PROVIDER one of the supported API management providers or edit the code to connect to your API Management."
       );
     }
     switch (apimProvider.toLowerCase()) {
         case 'auth0-m2m': 
-        case 'aws': 
           const { Auth0M2MProvisioningPlugin } = require('dev-portal-auth0-m2m-plugin');
           return new Auth0M2MProvisioningPlugin();
         case 'jwt':
+        case 'aws': 
           const { JwtProvisioningPlugin } = require('dev-portal-jwt-plugin');
           return new JwtProvisioningPlugin();       
         case 'kong':

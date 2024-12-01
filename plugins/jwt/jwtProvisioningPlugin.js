@@ -5,11 +5,11 @@ class JwtProvisioningPlugin extends ProvisioningPlugin {
     constructor() {
         super();
         this.slug = "jwt";
-        this.jwtAlgorithm = process.env.JWT_ALGORITHM;
-        this.jwtSecret = process.env.JWT_SECRET.trim();
-        this.jwtUserIdField = process.env.JWT_USER_ID_FIELD;
-        this.jwtCompanyIdField = process.env.JWT_COMPANY_ID_FIELD;
-        this.jwtExpiresIn = +process.env.JWT_EXPIRES_IN || process.env.JWT_EXPIRES_IN;
+        this.jwtAlgorithm = this.getConfig('PLUGIN_JWT_ALGORITHM');
+        this.jwtSecret = this.getConfig('PLUGIN_JWT_SECRET').trim();
+        this.jwtUserIdField = this.getConfig('PLUGIN_JWT_USER_ID_FIELD');
+        this.jwtCompanyIdField = this.getConfig('PLUGIN_JWT_COMPANY_ID_FIELD');
+        this.jwtExpiresIn = +this.getConfig('PLUGIN_JWT_EXPIRES_IN') || this.getConfig('PLUGIN_JWT_EXPIRES_IN');
     }
 
     async getUser(customerId, email) {

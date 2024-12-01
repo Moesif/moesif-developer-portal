@@ -4,8 +4,8 @@ class KongProvisioningPlugin extends ProvisioningPlugin {
     constructor() {
         super();
         this.slug = "kong-gateway";
-        this.kongUrl = process.env.KONG_URL.trim()
-        this.kongAdminToken = process.env.KONG_ADMIN_TOKEN
+        this.kongUrl = this.getConfig('PLUGIN_KONG_URL').trim()
+        this.kongAdminToken = this.getConfig('PLUGIN_KONG_ADMIN_TOKEN')
     }
 
     async kongAdminRequest(method, resource, body) {

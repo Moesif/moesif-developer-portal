@@ -4,8 +4,9 @@ class KonnectProvisioningPlugin extends ProvisioningPlugin {
     constructor() {
         super();
         this.slug = "kong-konnect";
-        this.konnectBaseUrl = `${process.env.KONNECT_API_URL}/${process.env.KONNECT_API_VERSION}`;
-        this.konnectPat = process.env.KONNECT_PAT
+        this.konnectBaseUrl = `${this.getConfig('PLUGIN_KONNECT_API_URL')}/${this.getConfig('PLUGIN_KONNECT_API_VERSION')}`;
+        this.konnectPat = this.getConfig('PLUGIN_KONNECT_PAT')
+        this.runtimeGroupName = this.getConfig('PLUGIN_KONNECT_RUNTIME_GROUP_NAME')
     }
 
     async kongAdminRequest(method, resource, body) {
@@ -36,7 +37,7 @@ class KonnectProvisioningPlugin extends ProvisioningPlugin {
     async getUser(customerId, email) {
         try {
           // get Konnect Runtime Group ID
-          const rtgResult = await this.kongAdminRequest('GET', `runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`, undefined);
+          const rtgResult = await this.kongAdminRequest('GET', `runtime-groups?filter[name][eq]=${this.runtimeGroupName}`, undefined);
         
           console.log(`Got Konnect runtime group ID: ${rtgResult.data[0].id}`);
           const konnectRtgId = rtgResult.data[0].id;
@@ -55,7 +56,7 @@ class KonnectProvisioningPlugin extends ProvisioningPlugin {
       console.log("Kong Konnect, collecting runtime group ID");
 
       // get Konnect Runtime Group ID
-      const rtgResult = await this.kongAdminRequest('GET', `runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`, undefined);
+      const rtgResult = await this.kongAdminRequest('GET', `runtime-groups?filter[name][eq]=${this.runtimeGroupName}`, undefined);
     
       console.log(`KonnectProvisioningPlugin runtime group ID: ${rtgResult.data[0].id}`);
       const konnectRtgId = rtgResult.data[0].id;
@@ -74,7 +75,7 @@ class KonnectProvisioningPlugin extends ProvisioningPlugin {
     async createApiKey(customerId, email) {
       // get Konnect Runtime Group ID
       console.log("KonnectProvisioningPlugin, collecting runtime group ID");
-      const rtgResult = await this.kongAdminRequest('GET', `runtime-groups?filter[name][eq]=${process.env.KONNECT_RUNTIME_GROUP_NAME}`, undefined);
+      const rtgResult = await this.kongAdminRequest('GET', `runtime-groups?filter[name][eq]=${this.runtimeGroupName}`, undefined);
     
       console.log(`KonnectProvisioningPlugin Got runtime group ID: ${rtgResult.data[0].id}`);
       const konnectRtgId = rtgResult.data[0].id;
