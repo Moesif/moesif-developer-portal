@@ -1,7 +1,6 @@
 # Moesif Developer Portal
 
-The Moesif developer portal is an open-source app that you can deploy to provide a self-service experience for customers to subscribe and pay for your APIs. 
-The developer portal is for API product owners looking to productize and monetize APIs.
+The Moesif developer portal is an open-source app that you can deploy to provide a self-service experience for customers to subscribe and pay for your APIs. The developer portal is for API product owners looking to productize and monetize APIs.
 
 As an open-source project, you can customize the brand and user experience to meet your requirements without fear of vendor lock-in. 
 
@@ -9,16 +8,18 @@ As an open-source project, you can customize the brand and user experience to me
 
 There are two main components
 
-- my-dev-portal is a React based frontend for customers to subscribe to APIs
-- my-dev-portal-api is a Node.js API to communicate with the Moesif APIs and Billing APIs in a secure environment.
+- `my-dev-portal` is a React based frontend for customers to subscribe to APIs
+- `my-dev-portal-api` is a Node.js API to communicate with the Moesif APIs and Billing APIs in a secure environment.
 
 ![Architecture Diagram of Moesif Developer Portal](https://raw.githubusercontent.com/Moesif/moesif-developer-portal/main/my-dev-portal/src/images/assets/dev-portal-architecture-diagram.svg)
 
+> As of December 2024, the Moesif developer portal is now Generally Available and ready for production use. If you are using an early version, we recommend merging the latest changes for production readiness.
+
 ## Production Readiness
 
-This portal is a pre-release project in preview and actively being developed. Before going to production, a few things should be done:
+Before going to production, you should confirm a few things:
 
-1. Ensure APIs are secured using HTTPS and authentication layer
+1. Ensure APIs are secured using HTTPS
 2. Ensuring all keys stored securely in a keystore
 3. Customize the CSS for your brand
 4. Check assumptions in the DATA-MODEL.md, if your data mapping needs is different, you may want to adjust the code according.
@@ -50,7 +51,7 @@ In order to set up and use the Moesif Developer Portal, you will need the follow
 
 - An active Identity Provider account
 - An active payment provider account
-- A running APIM / key manager
+- A running APIM / API service to provision keys
 - An active Moesif account
 
 Below is a step-by-step guide on how to set up the Moesif Developer Portal. Since there are a lot of moving parts, it’s suggested that you follow each step carefully and in the order that they are presented.
@@ -91,6 +92,14 @@ You can also implement your own logic to generate API keys. You just need to imp
 
 ## Running the portal
 
+There are two docker images available to run:
+* `moesif/dev-portal` runs the frontend
+* `moesif/dev-portal-api` runs the backend
+
+To run the docker examples, modify the envvars in `distribution/docker/docker-compose.yml` and then run it as:
+
+`docker-compose up -d`
+
 ### Source Code Layout
 
 Within the project, you will see two subfolders: `my-dev-portal` and `my-dev-portal-api`. For the project to work, both applications must be running.
@@ -100,6 +109,8 @@ The `my-dev-portal` folder is a React application that contains the UI and logic
 The `my-dev-portal-api` project is where the APIs and various other logic are contained. In this project, you’ll have connectivity to Moesif, Stripe, and Kong through various APIs. For example, the `/register` endpoint in this project contains the logic used to register a new user in the various systems that are part of the developer portal ecosystem.
 
 In addition, the `plugins` directory contains various plugins to provisions API keys such as for JWT and Kong. 
+
+The `resources` directory contains additional files such as for AWS API Gateway
 
 ### Setting up the .env File
 
@@ -111,7 +122,7 @@ In the root of both the `my-dev-portal` and `my-dev-portal-api` projects, create
 
 Now that everything is configured, it’s time to start up the Developer portal. This will require starting up both the UI and the API projects.
 
-First, in a terminal that is pointing to the `/my-dev-portal-api` directory in the project, you’ll run:
+First, in a terminal that is pointing to the `./my-dev-portal-api` directory in the project, you’ll run:
 
 ```shell
 node app.js
@@ -119,7 +130,7 @@ node app.js
 
 This will start up our API project.
 
-Secondly, we will start up our UI project by opening another terminal at the `/my-dev-portal` directory and running:
+Secondly, we will start up our UI project by opening another terminal at the `./my-dev-portal` directory and running:
 
 ```shell
 npm start
