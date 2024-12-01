@@ -6,18 +6,18 @@ class Auth0M2MProvisioningPlugin extends ProvisioningPlugin {
         super();
         this.slug = "auth0-jwt";
         this.mgmtClient = new ManagementClient({
-            domain: process.env.AUTH0_M2M_DOMAIN,
-            clientId: process.env.AUTH0_M2M_CLIENT_ID,
-            clientSecret: process.env.AUTH0_M2M_CLIENT_SECRET,
+            domain: this.getConfig('PLUGIN_AUTH0_M2M_DOMAIN'),
+            clientId: this.getConfig('PLUGIN_AUTH0_M2M_CLIENT_ID'),
+            clientSecret: this.getConfig('PLUGIN_AUTH0_M2M_CLIENT_SECRET'),
         });
         this.authClient = new AuthenticationClient({
-            domain: process.env.AUTH0_M2M_DOMAIN,
-            clientId: process.env.AUTH0_M2M_CLIENT_ID,
-            clientSecret: process.env.AUTH0_M2M_CLIENT_SECRET,
+            domain: this.getConfig('PLUGIN_AUTH0_M2M_DOMAIN'),
+            clientId: this.getConfig('PLUGIN_AUTH0_M2M_CLIENT_ID'),
+            clientSecret: this.getConfig('PLUGIN_AUTH0_M2M_CLIENT_SECRET'),
           });
 
-        this.apiAudience = process.env.AUTH0_M2M_API_AUDIENCE;
-        this.apiScope = process.env.AUTH0_M2M_API_SCOPE;
+        this.apiAudience = this.getConfig('PLUGIN_AUTH0_M2M_API_AUDIENCE');
+        this.apiScope = this.getConfig('PLUGIN_AUTH0_M2M_API_SCOPE');
 
         this.claimKeyCustomerId = `${this.apiAudience}/customerId`;
         this.claimKeySubscriptionId = `${this.apiAudience}/subscriptionId`;
@@ -90,7 +90,7 @@ class Auth0M2MProvisioningPlugin extends ProvisioningPlugin {
         const client = await this.mgmtClient.clients.create({
             name: this.sanitizeEmail(email),
             app_type: 'non_interactive',
-            is_first_party: false,
+            is_first_party: true,
             default_organization: {
                 organization_id: orgId,
                 flows: ['client_credentials']
@@ -112,9 +112,15 @@ class Auth0M2MProvisioningPlugin extends ProvisioningPlugin {
         const grantId = grant.data.id;
 
         // Authorize the organization to access this application and API
-        const memberRes = await this.mgmtClient.organizations.postOrganizationClientGrants({
-            grant_id: grantId,
-        });
+        const memberRes = await this.mgmtClient.organizations.postOrganizationClientGrants(
+            {
+                id: orgId,
+            },
+            {
+                grant_id: grantId,
+            });
+        console.log('memberRes')
+        console.log(JSON.stringify(memberRes))
         return response
     }
 

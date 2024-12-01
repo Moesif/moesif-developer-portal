@@ -41,6 +41,15 @@ class ProvisioningPlugin {
     createApiKey(customerId, email) {
       throw new Error('Method not implemented.');
     }
+
+      /**
+     * Read config from envvars. Backwards Compatible with old envvar names
+     * @param {string} name - Name of the envvar
+     * @returns {string} - The envvar value.
+     */
+    getConfig(name) {
+      return process.env[name] || process.env[name.replace('PLUGIN_', '')]
+    }
   }
   
   module.exports = {

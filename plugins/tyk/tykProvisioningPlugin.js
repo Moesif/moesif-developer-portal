@@ -4,9 +4,9 @@ class TykProvisioningPlugin extends ProvisioningPlugin {
     constructor() {
         super();
         this.slug = "tyk";
-        this.tykDashOrgId = process.env.TYK_DASH_ORG_ID;
-        this.tykGatewayUrl = process.env.TYK_GATEWAY_URL;
-        this.tykGatewaySecretKey = process.TYK_GATEWAY_SECRET_KEY;
+        this.tykDashOrgId = this.getConfig('PLUGIN_TYK_DASH_ORG_ID');
+        this.tykGatewayUrl = this.getConfig('PLUGIN_TYK_GATEWAY_URL');
+        this.tykGatewaySecretKey = this.getConfig('PLUGIN_TYK_GATEWAY_SECRET_KEY');
     }
 
     async tykAdminRequest(method, resource, body) {

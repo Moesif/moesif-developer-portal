@@ -36,7 +36,7 @@ exports.handler = function (event, _context, callback) {
       } else {
         callback(
           null,
-          generatePolicy(decoded.stripeCustomerId, "Allow", event.methodArn)
+          generatePolicy(decoded.org_id, "Allow", event.methodArn)
         );
       }
     }
