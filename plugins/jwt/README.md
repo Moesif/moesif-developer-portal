@@ -12,11 +12,11 @@ In the `my-dev-portal-api` project, you'll need to set the following envvars in 
 
 |envvar name|description|
 |-----------|-----------|
-|JWT_ALGORITHM|Algorithm to use for signing JWT|
-|JWT_SECRET|Secret used for signing. Make sure to keep private and store in a robust key store.|
-|JWT_USER_ID_FIELD|The field in the claims that contains user id. Defaults to "sub"|
-|JWT_COMPANY_ID_FIELD|The field in the claims that contains company (customer) id. Defaults to "org_id"|
-|JWT_EXPIRES_IN|How long JWT is valid. Can be a number in seconds or use shorthand like "30d"|
+|PLUGIN_JWT_ALGORITHM|Algorithm to use for signing JWT|
+|PLUGIN_JWT_SECRET|Secret used for signing. Make sure to keep private and store in a robust key store.|
+|PLUGIN_JWT_USER_ID_FIELD|The field in the claims that contains user id. Defaults to "sub"|
+|PLUGIN_JWT_COMPANY_ID_FIELD|The field in the claims that contains company (customer) id. Defaults to "org_id"|
+|PLUGIN_JWT_EXPIRES_IN|How long JWT is valid. Can be a number in seconds or use shorthand like "30d"|
 
 ### Configuring API gateway or app
 
@@ -30,4 +30,4 @@ Follow the [instructions here](https://docs.aws.amazon.com/apigateway/latest/dev
 1. If not done already, cd into `my-dev-portal-api` and run `npm install`
 2. Go to your newly created Lambda Authorizer in the AWS Console
 3. Under Code source, click the Upload from dropdown and select .zip file.
-4. Upload the zip `resources/aws-authorizer/authorizer.zip` to your newly created authorizer. 
+4. Upload the zip `resources/aws-authorizer/authorizer.zip` to your newly created authorizer.

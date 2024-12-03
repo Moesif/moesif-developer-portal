@@ -37,7 +37,7 @@ Once populated, click **Create** to create the route. After this, you’ll see y
 
 ### Testing the Endpoint
 
-To test your newly created endpoint, you’ll want to use a tool like [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/). Alternatively, you could also just use a browser at this point too. In your tool, add your endpoint URL which will look like `{KONG_URL}:PORT/test-service/` and send a GET request. If you are running Kong in Docker and have set up the endpoint as shown above, your URL will look like `localhost:8000/test-service/`.
+To test your newly created endpoint, you’ll want to use a tool like [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/). Alternatively, you could also just use a browser at this point too. In your tool, add your endpoint URL which will look like `{PLUGIN_KONG_URL}:PORT/test-service/` and send a GET request. If you are running Kong in Docker and have set up the endpoint as shown above, your URL will look like `localhost:8000/test-service/`.
 
 After the request has been sent, you should see a `200 OK` response as well as a response body containing the HttpBin contents (essentially a webpage). With our endpoint working, now let’s move on to securing it with an API key.
 
@@ -57,42 +57,42 @@ Lastly, to save our plugin configuration, scroll down to the bottom of the scree
 
 ### Configuring the .env File
 
-In the `my-dev-portal-api` project, for the `KONG_URL`, you'll need to add in the URL of your Kong instance. Specifically the Kong admin API URL/port, not the gateway URL/port where traffic is proxied. If you’re running a local instance of Kong, by default this will be running on `http://localhost:8001`. If this is the case, you can leave the value as is. If it is different or running remotely, you can change the value to point to the correct URL/port.
+In the `my-dev-portal-api` project, for the `PLUGIN_KONG_URL`, you'll need to add in the URL of your Kong instance. Specifically the Kong admin API URL/port, not the gateway URL/port where traffic is proxied. If you’re running a local instance of Kong, by default this will be running on `http://localhost:8001`. If this is the case, you can leave the value as is. If it is different or running remotely, you can change the value to point to the correct URL/port.
 
 ### Kong Konnect
 
 For Kong Konnect, the setup also requires you to add a few additional environment variables to the `my-dev-portal-api/.env` file. You'll want to add in the following key-values to the file:
 
 ``` conf
-KONNECT_API_URL="https://us.api.konghq.com"
-KONNECT_API_VERSION="v2"
-KONNECT_RUNTIME_GROUP_NAME="default"
-KONNECT_PAT=""
+PLUGIN_KONNECT_API_URL="https://us.api.konghq.com"
+PLUGIN_KONNECT_API_VERSION="v2"
+PLUGIN_KONNECT_RUNTIME_GROUP_NAME="default"
+PLUGIN_KONNECT_PAT=""
 ```
 
-for the `KONNECT_API_URL` and `KONNECT_API_VERSION` values, you'll want to log into your Kong Konnect control plane and retrieve this. You can get this value by going to the **Gateway Manager** screen and selecting your control plane. In the next screen, you can grab the **Admin API** value (located in near the top of the screen) and truncate anything we don't need.
+for the `PLUGIN_KONNECT_API_URL` and `PLUGIN_KONNECT_API_VERSION` values, you'll want to log into your Kong Konnect control plane and retrieve this. You can get this value by going to the **Gateway Manager** screen and selecting your control plane. In the next screen, you can grab the **Admin API** value (located in near the top of the screen) and truncate anything we don't need.
 
 The raw value will look like this: `https://us.api.konghq.com/v2/control-planes/123-asd-etc`
 
 From this, we can populate our values like so:
 
 ``` conf
-KONNECT_API_URL="https://us.api.konghq.com"
-KONNECT_API_VERSION="v2"
+PLUGIN_KONNECT_API_URL="https://us.api.konghq.com"
+PLUGIN_KONNECT_API_VERSION="v2"
 ```
 
-For the `KONNECT_RUNTIME_GROUP_NAME`, you'll use your **Control Plane** name. By default, this will be fittingly named `default`.
+For the `PLUGIN_KONNECT_RUNTIME_GROUP_NAME`, you'll use your **Control Plane** name. By default, this will be fittingly named `default`.
 
 ``` conf
-KONNECT_RUNTIME_GROUP_NAME="default"
+PLUGIN_KONNECT_RUNTIME_GROUP_NAME="default"
 ```
 
 Lastly, we will generate a Konnect Personal Access Token. This can be done through the Konnect UI by going to your initials in the top-right of the screen and from the dropdown, selecting **Personal Access Tokens**.
 
-From here, click **Generate Token**, give the token a **Name** and **Expiration**, then click **Generate**. Paste the returned value into the `KONNECT_PAT` value.
+From here, click **Generate Token**, give the token a **Name** and **Expiration**, then click **Generate**. Paste the returned value into the `PLUGIN_KONNECT_PAT` value.
 
 ```conf
-KONNECT_PAT="kpat_FIZqQxICG6aEpA10nQ1TesTtEStTEST"
+PLUGIN_KONNECT_PAT="kpat_FIZqQxICG6aEpA10nQ1TesTtEStTEST"
 ```
 
 ### Connecting Kong to Moesif

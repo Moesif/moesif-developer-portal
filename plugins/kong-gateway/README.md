@@ -37,7 +37,7 @@ Once populated, click **Create** to create the route. After this, you’ll see y
 
 ### Testing the Endpoint
 
-To test your newly created endpoint, you’ll want to use a tool like [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/). Alternatively, you could also just use a browser at this point too. In your tool, add your endpoint URL which will look like `{KONG_URL}:PORT/test-service/` and send a GET request. If you are running Kong in Docker and have set up the endpoint as shown above, your URL will look like `localhost:8000/test-service/`.
+To test your newly created endpoint, you’ll want to use a tool like [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/). Alternatively, you could also just use a browser at this point too. In your tool, add your endpoint URL which will look like `{PLUGIN_KONG_URL}:PORT/test-service/` and send a GET request. If you are running Kong in Docker and have set up the endpoint as shown above, your URL will look like `localhost:8000/test-service/`.
 
 After the request has been sent, you should see a `200 OK` response as well as a response body containing the HttpBin contents (essentially a webpage). With our endpoint working, now let’s move on to securing it with an API key.
 
@@ -57,7 +57,7 @@ Lastly, to save our plugin configuration, scroll down to the bottom of the scree
 
 ### Configuring the .env File
 
-In the `my-dev-portal-api` project, for the `KONG_URL`, you'll need to add in the URL of your Kong instance. Specifically the Kong admin API URL/port, not the gateway URL/port where traffic is proxied. If you’re running a local instance of Kong, by default this will be running on `http://localhost:8001`. If this is the case, you can leave the value as is. If it is different or running remotely, you can change the value to point to the correct URL/port.
+In the `my-dev-portal-api` project, for the `PLUGIN_KONG_URL`, you'll need to add in the URL of your Kong instance. Specifically the Kong admin API URL/port, not the gateway URL/port where traffic is proxied. If you’re running a local instance of Kong, by default this will be running on `http://localhost:8001`. If this is the case, you can leave the value as is. If it is different or running remotely, you can change the value to point to the correct URL/port.
 
 ### Connecting Kong to Moesif
 
