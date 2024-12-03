@@ -59,11 +59,11 @@ In the Developer Portal code, there are a few environment variables that you wil
 
 #### Tyk Gateway
 
-For the `TYK_GATEWAY_URL`, If you’re running a local instance of Tyk, by default this should be running on `http://localhost:8080`. If this is the case, you can leave the value as is. If it is different or running remotely, you can change the value to point to your Tyk gateway.
+For the `PLUGIN_TYK_GATEWAY_URL`, If you’re running a local instance of Tyk, by default this should be running on `http://localhost:8080`. If this is the case, you can leave the value as is. If it is different or running remotely, you can change the value to point to your Tyk gateway.
 
 #### Tyk Gateway Secret
 
-This would also be a good time to grab your `TYK_GATEWAY_SECRET_KEY`. If running in docker, your `TYK_GATEWAY_SECRET_KEY` can be found in the `tyk.conf` file in the Gateway container under the `"secret"` variable.
+This would also be a good time to grab your `PLUGIN_TYK_GATEWAY_SECRET_KEY`. If running in docker, your `PLUGIN_TYK_GATEWAY_SECRET_KEY` can be found in the `tyk.conf` file in the Gateway container under the `"secret"` variable.
 
 ### Connecting Tyk to Moesif
 
