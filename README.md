@@ -2,7 +2,7 @@
 
 The Moesif developer portal is an open-source app that you can deploy to provide a self-service experience for customers to subscribe and pay for your APIs. The developer portal is for API product owners looking to productize and monetize APIs.
 
-As an open-source project, you can customize the brand and user experience to meet your requirements without fear of vendor lock-in. 
+As an open-source project, you can customize the brand and user experience to meet your requirements without fear of vendor lock-in.
 
 ## Overview
 
@@ -33,17 +33,17 @@ Below are the currently supported solutions in the developer portal. They may be
 - Auth0
 - Okta
 
-### APIM / Key provisioning service
-
-- AWS API Gateway
-- Auth0 Machine2Machine
-- JWT
-- Kong
-- Tyk
-
 ### Payment Provider
 
 - Stripe
+
+### APIM / Key provisioning service
+
+- Auth0 Machine2Machine
+- JWT
+- AWS API Gateway
+- Kong
+- Tyk
 
 ## Prerequisites
 
@@ -56,45 +56,44 @@ In order to set up and use the Moesif Developer Portal, you will need the follow
 
 Below is a step-by-step guide on how to set up the Moesif Developer Portal. Since there are a lot of moving parts, it’s suggested that you follow each step carefully and in the order that they are presented.
 
-## Configuring the developer portal
+## Configuring the Developer Portal
 
 ### 1. Configuring Identity Provider
 
 In order for new customers to sign up, you must configure an identity provider. Moesif supports two identity providers:
 
-* [Configure the portal with Auth0](https://www.moesif.com/docs/developer-portal/configuring-auth0-as-an-identity-provider/)
-* [Configure the portal with Okta](https://www.moesif.com/docs/developer-portal/configuring-okta-as-an-identity-provider/)
+- [Configure the portal with Auth0](https://www.moesif.com/docs/developer-portal/configuring-auth0-as-an-identity-provider/)
+- [Configure the portal with Okta](https://www.moesif.com/docs/developer-portal/configuring-okta-as-an-identity-provider/)
 
+### 2. Configuring Billing Provider
 
-## 2. Configuring Billing Provider
+In order for new customers to purchase paid plans with a credit card, you must configure a billing provider. Currently, Stripe is the only supported billing provider. However, the portal can be modified for alternate checkout flows.
 
-In order for new customers to purchase paid plans with a credit card, you must configure a billing provider. Currently, Stripe is the only supported billing provider. However, the portal can be modified for alternate checkout flows. 
+- [Configure Stripe as the billing provider](https://www.moesif.com/docs/developer-portal/configuring-stripe-as-a-billing-provider/)
 
-* [Configure Stripe as the billing provider](https://www.moesif.com/docs/developer-portal/configuring-stripe-as-a-billing-provider/)
+### 3. Configuring API Management or Provisioning Plugin
 
-
-## 3. Configuring API Management or Provisioning Plugin
-
-Lastly, you'll need to configure a service to generate API keys. This enables new sign ups to access your APIs and meter their usage. 
+Lastly, you'll need to configure a service to generate API keys. This enables new sign ups to access your APIs and meter their usage.
 The developer portal has plugins for many different provisioning flows including popular API gateways like Kong along with standards like Json Web Tokens (JWT)
 
 The plugins are available in the `./plugins` directory of the repository. Instructions are below:
 
-* [Configure Auth0 Machine2Machine plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/auth0-m2m) as the key provisioning service
-* [Configure JWT plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/jwt) as the key provisioning service
-* [Configure Kong Gateway plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/kong-gateway) as the key provisioning service
-* [Configure Kong Konnect plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/kong-konnect) as the key provisioning service
-* [Configure Tyk plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/tyk) as the key provisioning service
+- [Configure Auth0 Machine2Machine plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/auth0-m2m) as the key provisioning service
+- [Configure JWT plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/jwt) as the key provisioning service
+- [Configure Kong Gateway plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/kong-gateway) as the key provisioning service
+- [Configure Kong Konnect plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/kong-konnect) as the key provisioning service
+- [Configure Tyk plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/tyk) as the key provisioning service
 
 ### Building Your Own Provisioning Plugin
 
 You can also implement your own logic to generate API keys. You just need to implement the [provisioningPlugin.js](https://github.com/Moesif/moesif-developer-portal/blob/main/plugins/provisioningPlugin.js) class. Once done, ensure the respective plugin is loaded in the portal API's [pluginLoader.js](https://github.com/Moesif/moesif-developer-portal/blob/main/my-dev-portal-api/config/pluginLoader.js)
 
-## Running the portal
+## Running the Portal
 
 There are two docker images available to run:
-* `moesif/dev-portal` runs the frontend
-* `moesif/dev-portal-api` runs the backend
+
+- `moesif/dev-portal` runs the frontend
+- `moesif/dev-portal-api` runs the backend
 
 To run the docker examples, modify the envvars in `distribution/docker/docker-compose.yml` and then run it as:
 
@@ -108,7 +107,7 @@ The `my-dev-portal` folder is a React application that contains the UI and logic
 
 The `my-dev-portal-api` project is where the APIs and various other logic are contained. In this project, you’ll have connectivity to Moesif, Stripe, and Kong through various APIs. For example, the `/register` endpoint in this project contains the logic used to register a new user in the various systems that are part of the developer portal ecosystem.
 
-In addition, the `plugins` directory contains various plugins to provisions API keys such as for JWT and Kong. 
+In addition, the `plugins` directory contains various plugins to provisions API keys such as for JWT and Kong.
 
 The `resources` directory contains additional files such as for AWS API Gateway
 
@@ -146,7 +145,7 @@ To start, navigate to your developer portal in the browser, and at the Home Scre
 
 ## Building Docker Image
 
-You can deploy the two components (the frontend and the API) from the Docker images available. 
+You can deploy the two components (the frontend and the API) from the Docker images available.
 To build the Docker images:
 
 1. cd into `./distribution/docker`
