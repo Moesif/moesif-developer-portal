@@ -18,7 +18,6 @@ export const Auth0ProviderWithNavigate = ({ children }) => {
       onRedirectCallback={onRedirectCallback}
       authorizationParams={{
         redirect_uri: window.location.origin,
-        audience: process.env.REACT_APP_DEV_PORTAL_API_SERVER,
         scope: "openid profile email offline_access", // Request offline_access scope
       }}
     >
