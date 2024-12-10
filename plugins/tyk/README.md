@@ -76,3 +76,7 @@ For the developer portal, an additional step is required within the Tyk configur
 ## Testing the Developer Portal
 
 Once the Developer portal is configured, testing out all of the moving parts of the Developer Portal is crucial. Doing this ensures that everything is working as intended. See our detailed testing process [here](https://www.moesif.com/docs/developer-portal/using-the-portal/).
+
+## Verifying Key Provisioning Functionality
+
+After configuring the rest of the developer portal you can verify Tyk functionality after creating a key. Head to the **Tyk Dashboard**, under **System Management > Keys** you should see a new key created. You should see the **Alias / Key Hash Value** associated with a Stripe customer ID (will resemble `cus_123abc`).

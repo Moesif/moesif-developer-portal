@@ -104,3 +104,7 @@ Once the Moesif-Kong integration and **key-auth** is been enabled, you should be
 ## Testing the Developer Portal
 
 Once the Developer portal is configured, testing out all of the moving parts of the Developer Portal is crucial. Doing this ensures that everything is working as intended. See our detailed testing process [here](https://www.moesif.com/docs/developer-portal/using-the-portal/).
+
+## Verifying Key Provisioning Functionality
+
+After configuring the rest of the developer portal you can verify Kong Konnect functionality after creating a key. In Kong, under **Consumers**, you should see your new user added. For this entry, you should also see the **custom_id** field with the Stripe customer ID as well (will resemble `cus_123abc`).
