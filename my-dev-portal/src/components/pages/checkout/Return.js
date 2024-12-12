@@ -6,6 +6,7 @@ import noPriceIcon from "../../../images/icons/empty-state-price.svg";
 import NoticeBox from "../../notice-box";
 import useAuthCombined from "../../../hooks/useAuthCombined";
 import { moesifIdentifyUserFrontEndIfPossible } from "../../../common/utils";
+import { PageLoader } from "../../page-loader";
 
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
@@ -15,6 +16,7 @@ import { moesifIdentifyUserFrontEndIfPossible } from "../../../common/utils";
 
 function Return(props) {
   const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [customerEmail, setCustomerEmail] = useState("");
   const [provisionError, setProvisionError] = useState(null);
   const { idToken } = useAuthCombined();
@@ -32,6 +34,8 @@ function Return(props) {
     });
 
     if (sessionId && idToken) {
+      setLoading(true);
+
       fetch(
         `${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${sessionId}`,
         {
@@ -58,8 +62,9 @@ function Return(props) {
         })
         .catch((err) => {
           setProvisionError(err);
-
-        }).finally(() => {
+        })
+        .finally(() => {
+          setLoading(false);
           moesifIdentifyUserFrontEndIfPossible(idToken);
         });
     } else {
@@ -98,6 +103,10 @@ function Return(props) {
         />
       </PageLayout>
     );
+  }
+
+  if (loading) {
+    return <PageLoader />;
   }
 
   return (
