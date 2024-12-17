@@ -12,6 +12,7 @@ const {
   getStripeCustomer,
   getStripeCustomerId,
   getStripeCustomerIdFromCache,
+  createStripeCheckoutSession,
 } = require("./services/stripeApis");
 const {
   syncToMoesif,
@@ -22,7 +23,6 @@ const {
 
 const { authMiddleware } = require("./services/authPlugin");
 
-const StripeSDK = require("stripe");
 const { getApimProvisioningPlugin } = require("./config/pluginLoader");
 
 const app = express();
@@ -68,47 +68,11 @@ app.post(
   "/create-stripe-checkout-session",
   authMiddleware,
   async (req, res) => {
-    const stripe = StripeSDK(process.env.STRIPE_API_KEY);
     const priceId = req.query?.price_id;
     const email = req.user?.email;
-    // https://docs.stripe.com/checkout/quickstart?client=react
-    // for embedded checkout.
-
-    // make sure only one stripe customer per email
-    let customerId = await getStripeCustomerId(email);
-
-    if (!customerId) {
-      // If no customerId exists, create a new one
-      const customer = await stripe.customers.create({
-        email: email,
-        metadata: {
-          // add the user id from identify provider to
-          // stripe metadata for customer.
-          // Because, an alternative approach is to tie
-          // the identity provider's user id to stripe customer
-          // and look up customer object using user_id instead of
-          // email.
-          authUserId: req?.user?.sub,
-        }
-      });
-
-      customerId = customer.id;
-    }
 
     try {
-      const session = await stripe.checkout.sessions.create({
-        ui_mode: "embedded",
-        line_items: [
-          {
-            // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-            price: priceId,
-          },
-        ],
-        customer: customerId,
-        mode: "subscription",
-        return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`,
-      });
-
+      const session = await createStripeCheckoutSession(email, priceId, req?.user);
       console.log("got session back from stripe session");
       console.log(JSON.stringify(session));
 
