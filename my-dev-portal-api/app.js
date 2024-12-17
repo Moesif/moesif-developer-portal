@@ -26,6 +26,7 @@ const {
   getUnifiedCustomerId,
   getUnifiedCustomerIdCached,
 } = require("./services/commonUtils");
+const { BillingProvider } = require('./services/BillingProvider');
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -214,7 +215,7 @@ app.post("/okta/register", jsonParser, async (req, res) => {
   }
 });
 
-// This handles Provision after user success checked out from Moesif
+// This handles Provision after user success checked out from Stripe
 // - syncing the Stripe ids to Moesif.
 // - creates customers to API Management platform if need.
 // - Please see DATA-MODEL.md see the assumptions and background on data mapping.
@@ -286,6 +287,35 @@ app.post(
       });
   }
 );
+
+// if you are using customer billing provider
+// generally on checkout success you want to trigger
+// to
+// - verify the purchase
+// - sync the ids to moesif.
+// - provision the service.
+app.post('/register/custom', authMiddleware, async function(req, res) {
+  const customerId = await getUnifiedCustomerId(req?.user);
+  const email = req?.user?.email;
+  // verify plans and subscription using your custom billing provider.
+
+  const { subscription_id } = await BillingProvider.verifyPurchase(req);
+
+  syncToMoesif({
+    companyId: customerId,
+    subscriptionId: subscription_id,
+    userId: customerId,
+    email: email,
+  });
+
+  const user = await provisioningService.provisionUser(
+    customerId,
+    email,
+    subscription_id
+  );
+
+  return user;
+});
 
 app.get("/stripe/customer", authMiddleware, function (req, res) {
   const email = req.user?.email;

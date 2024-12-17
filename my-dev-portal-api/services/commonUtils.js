@@ -21,6 +21,8 @@ async function getUnifiedCustomerId(authUser, email) {
     return getStripeCustomerId(email || authUser.email);
   }
 
+  // for custom billing set up we can use the user id provided by the
+  // authentication provider as userid
   return authUser.sub || authUser.user_id || authUser.id || email;
 }
 
