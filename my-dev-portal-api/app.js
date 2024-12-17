@@ -10,8 +10,6 @@ const { Client } = require("@okta/okta-sdk-nodejs");
 const {
   verifyStripeSession,
   getStripeCustomer,
-  getStripeCustomerId,
-  getStripeCustomerIdFromCache,
   createStripeCheckoutSession,
 } = require("./services/stripeApis");
 const {
@@ -24,6 +22,10 @@ const {
 const { authMiddleware } = require("./services/authPlugin");
 
 const { getApimProvisioningPlugin } = require("./config/pluginLoader");
+const {
+  getUnifiedCustomerId,
+  getUnifiedCustomerIdCached,
+} = require("./services/commonUtils");
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -55,10 +57,7 @@ const moesifMiddleware = moesif({
   applicationId: process.env.MOESIF_APPLICATION_ID,
 
   identifyUser: function (req, _res) {
-    if (req.user?.email) {
-      return getStripeCustomerIdFromCache(req.user?.email);
-    }
-    return req.user ? req.user.id : undefined;
+    return getUnifiedCustomerIdCached(req?.user);
   },
 });
 
@@ -72,7 +71,11 @@ app.post(
     const email = req.user?.email;
 
     try {
-      const session = await createStripeCheckoutSession(email, priceId, req?.user);
+      const session = await createStripeCheckoutSession(
+        email,
+        priceId,
+        req?.user
+      );
       console.log("got session back from stripe session");
       console.log(JSON.stringify(session));
 
@@ -112,19 +115,19 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
   console.log("verified email from claims " + req.user.email);
   const email = req.user?.email;
 
-  let stripeCustomerId;
+  let moesifUserId;
   try {
-    stripeCustomerId = await getStripeCustomerId(email);
-    // since customerId is mapped to moesif user_id (see DATA_MODEL.md);
+    moesifUserId = await getUnifiedCustomerId(email);
+    // see DATA_MODEL.md regarding how customer ids are mapped.
     // please modify if you decides to use some other data mapping model.
-
-    if (!stripeCustomerId) {
+    if (!moesifUserId) {
       return res.status(200).json([]);
     }
 
     const subscriptions = await getSubscriptionsForUserId({
-      userId: stripeCustomerId,
+      userId: moesifUserId,
     });
+
     console.log(
       "got subscriptions from moesif " + JSON.stringify(subscriptions)
     );
@@ -134,7 +137,7 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
       "Error getting subscription from moesif for " +
         email +
         " " +
-        stripeCustomerId,
+        moesifUserId,
       err
     );
     res.status(404).json({ message: err.toString() });
@@ -309,7 +312,7 @@ app.post("/create-key", authMiddleware, jsonParser, async function (req, res) {
     // otherwise we use email from body.
     const email = req.user?.email;
 
-    const customerId = await getStripeCustomerId(email);
+    const customerId = await getUnifiedCustomerId(email);
     if (!customerId) {
       throw new Error(
         `Customer Id unknown. Ensure you're subscribed to a plan. If you just subscribed, try again.`
@@ -341,9 +344,9 @@ app.get(
     // Perhaps, you have your own userId for your own system.
     // the most important aspect is the user_id used in your identifyUser hook
     try {
-      const stripeCustomerId = await getStripeCustomerId(email);
-      if (!stripeCustomerId) {
-        console.error("stripe customer not found when fetching for " + email);
+      const customerId = await getUnifiedCustomerId(email);
+      if (!customerId) {
+        console.error("Customer Id not found when fetching for " + email);
       }
 
       const embedInfoArray = await Promise.all(
@@ -351,7 +354,7 @@ app.get(
           (workspaceId) =>
             getInfoForEmbeddedWorkspaces({
               workspaceId: workspaceId,
-              userId: stripeCustomerId || authUserId,
+              userId: customerId,
             })
         )
       );
