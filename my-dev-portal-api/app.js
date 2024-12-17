@@ -26,7 +26,7 @@ const {
   getUnifiedCustomerId,
   getUnifiedCustomerIdCached,
 } = require("./services/commonUtils");
-const { BillingProvider } = require('./services/BillingProvider');
+const { BillingProvider } = require("./services/BillingProvider");
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
@@ -53,6 +53,8 @@ if (!templateWorkspaceIdLiveEvent) {
 }
 
 const provisioningService = getApimProvisioningPlugin();
+
+const customBillingProvider = new BillingProvider();
 
 const moesifMiddleware = moesif({
   applicationId: process.env.MOESIF_APPLICATION_ID,
@@ -294,27 +296,33 @@ app.post(
 // - verify the purchase
 // - sync the ids to moesif.
 // - provision the service.
-app.post('/register/custom', authMiddleware, async function(req, res) {
+app.post("/register/custom", authMiddleware, async function (req, res) {
   const customerId = await getUnifiedCustomerId(req?.user);
   const email = req?.user?.email;
   // verify plans and subscription using your custom billing provider.
 
-  const { subscription_id } = await BillingProvider.verifyPurchase(req);
+  try {
+    const { subscription_id } = await customBillingProvider.verifyPurchase(req);
 
-  syncToMoesif({
-    companyId: customerId,
-    subscriptionId: subscription_id,
-    userId: customerId,
-    email: email,
-  });
+    syncToMoesif({
+      companyId: customerId,
+      subscriptionId: subscription_id,
+      userId: customerId,
+      email: email,
+    });
 
-  const user = await provisioningService.provisionUser(
-    customerId,
-    email,
-    subscription_id
-  );
-
-  return user;
+    const user = await provisioningService.provisionUser(
+      customerId,
+      email,
+      subscription_id
+    );
+    res.status(201).json({ status: 'provisioned'});
+  } catch (err) {
+    console.error("Error registering user", err);
+    res.status(500).json({
+      message: "Failed to provision user. " + err.toString(),
+    });
+  }
 });
 
 app.get("/stripe/customer", authMiddleware, function (req, res) {
