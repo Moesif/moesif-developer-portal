@@ -11,7 +11,7 @@ const moesifMiddleware = moesif({
   },
 });
 
-function syncToMoesif({ companyId, userId, email, subscriptionId }) {
+function syncToMoesif({ companyId, userId, email }) {
   if (companyId) {
     var company = {
       companyId: companyId,
@@ -32,6 +32,60 @@ function syncToMoesif({ companyId, userId, email, subscriptionId }) {
     };
     moesifMiddleware.updateUser(user);
   }
+}
+
+// for Stripe, if you set up webhook in Stripe, below is NOT needed
+// since Moesif automatically listen to Stripe's webhook for Subscription updates.
+// but if you are building a custom billing provider, you must send
+// the subscription data to Moesif.
+export function sendSubscriptionToMoesif({
+  companyId,
+  subscriptionId,
+  planId,
+  priceId,
+  currentPeriodStart,
+  currentPeriodEnd,
+  metadata,
+}) {
+  const payload = {
+    subscription_id: subscriptionId,
+    company_id: companyId,
+    current_period_start: currentPeriodStart,
+    current_period_end: currentPeriodEnd,
+    status: "active",
+    items: [
+      {
+        plan_id: planId,
+        price_id: priceId,
+      },
+    ],
+    metadata: {
+      // this is custom data you would like to be available.
+      subscription_type: "PAYG",
+      subscription_tier: "Pro",
+      ...metadata,
+    },
+  };
+
+  return fetch(`https://api.moesif.net/v1/subscriptions`, {
+    method: "POST",
+    headers: {
+      "X-Moesif-Application-Id": moesifApplicationId,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+    .then((res) => {
+      if (res.ok) {
+        console.log(
+          `subscription sent to moesif successfully for ${companyId}`
+        );
+      } else {
+      }
+    })
+    .catch((err) => {
+      console.error(`failed to send event to ${companyId}`, err);
+    });
 }
 
 function getPlansFromMoesif() {
@@ -119,7 +173,7 @@ function getSubscriptionForUserEmail({ email }) {
     .then(async (res) => {
       if (!res.ok) {
         const body = await res.json();
-        console.log('error fetching this');
+        console.log("error fetching this");
         throw new Error(
           `Error fetching subscriptions: ${res.status} ${JSON.stringify(body)}`
         );

@@ -17,6 +17,7 @@ const {
   getInfoForEmbeddedWorkspaces,
   getPlansFromMoesif,
   getSubscriptionsForUserId,
+  sendSubscriptionToMoesif,
 } = require("./services/moesifApis");
 
 const { authMiddleware } = require("./services/authPlugin");
@@ -242,7 +243,7 @@ app.post(
               process.env.MOESIF_MONETIZATION_VERSION.toUpperCase() === "V1"
             ) {
               console.log("updating company and user with V1");
-              // in v1, companyId and subscription id is one to one mapping.
+              // in v1, companyId and subscription id has one to one mapping.
               syncToMoesif({
                 companyId: stripe_subscription_id,
                 subscriptionId: stripe_subscription_id,
@@ -250,10 +251,9 @@ app.post(
                 email: email,
               });
             }
-            // V2 as fallback
+            // V2 as default
             else {
               console.log("updating company and user with V2");
-
               // assume you have one user per subscription
               // but if you have multiple users per each subscription
               // please check out https://www.moesif.com/docs/getting-started/overview/
@@ -302,13 +302,24 @@ app.post("/register/custom", authMiddleware, async function (req, res) {
   // verify plans and subscription using your custom billing provider.
 
   try {
-    const { subscription_id } = await customBillingProvider.verifyPurchase(req);
+    const { subscription } = await customBillingProvider.verifyPurchase(req);
 
     syncToMoesif({
       companyId: customerId,
-      subscriptionId: subscription_id,
       userId: customerId,
       email: email,
+    });
+
+    sendSubscriptionToMoesif({
+      companyId: customerId,
+      subscriptionId: subscription.id,
+      planId: subscription.plan_id,
+      priceId: subscription.price_id,
+      currentPeriodStart: subscription.current_period_start,
+      currentPeriodEnd: subscription.current_period_end,
+      metadata: {
+        ...subscription
+      }
     });
 
     const user = await provisioningService.provisionUser(
