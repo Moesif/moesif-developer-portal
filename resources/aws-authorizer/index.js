@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const jwksClient = require("jwks-rsa");
 
 const client = jwksClient({
-  jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+  jwksUri: `https://${process.env.JWKS_URI}`,
 });
 
 function getKey(header, callback) {
@@ -13,21 +13,30 @@ function getKey(header, callback) {
       return; // Immediately return to prevent further execution.
     }
 
-    var signingKey = key.publicKey || key.rsaPublicKey;
+    var signingKey = key.getPublicKey();
     callback(null, signingKey);
   });
 }
 
 exports.handler = function (event, _context, callback) {
   const token = event.authorizationToken;
+  // This environment variable holds the secret to verify the JWT with.
+  //
+  // For HS256-signed JWTS, this variable is the same secret the JWT is signed with 
+  // and must equal the `PLUGIN_JWT_SECRET` environment variable in 
+  // my-dev-portal-api/.env.
+  // 
+  // For RS256-signed JWTs, it holds the public key to verify the JWT with to make 
+  // testing easier by not having to set up a JWKS URI.
+  const secret = process.env.JWT_VERIFY_KEY ?? getKey;
 
   console.log(token);
 
   jwt.verify(
     token,
-    getKey,
+    secret,
     {
-      algorithms: ["RS256"],
+      algorithms: ["RS256", "HS256"],
     },
     function (err, decoded) {
       if (err) {

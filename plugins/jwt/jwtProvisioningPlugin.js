@@ -7,6 +7,7 @@ class JwtProvisioningPlugin extends ProvisioningPlugin {
         this.slug = "jwt";
         this.jwtAlgorithm = this.getConfig('PLUGIN_JWT_ALGORITHM');
         this.jwtSecret = this.getConfig('PLUGIN_JWT_SECRET').trim();
+        this.jwtKid = this.getConfig('PLUGIN_JWT_KID');
         this.jwtUserIdField = this.getConfig('PLUGIN_JWT_USER_ID_FIELD');
         this.jwtCompanyIdField = this.getConfig('PLUGIN_JWT_COMPANY_ID_FIELD');
         this.jwtExpiresIn = +this.getConfig('PLUGIN_JWT_EXPIRES_IN') || this.getConfig('PLUGIN_JWT_EXPIRES_IN');
@@ -31,7 +32,8 @@ class JwtProvisioningPlugin extends ProvisioningPlugin {
       // Sign the token
       const token = jwt.sign(payload, this.jwtSecret, { 
         algorithm: this.jwtAlgorithm,
-        expiresIn: this.jwtExpiresIn
+        expiresIn: this.jwtExpiresIn,
+        keyid: this.jwtKid, 
       });
 
       console.log(`Generated new JWT with claims ${JSON.stringify(this.jwtExpiresIn)}`)
