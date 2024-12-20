@@ -6,69 +6,162 @@ The Moesif Developer Portal can be used with a running instance of Kong. To inte
 
 ## Configure the Gateway
 
-### Creating an Endpoint in Kong Manager
+### Create an Endpoint in Kong Gateway
 
-In order to use the developer portal to monetize your APIs, you'll require an endpoint in Kong. If you already have an endpoint created, you can use this existing endpoint.
+To monetize your APIs using the developer portal, you’ll need to set up an endpoint in Kong. This allows Kong to route and manage traffic to your upstream API, enabling features like authentication and rate limiting. If you already have an endpoint, you can use the existing one, provided it meets the requirements for your intended use case. Below are the steps to create a new service and route using Kong's CLI.
 
-If you are using Kong Manager, you can create the endpoint by clicking **Services** in the left-side menu, under the **API Gateway** section. On the **Services** page, click the **New Service** button in the top-right corner to add a new service.
+#### Create a Service
 
-On the **Create Service** page, You will need to fill out the **Name** and, after selecting the **Add using URL** option, the **URL** field. For this example, you can fill them out with the following values:
+A service in Kong represents your upstream API or microservice. Use the following command to create a service:
 
-| Field     | Value                     |
-|-----------|---------------------------|
-| Name      | `HttpBin`                 |
-| URL       | `https://www.httpbin.org` |
+```bash
+curl -i -X POST http://localhost:8001/services \
+    --data name=TestService \
+    --data url=https://www.httpbin.org
+```
 
-Once populated, click **Create** to create the service. After this, you’ll see your new services viewing page.
+In this command:
 
-Next, we will create a route that will expose this service. To do this, click on **Routes** in the left-side menu, which is also under the **API Gateway** section.
+- Replace `http://localhost:8001/services` with URL of your Kong admin instance.
+- Replace `TestService` with the desired name for your service.
+- Replace `https://www.httpbin.org` with the URL of your upstream service.
 
-On the **Routes** page, click on the **Create Route** button in the top-right corner of the screen to add the new route. On the **Create Route** screen, you’ll have a few values to fill out including the **Service, Name**, **Protocols**, **Method(s)**, and **Path(s)** fields on the screen. For this example, you can fill out these fields with the following values:
+#### Create a Route
 
-| Field      | Value                            |
-|------------|----------------------------------|
-| Service    | The service you just created, `HttpBin` |
-| Name       | `TestService`                    |
-| Protocols  | `http, https`                    |
-| Method(s)  | `GET`                            |
-| Path(s)    | `/test-service`                  |
+A route specifies how Kong should route requests to your service. To create a route for the service created in Step 1, use the following command:
 
-Once populated, click **Create** to create the route. After this, you’ll see your new routes viewing page. With the endpoint creation complete, we can now move on to testing it to ensure it is configured correctly.
+```bash
+curl -i -X POST http://localhost:8001/routes \
+    --data service.name=TestService \
+    --data name=TestRoute \
+    --data methods=GET \
+    --data paths=/test-route
+```
 
-### Testing the Endpoint
+In this command:
 
-To test your newly created endpoint, you’ll want to use a tool like [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/). Alternatively, you could also just use a browser at this point too. In your tool, add your endpoint URL which will look like `{PLUGIN_KONG_URL}:PORT/test-service/` and send a GET request. If you are running Kong in Docker and have set up the endpoint as shown above, your URL will look like `localhost:8000/test-service/`.
+- Replace `http://localhost:8001/routes` with URL of your Kong admin instance.
+- Replace `TestService` with the name of your previously created service.
+- Replace `TestRoute` with the desired name for the route.
+- Replace `/test-route` with the desired path for the route.
 
-After the request has been sent, you should see a `200 OK` response as well as a response body containing the HttpBin contents (essentially a webpage). With our endpoint working, now let’s move on to securing it with an API key.
+#### Verify the Endpoint
 
-## Configure Gateway Authentication
+Once the service and route are created, you can test the endpoint to ensure it is configured correctly. Use the following command to test the route:
 
-### Adding Key Auth to All Endpoints
+```bash
+curl -i http://localhost:8000/test-route
+```
 
-Since the Developer Portal generates API keys, is you must add and enable the **Key-Auth** plugin to our Kong endpoint. For simplicity, you can enable this plugin globally. If only you want to only apply **Key-Auth** to specific/monetized routes, you can do that as well.
+In this command:
 
-In the Kong Manager Dashboard, you can add the plugin by clicking **Plugins** in the left-side menu, under the **API Gateway** section. On the **Plugins** page, you’ll click the **New Plugin** button to add a new plugin. On the **Add New Plugin** screen, you’ll find the **Key-Authentication** plugin by scrolling or searching, once found, click **Enable**.
+- Replace `http://localhost:8000/test-route` with URL of your Kong instance.
 
-On the **Create new key-auth plugin** screen, you’ll want to make sure that the **This plugin is Enabled** toggle is set to `on`, the **Global** radio button is selected, and that **Config.Key Names** field is set to `apikey`. By setting this to `apikey` we can pass a field of the same name in the header and include our API key as the value.
+This command sends a GET request to the route. If everything is configured correctly, you should see a response from your upstream service (`https://www.httpbin.org` in this example).
 
-Lastly, to save our plugin configuration, scroll down to the bottom of the screen and click **Create**. Now, our endpoint will be secured by the kay-auth plugin. To test it out, resend the request from earlier and you should get a `401 Unauthorized` response, and a message body stating `No API key found in request`. If you are not getting this response, please refer to the [Kong documentation for key-auth](https://docs.konghq.com/hub/kong-inc/key-auth/).
+You should see a `200 OK` response as well as a response body containing the response's contents (essentially a webpage). With our endpoint working, now let’s move on to securing it with an API key.
+
+### Configure Gateway Authentication
+
+#### Adding Key Auth to All Endpoints
+
+Since the Developer Portal generates API keys, you must add and enable the **Key-Auth** plugin to your Kong endpoint. For simplicity, you can enable this plugin globally. If you want to apply **Key-Auth** only to specific/monetized routes, you can do that as well.
+
+To add the Key-Auth plugin globally using the CLI, use the following command:
+
+```bash
+curl -i -X POST http://localhost:8001/plugins \
+    --data name=key-auth \
+    --data config.key_names=apikey \
+    --data enabled=true
+```
+
+In this command:
+
+- `name=key-auth` specifies the Key-Auth plugin.
+- `config.key_names=apikey` sets the header field name to `apikey`.
+- `enabled=true` ensures the plugin is active.
+
+To test it out, resend the request from earlier. You should get a `401 Unauthorized` response with a message body stating `No API key found in request`. If you are not getting this response, please refer to the [Kong documentation for key-auth](https://docs.konghq.com/hub/kong-inc/key-auth/).
 
 ## Configure the Developer Portal
 
-### Configuring the .env File
+### Integrating Kong with Moesif
 
-In the `my-dev-portal-api` project, for the `PLUGIN_KONG_URL`, you'll need to add in the URL of your Kong instance. Specifically the Kong admin API URL/port, not the gateway URL/port where traffic is proxied. If you’re running a local instance of Kong, by default this will be running on `http://localhost:8001`. If this is the case, you can leave the value as is. If it is different or running remotely, you can change the value to point to the correct URL/port.
+The Moesif-Kong plugin simplifies sending API analytics to Moesif. To set it up, refer to [our integration documentation](https://docs.konghq.com/hub/moesif/kong-plugin-moesif/) or follow the detailed steps in [our integration guide](https://www.moesif.com/docs/guides/guide-kong-gateway-integration/).
 
-### Connecting Kong to Moesif
+After enabling the Moesif-Kong integration you should start seeing API call metrics in Moesif. To secure your API, ensure that unauthenticated calls are blocked by the **key-auth** plugin in Kong. Unauthorized requests should return `401 Unauthorized` responses, which will also appear in Moesif for monitoring.
 
-The Moesif-Kong plugin makes it easy to get API call analytics funneled into Moesif. For instructions on how to do this, you can reference [our integration documentation](https://docs.konghq.com/hub/moesif/kong-plugin-moesif/) or a more in-depth step-by-step approach in [our integration guide](https://www.moesif.com/docs/guides/guide-kong-gateway-integration/).
+### Updating Environment Variables
 
-Once the Moesif-Kong integration and **key-auth** is been enabled, you should begin to see some API call metrics flowing into Moesif. You may also want to ensure that API calls are being blocked by the **key-auth** plugin in Kong for unauthenticated calls. When unauthorized calls are sent to Kong, the `401 Unauthorized` responses should also show up in Moesif.
+Depending on your setup, variables can be added to either the `my-dev-portal-api/.env` file (for Node setups) or the `distribution/docker-compose.yml` file (for Docker setups).
+
+This should point to the Kong admin API URL and port, not the gateway URL/port used for traffic proxying. If you're running Kong locally, the default admin API URL is `http://localhost:8001`. For remote or custom configurations, update this value to match the correct URL and port.
+
+#### Environment Variables for Node
+
+- Open the `my-dev-portal-api/.env` file.
+- Replace the following lines with your admin API URL:
+
+```shell
+PLUGIN_APIM_PROVIDER="Kong"
+PLUGIN_KONG_URL="http://localhost:8001"
+```
+
+- Save the `.env` file to ensure the updated values are persisted.
+
+#### Environment Variables for Docker
+
+- Open the `distribution/docker-compose.yml` file.
+- Add or update the following entries in the relevant service configuration under `environment`, replacing with your admin API URL:
+
+```yaml
+dev-portal-api:
+    environment:
+        - PLUGIN_APIM_PROVIDER=Kong
+        - PLUGIN_KONG_URL="http://localhost:8001"
+```
+
+- Save the `docker-compose.yml` file to ensure the updated values are persisted.
 
 ## Testing the Developer Portal
 
 Once the Developer portal is configured, testing out all of the moving parts of the Developer Portal is crucial. Doing this ensures that everything is working as intended. See our detailed testing process [here](https://www.moesif.com/docs/developer-portal/using-the-portal/).
 
-## Verifying Key Provisioning Functionality
+## Verifying Key Provisioning Functionality via Kong CLI
 
-After configuring the rest of the developer portal you can verify Kong functionality after creating a key. In Kong, under **Consumers**, you should see your new user added. For this entry, you should also see the **custom_id** field with the Stripe customer ID as well (will resemble `cus_123abc`).
+After completing the developer portal configuration, you can verify Kong functionality and key provisioning using the Kong CLI. Follow these steps:
+
+### List All Consumers
+
+Use the following command to fetch the list of all consumers in your Kong instance:
+
+```bash
+curl -X GET http://localhost:8001/consumers
+```
+
+Replace `http://localhost:8001` with your Kong admin API URL if it's running remotely.
+
+Check the response for your newly created user. The output should include details such as `username`, `id`, and `custom_id`.
+
+### Search for a Specific Consumer by Stripe Customer ID
+
+If you know the `custom_id` (e.g., the Stripe customer ID `stripe_customer_ID`), filter the results to locate the specific consumer entry:
+
+```bash
+curl -X GET "http://localhost:8001/consumers?custom_id=stripe_customer_ID"
+```
+
+### Retrieve Consumer Details
+
+To view detailed information about the consumer, including associated keys, use the `id` or `username` of the consumer:
+
+```bash
+curl -X GET http://localhost:8001/consumers/{consumer_id_or_username}
+```
+
+Replace `{consumer_id_or_username}` with the appropriate consumer ID or username.
+
+### Verify the `custom_id` Field
+
+Ensure that the consumer entry includes the `custom_id` field with the Stripe customer ID (e.g., `stripe_customer_ID`). This confirms that the user is successfully added, and key provisioning is functioning correctly.
