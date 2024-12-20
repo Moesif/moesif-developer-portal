@@ -12,6 +12,11 @@ RUN apt-get update && apt-get upgrade -y && \
 # Bundle app source
 COPY ./my-dev-portal-api /usr/src/app
 COPY ./plugins /usr/src/plugins
+
+# Remove env file
+RUN rm -f /usr/src/app/.env
+
+# Install dependencies
 RUN npm install
 
 EXPOSE 3030
