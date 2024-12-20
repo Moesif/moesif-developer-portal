@@ -96,7 +96,14 @@ function getPlansFromMoesif() {
         Authorization: `Bearer ${moesifManagementToken}`,
       },
     }
-  ).then((res) => res.json());
+  )
+    .then((res) => {
+      if (!res.ok) {
+        console.error("get plans from moesif not successful" + res.statusText);
+      }
+      return res;
+    })
+    .then((res) => res.json());
 }
 
 function getCompany({ companyId }) {
@@ -109,7 +116,16 @@ function getCompany({ companyId }) {
         Authorization: `Bearer ${moesifManagementToken}`,
       },
     }
-  ).then((res) => res.json());
+  )
+    .then((res) => {
+      if (!res.ok) {
+        console.error(
+          "get company from moesif not successful" + res.statusText
+        );
+      }
+      return res;
+    })
+    .then((res) => res.json());
 }
 
 function getUser({ userId }) {
@@ -120,7 +136,14 @@ function getUser({ userId }) {
         Authorization: `Bearer ${moesifManagementToken}`,
       },
     }
-  ).then((res) => res.json());
+  )
+    .then((res) => {
+      if (!res.ok) {
+        console.error("get user from moesif not successful" + res.statusText);
+      }
+      return res;
+    })
+    .then((res) => res.json());
 }
 
 function extractSubscriptionsFromCompanyObject(companyObject) {
