@@ -67,6 +67,11 @@ function sendSubscriptionToMoesif({
     },
   };
 
+  console.log(
+    "about to send subscription data to moesif" +
+      JSON.stringify(payload, null, "  ")
+  );
+
   return fetch(`https://api.moesif.net/v1/subscriptions`, {
     method: "POST",
     headers: {
@@ -75,12 +80,14 @@ function sendSubscriptionToMoesif({
     },
     body: JSON.stringify(payload),
   })
-    .then((res) => {
+    .then(async (res) => {
       if (res.ok) {
         console.log(
           `subscription sent to moesif successfully for ${companyId}`
         );
       } else {
+        const text = await res.text();
+        console.error("failed to log to moesif", text);
       }
     })
     .catch((err) => {

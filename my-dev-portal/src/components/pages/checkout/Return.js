@@ -79,15 +79,16 @@ function registerPurchaseCustom({
   fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/custom`, {
     method: "POST",
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${idToken}`,
     },
-    body: {
+    body: JSON.stringify({
       plan_id: planId,
       price_id: priceId,
       // session_id:
       // you may have a some sort of session id or checkout id from your payment provider that you can
       // use to verify purchase on the backend.
-    },
+    }),
   })
     .then(async (res) => {
       if (!res.ok) {

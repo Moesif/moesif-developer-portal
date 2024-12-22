@@ -296,48 +296,55 @@ app.post(
 // - verify the purchase
 // - sync the ids to moesif.
 // - provision the service.
-app.post("/register/custom", authMiddleware, async function (req, res) {
-  const customerId = await getUnifiedCustomerId(req.user);
-  const email = req.user?.email;
-  // verify plans and subscription using your custom billing provider.
-  try {
-    const { subscription } =
-      await customBillingProvider.verifyPurchaseAndCreateSubscription(req, {
-        user: req.user,
-        ...req.body,
+app.post(
+  "/register/custom",
+  authMiddleware,
+  jsonParser,
+  async function (req, res) {
+    const customerId = await getUnifiedCustomerId(req.user);
+    const email = req.user?.email;
+    // verify plans and subscription using your custom billing provider.
+    try {
+      const { subscription } =
+        await customBillingProvider.verifyPurchaseAndCreateSubscription(req, {
+          user: req.user,
+          ...req.body,
+        });
+
+      console.log("custom subscription created", subscription);
+
+      syncToMoesif({
+        companyId: customerId,
+        userId: customerId,
+        email: email,
       });
 
-    syncToMoesif({
-      companyId: customerId,
-      userId: customerId,
-      email: email,
-    });
+      sendSubscriptionToMoesif({
+        companyId: customerId,
+        subscriptionId: subscription.id,
+        planId: subscription.plan_id,
+        priceId: subscription.price_id,
+        currentPeriodStart: subscription.current_period_start,
+        currentPeriodEnd: subscription.current_period_end,
+        metadata: {
+          // additional metadata you might want add.
+        },
+      });
 
-    sendSubscriptionToMoesif({
-      companyId: customerId,
-      subscriptionId: subscription.id,
-      planId: subscription.plan_id,
-      priceId: subscription.price_id,
-      currentPeriodStart: subscription.current_period_start,
-      currentPeriodEnd: subscription.current_period_end,
-      metadata: {
-        // additional metadata you might want add.
-      },
-    });
-
-    const user = await provisioningService.provisionUser(
-      customerId,
-      email,
-      subscription.id,
-    );
-    res.status(201).json({ status: "provisioned" });
-  } catch (err) {
-    console.error("Error registering user", err);
-    res.status(500).json({
-      message: "Failed to provision user. " + err.toString(),
-    });
+      const user = await provisioningService.provisionUser(
+        customerId,
+        email,
+        subscription.id
+      );
+      res.status(201).json({ status: "provisioned" });
+    } catch (err) {
+      console.error("Error registering user", err);
+      res.status(500).json({
+        message: "Failed to provision user. " + err.toString(),
+      });
+    }
   }
-});
+);
 
 app.get("/stripe/customer", authMiddleware, function (req, res) {
   const email = req.user?.email;
