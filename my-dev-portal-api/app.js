@@ -121,7 +121,7 @@ app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
 
   let moesifUserId;
   try {
-    moesifUserId = await getUnifiedCustomerId(email);
+    moesifUserId = await getUnifiedCustomerId(req.user, email);
     // see DATA_MODEL.md regarding how customer ids are mapped.
     // please modify if you decides to use some other data mapping model.
     if (!moesifUserId) {
@@ -302,7 +302,9 @@ app.post("/register/custom", authMiddleware, async function (req, res) {
   // verify plans and subscription using your custom billing provider.
 
   try {
-    const { subscription } = await customBillingProvider.verifyPurchase(req);
+    const { subscription } = await customBillingProvider.verifyPurchaseAndCreateSubscription(req, {
+      user: req.user
+    });
 
     syncToMoesif({
       companyId: customerId,
@@ -361,7 +363,7 @@ app.post("/create-key", authMiddleware, jsonParser, async function (req, res) {
     // otherwise we use email from body.
     const email = req.user?.email;
 
-    const customerId = await getUnifiedCustomerId(email);
+    const customerId = await getUnifiedCustomerId(req.user, email);
     if (!customerId) {
       throw new Error(
         `Customer Id unknown. Ensure you're subscribed to a plan. If you just subscribed, try again.`
@@ -393,7 +395,7 @@ app.get(
     // Perhaps, you have your own userId for your own system.
     // the most important aspect is the user_id used in your identifyUser hook
     try {
-      const customerId = await getUnifiedCustomerId(email);
+      const customerId = await getUnifiedCustomerId(req.user, email);
       if (!customerId) {
         console.error("Customer Id not found when fetching for " + email);
       }
