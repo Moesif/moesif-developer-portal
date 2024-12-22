@@ -291,11 +291,11 @@ app.post(
 );
 
 // if you are using customer billing provider
-// generally on checkout success you want to trigger
-// to
+// this should be triggered upon return from successful payment:
 // - verify the purchase
-// - sync the ids to moesif.
-// - provision the service.
+// - create subscription object.
+// - send the data to moesif.
+// - provision the by calling API gateway plugin.
 app.post(
   "/register/custom",
   authMiddleware,

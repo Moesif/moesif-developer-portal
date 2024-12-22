@@ -24,15 +24,16 @@ function CustomCheckoutForm({ planId, priceId, user, idToken }) {
             , with some sort of success code or identifier
           </li>
           <li>
-            On return page, it should make API call to backend:
+            On return page, it would make API call to backend:
             <ul>
-              <li>to verify the purchase is successful</li>
-              <li>to create the subscription object.</li>
+              <li>to verify the payment is successful.</li>
+              <li>to create the subscription.</li>
               <li>to provision any services.</li>
             </ul>
           </li>
           <li>
-            For now: to fake success return, go to:{" "}
+            For now: to simulate success return from payment provider, continue
+            to:{" "}
             <strong>
               <Link
                 to={`/return?price_id=${encodeURIComponent(
