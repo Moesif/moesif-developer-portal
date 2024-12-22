@@ -102,7 +102,7 @@ function registerPurchaseCustom({
         return res.json();
       })
       .then((data) => {
-        setStatus('complete');
+        setStatus("complete");
         setCustomerEmail(user?.email);
       })
       .catch((err) => {
@@ -142,6 +142,17 @@ function Return(props) {
       }
     );
     if (isCustom) {
+      registerPurchaseCustom({
+        planId,
+        priceId,
+        sessionId,
+        idToken,
+        user,
+        setCustomerEmail,
+        setStatus,
+        setLoading,
+        setProvisionError,
+      });
     } else {
       registerPurchaseStripe({
         sessionId,
