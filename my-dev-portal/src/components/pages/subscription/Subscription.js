@@ -56,8 +56,7 @@ function Subscription(props) {
                   <button className="button button__link">See Docs</button>
                 </a>
                 <Link
-                  href="https://www.moesif.com"
-                  target="_blank"
+                  to="/plans"
                   rel="noreferrer noopener"
                 >
                   <button className="button button--outline-secondary">

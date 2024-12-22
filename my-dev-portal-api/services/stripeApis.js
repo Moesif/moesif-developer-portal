@@ -51,8 +51,47 @@ async function getStripeCustomerId(email) {
   return stripeCustomerId;
 }
 
+async function createStripeCheckoutSession(email, priceId, authUser) {
+  // make sure only one stripe customer per email
+  let customerId = await getStripeCustomerId(email);
+
+  if (!customerId) {
+    // If no customerId exists, create a new one
+    const customer = await stripe.customers.create({
+      email: email,
+      metadata: {
+        // add the user id from identify provider to
+        // stripe metadata for customer.
+        // Because, an alternative approach is to tie
+        // the identity provider's user id to stripe customer
+        // and look up customer object using user_id instead of
+        // email.
+        authUserId: authUser?.sub,
+      },
+    });
+
+    customerId = customer.id;
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    ui_mode: "embedded",
+    line_items: [
+      {
+        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+        price: priceId,
+      },
+    ],
+    customer: customerId,
+    mode: "subscription",
+    return_url: `http://${process.env.FRONT_END_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}&price_id=${priceId}`,
+  });
+
+  return session;
+}
+
 module.exports = {
   verifyStripeSession,
+  createStripeCheckoutSession,
   getStripeCustomer,
   getStripeCustomerId,
   getStripeCustomerIdFromCache,
