@@ -297,14 +297,15 @@ app.post(
 // - sync the ids to moesif.
 // - provision the service.
 app.post("/register/custom", authMiddleware, async function (req, res) {
-  const customerId = await getUnifiedCustomerId(req?.user);
-  const email = req?.user?.email;
+  const customerId = await getUnifiedCustomerId(req.user);
+  const email = req.user?.email;
   // verify plans and subscription using your custom billing provider.
-
   try {
-    const { subscription } = await customBillingProvider.verifyPurchaseAndCreateSubscription(req, {
-      user: req.user
-    });
+    const { subscription } =
+      await customBillingProvider.verifyPurchaseAndCreateSubscription(req, {
+        user: req.user,
+        ...req.body,
+      });
 
     syncToMoesif({
       companyId: customerId,
@@ -320,8 +321,8 @@ app.post("/register/custom", authMiddleware, async function (req, res) {
       currentPeriodStart: subscription.current_period_start,
       currentPeriodEnd: subscription.current_period_end,
       metadata: {
-        ...subscription
-      }
+        // additional metadata you might want add.
+      },
     });
 
     const user = await provisioningService.provisionUser(
@@ -329,7 +330,7 @@ app.post("/register/custom", authMiddleware, async function (req, res) {
       email,
       subscription_id
     );
-    res.status(201).json({ status: 'provisioned'});
+    res.status(201).json({ status: "provisioned" });
   } catch (err) {
     console.error("Error registering user", err);
     res.status(500).json({

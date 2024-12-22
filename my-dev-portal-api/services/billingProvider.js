@@ -22,7 +22,9 @@ class BillingProvider {
 
     const subscription = {
       id: generateGUID(),
-      plan_id: req.query?.plan_id,
+      plan_id: data?.plan_id,
+      price_id: data?.price_id,
+      ...data,
       current_period_start: new Date().toISOString(),
       current_period_end: getOneMonthFromNowISO(),
     };
