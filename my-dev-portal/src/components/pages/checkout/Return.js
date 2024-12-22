@@ -74,47 +74,41 @@ function registerPurchaseCustom({
   setLoading,
   setProvisionError,
 }) {
-  if (sessionId && idToken) {
-    setLoading(true);
+  setLoading(true);
 
-    fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/custom`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-      body: {
-        plan_id: planId,
-        price_id: priceId,
-        // session_id:
-        // you may have a some sort of session id or checkout id from your payment provider that you can
-        // use to verify purchase on the backend.
-      },
+  fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/custom`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: {
+      plan_id: planId,
+      price_id: priceId,
+      // session_id:
+      // you may have a some sort of session id or checkout id from your payment provider that you can
+      // use to verify purchase on the backend.
+    },
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        const errorBody = await res.json();
+        throw new Error(
+          `Failed provision: ${res.status}, body: ${JSON.stringify(errorBody)}`
+        );
+      }
+      return res.json();
     })
-      .then(async (res) => {
-        if (!res.ok) {
-          const errorBody = await res.json();
-          throw new Error(
-            `Failed provision: ${res.status}, body: ${JSON.stringify(
-              errorBody
-            )}`
-          );
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setStatus("complete");
-        setCustomerEmail(user?.email);
-      })
-      .catch((err) => {
-        setProvisionError(err);
-      })
-      .finally(() => {
-        setLoading(false);
-        moesifIdentifyUserFrontEndIfPossible(idToken, user);
-      });
-  } else {
-    console.error("no session id found for stripe");
-  }
+    .then((data) => {
+      setStatus("complete");
+      setCustomerEmail(user?.email);
+    })
+    .catch((err) => {
+      setProvisionError(err);
+    })
+    .finally(() => {
+      setLoading(false);
+      moesifIdentifyUserFrontEndIfPossible(idToken, user);
+    });
 }
 
 function Return(props) {
@@ -141,7 +135,7 @@ function Return(props) {
         status,
       }
     );
-    if (isCustom) {
+    if (isCustom && idToken) {
       registerPurchaseCustom({
         planId,
         priceId,
@@ -163,7 +157,7 @@ function Return(props) {
         setProvisionError,
       });
     }
-  }, [sessionId, idToken]);
+  }, [sessionId, idToken, isCustom]);
 
   if (status === "open") {
     return <Navigate to={`/checkout?price_id_to_purchase=${priceId}`} />;

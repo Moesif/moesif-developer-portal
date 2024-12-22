@@ -328,7 +328,7 @@ app.post("/register/custom", authMiddleware, async function (req, res) {
     const user = await provisioningService.provisionUser(
       customerId,
       email,
-      subscription_id
+      subscription.id,
     );
     res.status(201).json({ status: "provisioned" });
   } catch (err) {

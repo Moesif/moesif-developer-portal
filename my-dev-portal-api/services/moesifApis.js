@@ -70,7 +70,7 @@ function sendSubscriptionToMoesif({
   return fetch(`https://api.moesif.net/v1/subscriptions`, {
     method: "POST",
     headers: {
-      "X-Moesif-Application-Id": moesifApplicationId,
+      "X-Moesif-Application-Id": process.env.MOESIF_APPLICATION_ID,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
