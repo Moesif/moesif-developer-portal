@@ -14,11 +14,10 @@ function getOneMonthFromNowISO() {
 
 /* Interface for Billing Provider */
 class BillingProvider {
-  verifyPurchase(req) {
+  verifyPurchaseAndCreateSubscription(req, data) {
     // use the request info to verify the purchase after checkout
     // but generally your billing provider should verify the subscription
     // and return the subscription object.
-
     // below is a fake subscription generated on the fly.
 
     const subscription = {

@@ -38,7 +38,7 @@ function syncToMoesif({ companyId, userId, email }) {
 // since Moesif automatically listen to Stripe's webhook for Subscription updates.
 // but if you are building a custom billing provider, you must send
 // the subscription data to Moesif.
-export function sendSubscriptionToMoesif({
+function sendSubscriptionToMoesif({
   companyId,
   subscriptionId,
   planId,
@@ -347,4 +347,5 @@ module.exports = {
   getSubscriptionsForCompanyId,
   getSubscriptionsForUserId,
   getSubscriptionForUserEmail,
+  sendSubscriptionToMoesif,
 };
