@@ -50,7 +50,7 @@ export function formatIsoTimestamp(isoString) {
 
 let stripeCustomerCache = {};
 
-export async function moesifIdentifyUserFrontEndIfPossible(idToken) {
+export async function moesifIdentifyUserFrontEndIfPossible(idToken, user) {
   // we are using stripe customer id
   // and as the user_id mapped to moesif users.
   // See DATA_MODEL.md
@@ -61,6 +61,10 @@ export async function moesifIdentifyUserFrontEndIfPossible(idToken) {
   console.log(
     "try to identifyUser for moesif using stripe customer id if exists"
   );
+
+  if (process.env.REACT_APP_PAYMENT_PROVIDER === "custom") {
+    return user?.sub || user?.user_id || user?.id;
+  }
 
   if (stripeCustomerCache[idToken]) {
     const stripeCustomerObject = stripeCustomerCache[idToken];
