@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import moesifBrowser from "moesif-browser-js";
 import './index.css'
 import App from './App.jsx'
+import "https://js.stripe.com/v3/pricing-table.js";
+import "./styles/styles.scss";
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>

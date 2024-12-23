@@ -11,14 +11,13 @@ import SecureRoute from "./components/okta/SecureRoute";
 import { AuthenticationGuard } from "./components/authentication-guard";
 import SignUp from "./components/pages/signup/SignUp";
 import RedirectToSignIn from "./components/pages/signup/OktaPostCreate";
-import { StripeProvider } from "./StripeProvider";
 import Return from "./components/pages/checkout/Return";
 import Setup from "./components/pages/setup/Setup";
 import Plans from "./components/pages/plans/Plans";
 import Home from "./components/pages/home/Home";
 import Checkout from "./components/pages/checkout/Checkout";
 import Subscription from "./components/pages/subscription/Subscription";
-import { PageFooter } from './components/page-footer';
+import { PageFooter } from "./components/page-footer";
 
 function App() {
   const { isAuthenticated } = useAuth0();
@@ -101,47 +100,45 @@ function App() {
         <div>
           <BrowserRouter>
             <Auth0ProviderWithNavigate>
-              <StripeProvider>
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      !isAuthenticated ? (
-                        <Home />
-                      ) : (
-                        <Navigate replace to={"dashboard"} />
-                      )
-                    }
-                  />
-                  <Route path="/return" element={<Return />} />
-                  <Route path="/setup" element={<Setup />} />
-                  <Route path="/plans" element={<Plans />} />
-                  <Route
-                    path="/checkout"
-                    element={<AuthenticationGuard component={Checkout} />}
-                  />
-                  <Route
-                    path="/return"
-                    element={<AuthenticationGuard component={Return} />}
-                  />
-                  <Route
-                    path="dashboard"
-                    element={<AuthenticationGuard component={Dashboard} />}
-                  />
-                  <Route
-                    path="settings"
-                    element={<AuthenticationGuard component={Settings} />}
-                  />
-                  <Route
-                    path="keys"
-                    element={<AuthenticationGuard component={Keys} />}
-                  />
-                  <Route
-                    path="subscription"
-                    element={<AuthenticationGuard component={Subscription} />}
-                  />
-                </Routes>
-              </StripeProvider>
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    !isAuthenticated ? (
+                      <Home />
+                    ) : (
+                      <Navigate replace to={"dashboard"} />
+                    )
+                  }
+                />
+                <Route path="/return" element={<Return />} />
+                <Route path="/setup" element={<Setup />} />
+                <Route path="/plans" element={<Plans />} />
+                <Route
+                  path="/checkout"
+                  element={<AuthenticationGuard component={Checkout} />}
+                />
+                <Route
+                  path="/return"
+                  element={<AuthenticationGuard component={Return} />}
+                />
+                <Route
+                  path="dashboard"
+                  element={<AuthenticationGuard component={Dashboard} />}
+                />
+                <Route
+                  path="settings"
+                  element={<AuthenticationGuard component={Settings} />}
+                />
+                <Route
+                  path="keys"
+                  element={<AuthenticationGuard component={Keys} />}
+                />
+                <Route
+                  path="subscription"
+                  element={<AuthenticationGuard component={Subscription} />}
+                />
+              </Routes>
             </Auth0ProviderWithNavigate>
           </BrowserRouter>
         </div>
