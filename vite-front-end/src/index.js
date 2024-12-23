@@ -13,9 +13,9 @@ root.render(
   // </React.StrictMode>
 );
 
-if (import.env.VITEMOESIF_PUBLISHABLE_APPLICATION_ID) {
+if (import.meta.env.VITE_MOESIF_PUBLISHABLE_APPLICATION_ID) {
   moesifBrowser.init({
-    applicationId: import.env.VITEMOESIF_PUBLISHABLE_APPLICATION_ID,
+    applicationId: import.meta.env.VITE_MOESIF_PUBLISHABLE_APPLICATION_ID,
     // add other option here
   });
   if (window) {

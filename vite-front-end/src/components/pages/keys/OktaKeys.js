@@ -32,7 +32,7 @@ const OktaKeys = () => {
   Modal.setAppElement("#root");
 
   function createKey() {
-    fetch(`${import.env.VITEDEV_PORTAL_API_SERVER}/create-key`, {
+    fetch(`${import.meta.env.VITE_DEV_PORTAL_API_SERVER}/create-key`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

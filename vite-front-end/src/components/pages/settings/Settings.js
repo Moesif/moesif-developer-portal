@@ -4,16 +4,16 @@ import OktaSettings from "./OktaSettings";
 
 const openStripeManagement = (email) => {
   window.open(
-    `${import.env.VITESTRIPE_MANAGEMENT_URL}?prefilled_email=${email}`,
+    `${import.meta.env.VITE_STRIPE_MANAGEMENT_URL}?prefilled_email=${email}`,
     "_blank",
     "noreferrer"
   );
 };
 
 const Settings = () => {
-  if (import.env.VITEAUTH_PROVIDER === "Okta") {
+  if (import.meta.env.VITE_AUTH_PROVIDER === "Okta") {
     return <OktaSettings openStripeManagement={openStripeManagement} />;
-  } else if (import.env.VITEAUTH_PROVIDER === "Auth0") {
+  } else if (import.meta.env.VITE_AUTH_PROVIDER === "Auth0") {
     return <Auth0Settings openStripeManagement={openStripeManagement} />;
   }
 };

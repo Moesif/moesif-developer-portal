@@ -12,7 +12,7 @@ export default function useSubscriptions({ user, idToken, accessToken }) {
     if (user?.email && idToken) {
       fetch(
         `${
-          import.env.VITEDEV_PORTAL_API_SERVER
+          import.meta.env.VITE_DEV_PORTAL_API_SERVER
         }/subscriptions?email=${encodeURIComponent(user.email)}`,
         {
           headers: {

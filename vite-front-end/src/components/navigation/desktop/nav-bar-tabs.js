@@ -3,9 +3,9 @@ import Auth0NavBarTabs from "./auth0-nav-bar-tabs";
 import OktaNavBarTabs from "./okta-nav-bar-tabs";
 
 export const NavBarTabs = () => {
-  if (import.env.VITEAUTH_PROVIDER === "Okta") {
+  if (import.meta.env.VITE_AUTH_PROVIDER === "Okta") {
     return <OktaNavBarTabs />;
-  } else if (import.env.VITEAUTH_PROVIDER === "Auth0") {
+  } else if (import.meta.env.VITE_AUTH_PROVIDER === "Auth0") {
     return <Auth0NavBarTabs />;
   }
 };

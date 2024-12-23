@@ -28,7 +28,7 @@ function registerPurchaseStripe({
     setLoading(true);
 
     fetch(
-      `${import.env.VITEDEV_PORTAL_API_SERVER}/register/stripe/${sessionId}`,
+      `${import.meta.env.VITE_DEV_PORTAL_API_SERVER}/register/stripe/${sessionId}`,
       {
         method: "POST",
         headers: {
@@ -76,7 +76,7 @@ function registerPurchaseCustom({
 }) {
   setLoading(true);
 
-  fetch(`${import.env.VITEDEV_PORTAL_API_SERVER}/register/custom`, {
+  fetch(`${import.meta.env.VITE_DEV_PORTAL_API_SERVER}/register/custom`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -125,7 +125,7 @@ function Return(props) {
   const priceId = urlParams.get("price_id");
   const planId = urlParams.get("plan_id");
 
-  const isCustom = import.env.VITEPAYMENT_PROVIDER === "custom";
+  const isCustom = import.meta.env.VITE_PAYMENT_PROVIDER === "custom";
 
   useEffect(() => {
     window.moesif?.track(

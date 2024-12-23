@@ -34,7 +34,7 @@ function Checkout(props) {
     <PageLayout>
       <h1>Subscribe</h1>
       <div className="page-layout__focus">
-        {import.env.VITEPAYMENT_PROVIDER === "custom" ? (
+        {import.meta.env.VITE_PAYMENT_PROVIDER === "custom" ? (
           <CustomCheckoutForm
             key={urlPriceIdToPurchase}
             priceId={urlPriceIdToPurchase}

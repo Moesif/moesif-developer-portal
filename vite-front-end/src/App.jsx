@@ -23,7 +23,7 @@ import { PageFooter } from './components/page-footer';
 function App() {
   const { isAuthenticated } = useAuth0();
 
-  if (import.env.VITEAUTH_PROVIDER === "Okta") {
+  if (import.meta.env.VITE_AUTH_PROVIDER === "Okta") {
     return (
       <div>
         <div>
@@ -95,7 +95,7 @@ function App() {
         <PageFooter />
       </div>
     );
-  } else if (import.env.VITEAUTH_PROVIDER === "Auth0") {
+  } else if (import.meta.env.VITE_AUTH_PROVIDER === "Auth0") {
     return (
       <div>
         <div>

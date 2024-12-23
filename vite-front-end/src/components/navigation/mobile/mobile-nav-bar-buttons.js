@@ -14,20 +14,20 @@ export const MobileNavBarButtons = () => {
 
   let isAuthenticated;
 
-  if (import.env.VITEAUTH_PROVIDER === "Okta") {
+  if (import.meta.env.VITE_AUTH_PROVIDER === "Okta") {
     isAuthenticated = oktaIsAuthenticated;
-  } else if (import.env.VITEAUTH_PROVIDER === "Auth0") {
+  } else if (import.meta.env.VITE_AUTH_PROVIDER === "Auth0") {
     isAuthenticated = auth0IsAuthenticated;
   }
 
   return (
     <div className="mobile-nav-bar__buttons">
-      {!isAuthenticated && import.env.VITEAUTH_PROVIDER === "Okta" && (
+      {!isAuthenticated && import.meta.env.VITE_AUTH_PROVIDER === "Okta" && (
         <>
           <LoginButton />
         </>
       )}
-      {!isAuthenticated && import.env.VITEAUTH_PROVIDER === "Auth0" && (
+      {!isAuthenticated && import.meta.env.VITE_AUTH_PROVIDER === "Auth0" && (
         <>
           <SignupButton />
           <LoginButton />

@@ -105,7 +105,7 @@ function useAuthAuth0Version() {
 }
 
 const useAuthCombined =
-  import.env.VITEAUTH_PROVIDER === "Okta"
+  import.meta.env.VITE_AUTH_PROVIDER === "Okta"
     ? useAuthOktaVersion
     : useAuthAuth0Version;
 
