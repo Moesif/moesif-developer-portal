@@ -1,8 +1,7 @@
-# React + Vite
+# Moesif Developer Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The Moesif developer portal is an open-source project to help provide a great starting place to quickly build your own developer experience. You can customize and deploy the developer portal without being worried about lock-in or lack of customization. The developer portal is focused on providing a low-friction solution allowing your customers to quickly and easily subscribe and provide authenticated, metered access to your APIs.
 
-Currently, two official plugins are available:
+Please refer to the [Wiki](https://github.com/Moesif/moesif-developer-portal/wiki) for a comprehensive overview and step-by-step setup guide.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The `my-dev-portal` folder is a React application that contains the UI and front-end logic for the developer portal. Any additions to the UI, styling or branding changes, and other user-facing changes will be done within this folder/project.
