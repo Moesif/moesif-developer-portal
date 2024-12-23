@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '127.0.0.1',
-    port: 4000, // Replace 3006 with your desired port number
+    port: 4000,
   },
   envPrefix: ['VITE_', 'REACT_APP_']
 })
