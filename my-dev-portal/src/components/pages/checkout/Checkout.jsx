@@ -34,7 +34,7 @@ function Checkout(props) {
     <PageLayout>
       <h1>Subscribe</h1>
       <div className="page-layout__focus">
-        {process.env.REACT_APP_PAYMENT_PROVIDER === "custom" ? (
+        {import.meta.env.REACT_APP_PAYMENT_PROVIDER === "custom" ? (
           <CustomCheckoutForm
             key={urlPriceIdToPurchase}
             priceId={urlPriceIdToPurchase}

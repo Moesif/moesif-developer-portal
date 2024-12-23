@@ -105,7 +105,7 @@ function useAuthAuth0Version() {
 }
 
 const useAuthCombined =
-  process.env.REACT_APP_AUTH_PROVIDER === "Okta"
+  import.meta.env.REACT_APP_AUTH_PROVIDER === "Okta"
     ? useAuthOktaVersion
     : useAuthAuth0Version;
 

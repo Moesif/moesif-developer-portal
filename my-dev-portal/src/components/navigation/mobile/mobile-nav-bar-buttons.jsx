@@ -14,20 +14,20 @@ export const MobileNavBarButtons = () => {
 
   let isAuthenticated;
 
-  if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
+  if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     isAuthenticated = oktaIsAuthenticated;
-  } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
+  } else if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     isAuthenticated = auth0IsAuthenticated;
   }
 
   return (
     <div className="mobile-nav-bar__buttons">
-      {!isAuthenticated && process.env.REACT_APP_AUTH_PROVIDER === "Okta" && (
+      {!isAuthenticated && import.meta.env.REACT_APP_AUTH_PROVIDER === "Okta" && (
         <>
           <LoginButton />
         </>
       )}
-      {!isAuthenticated && process.env.REACT_APP_AUTH_PROVIDER === "Auth0" && (
+      {!isAuthenticated && import.meta.env.REACT_APP_AUTH_PROVIDER === "Auth0" && (
         <>
           <SignupButton />
           <LoginButton />

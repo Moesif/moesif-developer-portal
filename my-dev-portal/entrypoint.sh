@@ -18,4 +18,4 @@ npm install -g serve
 # Start the server
 echo "Starting the app at port 4000..."
 echo ""
-exec serve -p 4000 -s build
+exec serve -p 4000 -s dist

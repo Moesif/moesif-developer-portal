@@ -4,16 +4,16 @@ import OktaSettings from "./OktaSettings";
 
 const openStripeManagement = (email) => {
   window.open(
-    `${process.env.REACT_APP_STRIPE_MANAGEMENT_URL}?prefilled_email=${email}`,
+    `${import.meta.env.REACT_APP_STRIPE_MANAGEMENT_URL}?prefilled_email=${email}`,
     "_blank",
     "noreferrer"
   );
 };
 
 const Settings = () => {
-  if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
+  if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return <OktaSettings openStripeManagement={openStripeManagement} />;
-  } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
+  } else if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     return <Auth0Settings openStripeManagement={openStripeManagement} />;
   }
 };

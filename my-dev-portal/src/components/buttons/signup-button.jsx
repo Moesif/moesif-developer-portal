@@ -53,11 +53,11 @@ const SignupButtonWithAuth0 = ({ isLink, isPriceAction }) => {
 };
 
 export const SignupButton = ({ isLink, isPriceAction }) => {
-  if (process.env.REACT_APP_AUTH_PROVIDER === "Okta") {
+  if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return (
       <SignupButtonWithOkta isLink={isLink} isPriceAction={isPriceAction} />
     );
-  } else if (process.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
+  } else if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     return (
       <SignupButtonWithAuth0 isLink={isLink} isPriceAction={isPriceAction} />
     );

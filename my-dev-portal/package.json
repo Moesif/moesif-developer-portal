@@ -1,7 +1,15 @@
 {
   "name": "my-dev-portal",
-  "version": "1.1.0",
   "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "@auth0/auth0-react": "^2.0.1",
     "@emotion/react": "^11.11.1",
@@ -11,53 +19,28 @@
     "@okta/okta-react": "^6.7.0",
     "@stripe/react-stripe-js": "^2.1.0",
     "@stripe/stripe-js": "^1.52.1",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "copy-to-clipboard": "^3.3.3",
     "lodash": "^4.17.21",
     "moesif-browser-js": "^1.8.13",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-inlinesvg": "^3.0.2",
     "react-modal": "^3.16.1",
-    "react-router-dom": "^6.10.0",
-    "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ],
-    "rules": {
-      "react/react-in-jsx-scope": "off",
-      "react/jsx-no-target-blank": "off",
-      "react/no-direct-mutation-state": "off",
-      "react/no-typos": "off"
-    }
-  },
-  "browserslist": {
-    "production": [
-      ">2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "react-router-dom": "^6.10.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "react-scripts": "5.0.1",
+    "@eslint/js": "^9.17.0",
+    "@types/react": "^18.3.17",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.13.0",
     "sass": "1.78.0",
-    "sass-loader": "^16.0.3"
+    "sass-loader": "^16.0.3",
+    "vite": "^6.0.3"
   },
   "engines": {
     "node": ">=18.0.0"
