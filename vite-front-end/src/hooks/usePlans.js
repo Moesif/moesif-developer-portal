@@ -9,7 +9,7 @@ export default function usePlans() {
   const [plans, setPlans] = useState(null);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_DEV_PORTAL_API_SERVER}/plans`)
+    fetch(`${import.meta.env.REACT_APP_DEV_PORTAL_API_SERVER}/plans`)
       .then((res) => res.json())
       .then((result) => {
         const loadedPlans = result?.hits || [];

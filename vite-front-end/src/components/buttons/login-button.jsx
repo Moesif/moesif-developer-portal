@@ -48,9 +48,9 @@ const LoginButtonWithAuth0 = ({ isLink }) => {
 };
 
 export const LoginButton = ({ isLink }) => {
-  if (import.meta.env.VITE_AUTH_PROVIDER === "Okta") {
+  if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return <LoginButtonWithOkta isLink={isLink} />;
-  } else if (import.meta.env.VITE_AUTH_PROVIDER === "Auth0") {
+  } else if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     return <LoginButtonWithAuth0 isLink={isLink} />;
   } else {
     return null; // or some error message

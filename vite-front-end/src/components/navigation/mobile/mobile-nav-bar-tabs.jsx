@@ -12,9 +12,9 @@ export const MobileNavBarTabs = ({ handleClick }) => {
 
   let isAuthenticated;
 
-  if (import.meta.env.VITE_AUTH_PROVIDER === "Okta") {
+  if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     isAuthenticated = oktaIsAuthenticated;
-  } else if (import.meta.env.VITE_AUTH_PROVIDER === "Auth0") {
+  } else if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     isAuthenticated = auth0IsAuthenticated;
   }
 

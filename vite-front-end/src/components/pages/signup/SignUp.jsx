@@ -18,7 +18,7 @@ const SignUp = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_DEV_PORTAL_API_SERVER}/okta/register`,
+        `${import.meta.env.REACT_APP_DEV_PORTAL_API_SERVER}/okta/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

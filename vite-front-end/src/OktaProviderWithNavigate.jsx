@@ -7,8 +7,8 @@ export const OktaProviderWithNavigate = ({ children }) => {
   const navigate = useNavigate();
 
   const oktaAuth = new OktaAuth({
-    issuer: import.meta.env.VITE_OKTA_ORG_URL,
-    clientId: import.meta.env.VITE_OKTA_CLIENT_ID,
+    issuer: import.meta.env.REACT_APP_OKTA_ORG_URL,
+    clientId: import.meta.env.REACT_APP_OKTA_CLIENT_ID,
     redirectUri: window.location.origin + "/login/callback",
   });
 

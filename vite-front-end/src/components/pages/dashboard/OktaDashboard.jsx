@@ -27,7 +27,7 @@ const OktaDashboard = (props) => {
 
     if (checkout_session_id) {
       fetch(
-        `${import.meta.env.VITE_DEV_PORTAL_API_SERVER}/register/stripe/${checkout_session_id}`,
+        `${import.meta.env.REACT_APP_DEV_PORTAL_API_SERVER}/register/stripe/${checkout_session_id}`,
         {
           method: "POST",
           headers: {
@@ -46,7 +46,7 @@ const OktaDashboard = (props) => {
         });
     } else {
       fetch(
-        `${import.meta.env.VITE_DEV_PORTAL_API_SERVER}/stripe/customer?email=` +
+        `${import.meta.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer?email=` +
           encodeURIComponent(user.email),
         {
           headers: {

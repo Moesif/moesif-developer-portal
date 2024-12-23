@@ -43,9 +43,9 @@ const LogoutButtonWithAuth0 = () => {
 };
 
 export const LogoutButton = () => {
-  if (import.meta.env.VITE_AUTH_PROVIDER === "Okta") {
+  if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Okta") {
     return <LogoutButtonWithOkta />;
-  } else if (import.meta.env.VITE_AUTH_PROVIDER === "Auth0") {
+  } else if (import.meta.env.REACT_APP_AUTH_PROVIDER === "Auth0") {
     return <LogoutButtonWithAuth0 />;
   }
 };
