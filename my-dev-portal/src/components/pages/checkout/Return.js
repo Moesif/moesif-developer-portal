@@ -158,7 +158,7 @@ function Return(props) {
         setProvisionError,
       });
     }
-  }, [sessionId, idToken, isCustom]);
+  }, [sessionId, idToken, isCustom, status, user, priceId, planId]);
 
   if (status === "open") {
     return <Navigate to={`/checkout?price_id_to_purchase=${priceId}`} />;
