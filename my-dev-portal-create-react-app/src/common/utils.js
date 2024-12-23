@@ -62,7 +62,7 @@ export async function moesifIdentifyUserFrontEndIfPossible(idToken, user) {
     "try to identifyUser for moesif using stripe customer id if exists"
   );
 
-  if (import.meta.env.REACT_APP_PAYMENT_PROVIDER === "custom") {
+  if (process.env.REACT_APP_PAYMENT_PROVIDER === "custom") {
     return user?.sub || user?.user_id || user?.id;
   }
 
@@ -72,7 +72,7 @@ export async function moesifIdentifyUserFrontEndIfPossible(idToken, user) {
       ...stripeCustomerObject,
     });
   } else {
-    fetch(`${import.meta.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer`, {
+    fetch(`${process.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${idToken}`,

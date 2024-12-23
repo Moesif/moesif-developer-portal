@@ -12,7 +12,7 @@ export default function useSubscriptions({ user, idToken, accessToken }) {
     if (user?.email && idToken) {
       fetch(
         `${
-          import.meta.env.REACT_APP_DEV_PORTAL_API_SERVER
+          process.env.REACT_APP_DEV_PORTAL_API_SERVER
         }/subscriptions?email=${encodeURIComponent(user.email)}`,
         {
           headers: {
