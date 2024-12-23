@@ -16,6 +16,9 @@ function StripeCheckoutForm({ priceId, user, idToken }) {
 
   useEffect(() => {
     // Create a Checkout Session as soon as the page loads
+    if (!idToken) {
+      return;
+    }
     fetch(
       `${
         process.env.REACT_APP_DEV_PORTAL_API_SERVER
@@ -34,7 +37,7 @@ function StripeCheckoutForm({ priceId, user, idToken }) {
         console.log(JSON.stringify(data));
         setClientSecret(data.clientSecret);
       });
-  }, [priceId, user]);
+  }, [priceId, user, idToken]);
 
   return (
     <div id="checkout">
