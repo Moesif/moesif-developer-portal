@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-// used on embedded checkout example code:
-// https://docs.stripe.com/checkout/embedded/quickstart
 
 function CustomCheckoutForm({ planId, priceId, user, idToken }) {
   return (
