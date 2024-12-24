@@ -173,7 +173,7 @@ function Return(props) {
         <NoticeBox
           iconSrc={noPriceIcon}
           title="Success"
-          description={`You are now subscription to the plan and price. A email should be sent to ${customerEmail}`}
+          description={`You are now subscribed to the plan and price. An email should be sent to ${customerEmail}`}
           actions={
             <>
               <a
