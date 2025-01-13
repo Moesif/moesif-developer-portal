@@ -17,7 +17,7 @@ function getApimProvisioningPlugin() {
         case 'kong':
           if ((typeof process.env.KONNECT_PAT !== "undefined" &&
               process.env.KONNECT_PAT !== "") || (
-                typeof process.env.PLUGIN_KONNECT_PAT !== 'undefined' ||
+                typeof process.env.PLUGIN_KONNECT_PAT !== "undefined" &&
                 process.env.PLUGIN_KONNECT_PAT !== ""
               )
           ) {
