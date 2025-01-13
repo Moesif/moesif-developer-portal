@@ -7,17 +7,20 @@ function getApimProvisioningPlugin() {
       );
     }
     switch (apimProvider.toLowerCase()) {
-        case 'auth0-m2m': 
+        case 'auth0-m2m':
           const { Auth0M2MProvisioningPlugin } = require('dev-portal-auth0-m2m-plugin');
           return new Auth0M2MProvisioningPlugin();
         case 'jwt':
-        case 'aws': 
+        case 'aws':
           const { JwtProvisioningPlugin } = require('dev-portal-jwt-plugin');
-          return new JwtProvisioningPlugin();       
+          return new JwtProvisioningPlugin();
         case 'kong':
-          if (typeof process.env.KONNECT_PAT !== "undefined" &&
-              process.env.KONNECT_PAT !== ""
-          ) { 
+          if ((typeof process.env.KONNECT_PAT !== "undefined" &&
+              process.env.KONNECT_PAT !== "") || (
+                typeof process.env.PLUGIN_KONNECT_PAT !== 'undefined' ||
+                process.env.PLUGIN_KONNECT_PAT !== ""
+              )
+          ) {
             const { KonnectProvisioningPlugin } = require('dev-portal-kong-konnect-plugin');
             return new KonnectProvisioningPlugin()
           } else {
@@ -28,11 +31,10 @@ function getApimProvisioningPlugin() {
           const { TykProvisioningPlugin } = require('dev-portal-tyk-plugin');
           return new TykProvisioningPlugin();
         default:
-            console.log(`Invalid apimProvider ${apimProvider} defined.`);
+          console.log(`Invalid apimProvider ${apimProvider} defined.`);
     }
 }
 
 module.exports = {
   getApimProvisioningPlugin,
 };
-  
