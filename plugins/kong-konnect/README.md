@@ -40,7 +40,7 @@ For more details, refer to the [Kong Key Authentication Plugin documentation](ht
 
 Log into Kong Konnect and navigate to the **Gateway Manager** select your control plane and take note of the following values under **About this Hybrid Control Plane**.
 
-1 `PLUGIN_KONG_URL`
+1. `PLUGIN_KONG_URL`
     - Locate the **Admin API** URL.
     - Copy the value and add `/core-entities` to the URL.
     - Use this value for `PLUGIN_KONG_URL`.
@@ -75,7 +75,7 @@ PLUGIN_KONNECT_PAT=""
 
 Save the `.env` file to ensure the updated values are persisted.
 
-## Environment Variables for Docker
+### Environment Variables for Docker
 
 If you are using the Docker Compose file included in the [Moesif Developer Portal repository](https://github.com/Moesif/moesif-developer-portal) or in the [Kong Konnect Docker Demo repository](https://github.com/Moesif/moesif-kong-konnect-docker-demo), add the following environment variables to the `docker-compose.yml` file:
 
@@ -104,6 +104,6 @@ After completing the developer portal configuration, you can verify Kong functio
 - Select **Consumers** on the left navigation pane.
 - You should see the `Username` and `Custom ID` associated with the user created in the Developer Portal.
 
-### Verify the `custom_id` Field
+### Verify the custom_id Field
 
 Ensure that the consumer entry includes the `custom_id` field with the Stripe customer ID (e.g., `stripe_customer_ID`). This confirms that the user is successfully added, and key provisioning is functioning correctly.
