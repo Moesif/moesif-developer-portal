@@ -1,110 +1,109 @@
 # Configuring Kong Konnect
 
+Kong Konnect offers a suite of tools and services for managing, securing, and optimizing your APIs and microservices. The Moesif Developer Portal can seamlessly integrate with Kong Konnect to enhance your API management capabilities.
+
+We'll cover configuring Kong Konnect for the Developer Portal in this document.
+
 ## Setup the Gateway
 
-The Moesif Developer Portal can be used with a running instance of Kong. To integrate Moesif and Kong, you can follow our guide that covers [integrating Moesif and Kong in detail](https://www.moesif.com/docs/guides/guide-kong-gateway-integration/). Alternatively, you can also check out [our integration documentation for Kong](https://www.moesif.com/docs/server-integration/kong-api-gateway/) if you’re already an experienced Kong user. Once you have the integration set, you’ll be able to complete the rest of the Kong setup for the Developer Portal.
+If you haven’t already, sign up for Kong Konnect and log in to the Kong Konnect Portal. Once logged in, you can begin setting up your API Gateway to integrate with Moesif.
+
+To get started, we recommend following our [Kong Konnect Docker Demo](https://github.com/Moesif/moesif-kong-konnect-docker-demo) for a streamlined setup.
+
+## Prerequisites
+
+- A running **Self-Managed Hybrid Kong Konnect Gateway**.
+- A configured **Service** and **Route**.
+- The **Moesif Kong Konnect plugin configured**.
 
 ## Configure the Gateway
 
-### Creating an Endpoint in Kong Manager
+### Adding the Key Authentication Plugin
 
-In order to use the developer portal to monetize your APIs, you'll require an endpoint in Kong. If you already have an endpoint created, you can use this existing endpoint.
+To secure your endpoints, you can add the Key Authentication (keyauth) plugin and apply it globally to all routes.
 
-If you are using Kong Manager, you can create the endpoint by clicking **Services** in the left-side menu, under the **API Gateway** section. On the **Services** page, click the **New Service** button in the top-right corner to add a new service.
+1. Navigate to the **Gateway Manager** in the Kong Konnect Portal and select your **Control Plane**.
+2. Go to the **Plugins** section and click on **New Plugin**.
+3. Search for the **Key Authentication** plugin and select **Enable**.
+4. Configure the plugin with default settings, or adjust the parameters based on your requirements.
+    - We will assume that the plugin is applied **Globally** and **Key Names** is set to`apikey`.
+    - We will include the provisioned api key from the developer portal in requests sent by including an `apikey` header.
+5. Click **Save** to apply the plugin.
 
-On the **Create Service** page, You will need to fill out the **Name** and, after selecting the **Add using URL** option, the **URL** field. For this example, you can fill them out with the following values:
+Once applied, every request to your endpoints will require an API key for authentication.
 
-| Field     | Value                     |
-|-----------|---------------------------|
-| Name      | `HttpBin`                 |
-| URL       | `https://www.httpbin.org` |
-
-Once populated, click **Create** to create the service. After this, you’ll see your new services viewing page.
-
-Next, we will create a route that will expose this service. To do this, click on **Routes** in the left-side menu, which is also under the **API Gateway** section.
-
-On the **Routes** page, click on the **Create Route** button in the top-right corner of the screen to add the new route. On the **Create Route** screen, you’ll have a few values to fill out including the **Service, Name**, **Protocols**, **Method(s)**, and **Path(s)** fields on the screen. For this example, you can fill out these fields with the following values:
-
-| Field      | Value                            |
-|------------|----------------------------------|
-| Service    | The service you just created, `HttpBin` |
-| Name       | `TestService`                    |
-| Protocols  | `http, https`                    |
-| Method(s)  | `GET`                            |
-| Path(s)    | `/test-service`                  |
-
-Once populated, click **Create** to create the route. After this, you’ll see your new routes viewing page. With the endpoint creation complete, we can now move on to testing it to ensure it is configured correctly.
-
-### Testing the Endpoint
-
-To test your newly created endpoint, you’ll want to use a tool like [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/). Alternatively, you could also just use a browser at this point too. In your tool, add your endpoint URL which will look like `{PLUGIN_KONG_URL}:PORT/test-service/` and send a GET request. If you are running Kong in Docker and have set up the endpoint as shown above, your URL will look like `localhost:8000/test-service/`.
-
-After the request has been sent, you should see a `200 OK` response as well as a response body containing the HttpBin contents (essentially a webpage). With our endpoint working, now let’s move on to securing it with an API key.
-
-## Configure Gateway Authentication
-
-### Adding Key Auth to All Endpoints
-
-Since the Developer Portal generates API keys, is you must add and enable the **Key-Auth** plugin to our Kong endpoint. For simplicity, you can enable this plugin globally. If only you want to only apply **Key-Auth** to specific/monetized routes, you can do that as well.
-
-In the Kong Manager Dashboard, you can add the plugin by clicking **Plugins** in the left-side menu, under the **API Gateway** section. On the **Plugins** page, you’ll click the **New Plugin** button to add a new plugin. On the **Add New Plugin** screen, you’ll find the **Key-Authentication** plugin by scrolling or searching, once found, click **Enable**.
-
-On the **Create new key-auth plugin** screen, you’ll want to make sure that the **This plugin is Enabled** toggle is set to `on`, the **Global** radio button is selected, and that **Config.Key Names** field is set to `apikey`. By setting this to `apikey` we can pass a field of the same name in the header and include our API key as the value.
-
-Lastly, to save our plugin configuration, scroll down to the bottom of the screen and click **Create**. Now, our endpoint will be secured by the kay-auth plugin. To test it out, resend the request from earlier and you should get a `401 Unauthorized` response, and a message body stating `No API key found in request`. If you are not getting this response, please refer to the [Kong documentation for key-auth](https://docs.konghq.com/hub/kong-inc/key-auth/).
+For more details, refer to the [Kong Key Authentication Plugin documentation](https://docs.konghq.com/hub/kong-inc/key-auth/).
 
 ## Configure the Developer Portal
 
-### Configuring the .env File
+### Retrieving Values
 
-In the `my-dev-portal-api` project, for the `PLUGIN_KONG_URL`, you'll need to add in the URL of your Kong instance. Specifically the Kong admin API URL/port, not the gateway URL/port where traffic is proxied. If you’re running a local instance of Kong, by default this will be running on `http://localhost:8001`. If this is the case, you can leave the value as is. If it is different or running remotely, you can change the value to point to the correct URL/port.
+Log into Kong Konnect and navigate to the **Gateway Manager** select your control plane and take note of the following values under **About this Hybrid Control Plane**.
 
-### Kong Konnect
+1 `PLUGIN_KONG_URL`
+    - Locate the **Admin API** URL.
+    - Copy the value and add `/core-entities` to the URL.
+    - Use this value for `PLUGIN_KONG_URL`.
+2. `PLUGIN_KONNECT_API_URL`
+    - Locate the **Admin API** URL.
+    - Take note of the base URL - will look like `https://us.api.konghq.com`.
+    - Use this value for `PLUGIN_KONNECT_API_URL`.
+3. `PLUGIN_KONNECT_API_VERSION`
+    - Locate the **Admin API** URL.
+    - Take note of the version number in the URL - will look like `v2`.
+    - Use this value for `PLUGIN_KONNECT_API_VERSION`.
+4. `PLUGIN_KONNECT_RUNTIME_GROUP_NAME`
+    - Use the **Name** of the control plane.
+    - Use this value for `PLUGIN_KONNECT_RUNTIME_GROUP_NAME`. By default, this is `default`.
+5. `PLUGIN_KONNECT_PAT`
+    - Navigate to your **Profile** in the Konnect UI and select **Personal Access Tokens**.
+    - Generate a new token, providing a name and expiration date.
+    - Copy the token and paste it into `PLUGIN_KONNECT_PAT`.
 
-For Kong Konnect, the setup also requires you to add a few additional environment variables to the `my-dev-portal-api/.env` file. You'll want to add in the following key-values to the file:
+### Environment Variables for Node
 
-``` conf
+If you are standing up each service in the Moesif Developer Portal individually using Node/NPM - in the `my-dev-portal-api` project, add the following environment variables to the `.env` file:
+
+```shell
+PLUGIN_APIM_PROVIDER="Kong"
+PLUGIN_KONG_URL="{your-konnect-api-url}/{your-konnect-api-version}/control-planes/{your-control-plane-id}/core-entities"
 PLUGIN_KONNECT_API_URL="https://us.api.konghq.com"
 PLUGIN_KONNECT_API_VERSION="v2"
 PLUGIN_KONNECT_RUNTIME_GROUP_NAME="default"
 PLUGIN_KONNECT_PAT=""
 ```
 
-for the `PLUGIN_KONNECT_API_URL` and `PLUGIN_KONNECT_API_VERSION` values, you'll want to log into your Kong Konnect control plane and retrieve this. You can get this value by going to the **Gateway Manager** screen and selecting your control plane. In the next screen, you can grab the **Admin API** value (located in near the top of the screen) and truncate anything we don't need.
+Save the `.env` file to ensure the updated values are persisted.
 
-The raw value will look like this: `https://us.api.konghq.com/v2/control-planes/123-asd-etc`
+## Environment Variables for Docker
 
-From this, we can populate our values like so:
+If you are using the Docker Compose file included in the [Moesif Developer Portal repository](https://github.com/Moesif/moesif-developer-portal) or in the [Kong Konnect Docker Demo repository](https://github.com/Moesif/moesif-kong-konnect-docker-demo), add the following environment variables to the `docker-compose.yml` file:
 
-``` conf
-PLUGIN_KONNECT_API_URL="https://us.api.konghq.com"
-PLUGIN_KONNECT_API_VERSION="v2"
+```yaml
+dev-portal-api:
+  environment:
+    - PLUGIN_APIM_PROVIDER=Kong
+    - PLUGIN_KONG_URL={your-konnect-api-url}/{your-konnect-api-version}/control-planes/{your-control-plane-id}/core-entities
+    - PLUGIN_KONNECT_API_URL=https://us.api.konghq.com
+    - PLUGIN_KONNECT_API_VERSION=v2
+    - PLUGIN_KONNECT_RUNTIME_GROUP_NAME=
+    - PLUGIN_KONNECT_PAT=
 ```
 
-For the `PLUGIN_KONNECT_RUNTIME_GROUP_NAME`, you'll use your **Control Plane** name. By default, this will be fittingly named `default`.
-
-``` conf
-PLUGIN_KONNECT_RUNTIME_GROUP_NAME="default"
-```
-
-Lastly, we will generate a Konnect Personal Access Token. This can be done through the Konnect UI by going to your initials in the top-right of the screen and from the dropdown, selecting **Personal Access Tokens**.
-
-From here, click **Generate Token**, give the token a **Name** and **Expiration**, then click **Generate**. Paste the returned value into the `PLUGIN_KONNECT_PAT` value.
-
-```conf
-PLUGIN_KONNECT_PAT="kpat_FIZqQxICG6aEpA10nQ1TesTtEStTEST"
-```
-
-### Connecting Kong to Moesif
-
-The Moesif-Kong plugin makes it easy to get API call analytics funneled into Moesif. For instructions on how to do this, you can reference [our integration documentation](https://docs.konghq.com/hub/moesif/kong-plugin-moesif/) or a more in-depth step-by-step approach in [our integration guide](https://www.moesif.com/docs/guides/guide-kong-gateway-integration/).
-
-Once the Moesif-Kong integration and **key-auth** is been enabled, you should begin to see some API call metrics flowing into Moesif. You may also want to ensure that API calls are being blocked by the **key-auth** plugin in Kong for unauthenticated calls. When unauthorized calls are sent to Kong, the `401 Unauthorized` responses should also show up in Moesif.
+Save the `docker-compose.yml` file to ensure the updated values are persisted.
 
 ## Testing the Developer Portal
 
 Once the Developer portal is configured, testing out all of the moving parts of the Developer Portal is crucial. Doing this ensures that everything is working as intended. See our detailed testing process [here](https://www.moesif.com/docs/developer-portal/using-the-portal/).
 
-## Verifying Key Provisioning Functionality
+## Verifying Key Provisioning Functionality via Kong Konnect
 
-After configuring the rest of the developer portal you can verify Kong Konnect functionality after creating a key. In Kong, under **Consumers**, you should see your new user added. For this entry, you should also see the **custom_id** field with the Stripe customer ID as well (will resemble `cus_123abc`).
+After completing the developer portal configuration, you can verify Kong functionality and key provisioning using Kong Konnect.
+
+- In Kong Konnect, select **Gateway Manager** and then select your **Control Plane**.
+- Select **Consumers** on the left navigation pane.
+- You should see the `Username` and `Custom ID` associated with the user created in the Developer Portal.
+
+### Verify the `custom_id` Field
+
+Ensure that the consumer entry includes the `custom_id` field with the Stripe customer ID (e.g., `stripe_customer_ID`). This confirms that the user is successfully added, and key provisioning is functioning correctly.
