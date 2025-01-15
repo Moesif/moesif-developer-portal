@@ -86,7 +86,7 @@ The plugins are available in the `./plugins` directory of the repository. Instru
 
 ### Building Your Own Provisioning Plugin
 
-You can also implement your own logic to generate API keys. You just need to implement the [provisioningPlugin.js](https://github.com/Moesif/moesif-developer-portal/blob/main/plugins/provisioningPlugin.js) class. Once done, ensure the respective plugin is loaded in the portal API's [pluginLoader.js](https://github.com/Moesif/moesif-developer-portal/blob/main/my-dev-portal-api/config/pluginLoader.js)
+You can also implement your own logic to generate API keys. For more information, see [Build Your Own Key Provisioning Plugin](http://moesif.com/docs/developer-portal/setup-custom-provisioning/#build-your-own-key-provisioning-plugin).
 
 ## Running the Portal
 

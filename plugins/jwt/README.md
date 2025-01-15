@@ -1,8 +1,11 @@
-# Configuring JWT
+# Set up Custom Provisioning (JWT)
 
-The Moesif Developer Portal can be used with Json Web Tokens (JWT) to generate keys and display to customer to access your APIs. Any API gateway or framework that supports JWT can be used with this plugin including AWS API Gateway with a Lambda Authorizer along with most web frameworks. In order to identify the company or customer, a claim is added to the JWT. By default, this is `org_id` but can be changed.
+Moesif Developer Portal allows you to set up custom key provisioning for generating 
+API keys to control secure access to your APIs. It has built-in support for JWT tokens. 
 
-> A JWT is a bearer token and requires extra caution. You should either issue short-lived tokens or have a separate mechanism to revoke JWT in case leaked. Moesif [governance rules can be used to block tokens](https://www.moesif.com/features/api-governance-rules) automatically if you don't have this functionality.
+The following sections describe how to set up and use JWT as the custom key 
+provisioning system. See [Build Your Own Key Provisioning Plugin](#build-your-own-key-provisioning-plugin) 
+for instructions on how to set up your own key provisioning system.
 
 ## Configure the Developer Portal
 
@@ -12,11 +15,12 @@ In the `my-dev-portal-api` project, you'll need to set the following envvars in 
 
 |envvar name|description|
 |-----------|-----------|
-|PLUGIN_JWT_ALGORITHM|Algorithm to use for signing JWT|
+|PLUGIN_JWT_ALGORITHM|Algorithm to use for signing JWT. The developer portal supports `RS256` and `HS256` algorithms.|
 |PLUGIN_JWT_SECRET|Secret used for signing. Make sure to keep private and store in a robust key store.|
 |PLUGIN_JWT_USER_ID_FIELD|The field in the claims that contains user id. Defaults to "sub"|
 |PLUGIN_JWT_COMPANY_ID_FIELD|The field in the claims that contains company (customer) id. Defaults to "org_id"|
 |PLUGIN_JWT_EXPIRES_IN|How long JWT is valid. Can be a number in seconds or use shorthand like "30d"|
+|PLUGIN_JWT_KID|The key ID value of a JWT that uniquely identifies the JWT in a JWKS (JSON Web Key Set).|
 
 ### Configuring API gateway or app
 
@@ -31,3 +35,75 @@ Follow the [instructions here](https://docs.aws.amazon.com/apigateway/latest/dev
 2. Go to your newly created Lambda Authorizer in the AWS Console
 3. Under Code source, click the Upload from dropdown and select .zip file.
 4. Upload the zip `resources/aws-authorizer/authorizer.zip` to your newly created authorizer.
+
+## Build Your Own Key Provisioning Plugin
+If you want to implement your own provisioning system to generate API keys, implement the 
+[`ProvisioningPlugin` class](https://github.com/Moesif/moesif-developer-portal/blob/main/plugins/provisioningPlugin.js):
+
+```javascript
+/**
+ * Interface for ProvisioningPlugin
+ * @interface ProvisioningPlugin
+ */
+class ProvisioningPlugin {
+  
+    /**
+     * Unique slug to identify plugin such as "kong-konnect" or "auth0-jwt"
+     * @type {string}
+     */
+    slug;
+  
+    /**
+     * Get a user from the gateway or auth provider
+     * @param {string} customerId - The ID of the customer.
+     * @param {string} email - The email of the user.
+     * @returns {string} - The normalized user object.
+     */
+    getUser(customerId, email) {
+      throw new Error('Method not implemented.');
+    }
+    
+    /**
+     * Create a new user
+     * @param {string} customerId - The ID of the customer.
+     * @param {string} email - The email of the user.
+     * @param {string} subscriptionId - The billing subscription ID.
+     * @returns {string} - The normalized user object.
+     */
+    provisionUser(customerId, email, subscriptionId)  {
+      throw new Error('Method not implemented.');
+    }
+    
+    /**
+     * Create a new API Key
+     * @param {string} customerId - The ID of the customer.
+     * @param {string} email - The email of the user.
+     * @param {string} userId - The ID of the user.
+     * @returns {string} - The API key.
+     */
+    createApiKey(customerId, email) {
+      throw new Error('Method not implemented.');
+    }
+
+      /**
+     * Read config from envvars. Backwards Compatible with old envvar names
+     * @param {string} name - Name of the envvar
+     * @returns {string} - The envvar value.
+     */
+    getConfig(name) {
+      return process.env[name] || process.env[name.replace('PLUGIN_', '')]
+    }
+  }
+  
+  module.exports = {
+    ProvisioningPlugin,
+  };
+```
+
+Then make sure you load the plugin in developer 
+portal API's 
+[`pluginLoader.js`](https://github.com/Moesif/moesif-developer-portal/blob/main/my-dev-portal-api/config/pluginLoader.js) file.
+
+For an example implementation of the `ProvisioningPlugin` class, see 
+[its implementation for the JWT plugin](https://github.com/Moesif/moesif-developer-portal/blob/main/plugins/jwt/jwtProvisioningPlugin.js).
+
