@@ -33,7 +33,7 @@ class JwtProvisioningPlugin extends ProvisioningPlugin {
       const token = jwt.sign(payload, this.jwtSecret, { 
         algorithm: this.jwtAlgorithm,
         expiresIn: this.jwtExpiresIn,
-        keyid: this.jwtKid, 
+        ...(this.jwtKid && { keyid: this.jwtKid }), 
       });
 
       console.log(`Generated new JWT with claims ${JSON.stringify(this.jwtExpiresIn)}`)
