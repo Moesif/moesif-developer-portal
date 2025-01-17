@@ -17,10 +17,10 @@ In the `my-dev-portal-api` project, you'll need to set the following envvars in 
 |-----------|-----------|
 |PLUGIN_JWT_ALGORITHM|Algorithm to use for signing JWT. The developer portal supports `RS256` and `HS256` algorithms.|
 |PLUGIN_JWT_SECRET|Secret used for signing. Make sure to keep private and store in a robust key store.|
-|PLUGIN_JWT_USER_ID_FIELD|The field in the claims that contains user id. Defaults to "sub"|
-|PLUGIN_JWT_COMPANY_ID_FIELD|The field in the claims that contains company (customer) id. Defaults to "org_id"|
-|PLUGIN_JWT_EXPIRES_IN|How long JWT is valid. Can be a number in seconds or use shorthand like "30d"|
-|PLUGIN_JWT_KID|The key ID value of a JWT that uniquely identifies the JWT in a JWKS (JSON Web Key Set).|
+|PLUGIN_JWT_USER_ID_FIELD|The field in the claims that contains user id. Defaults to "sub".|
+|PLUGIN_JWT_COMPANY_ID_FIELD|The field in the claims that contains company (customer) id. Defaults to "org_id".|
+|PLUGIN_JWT_EXPIRES_IN|How long JWT is valid. Can be a number in seconds or use shorthand like "30d".|
+|PLUGIN_JWT_KID|The key ID value of a JWT that uniquely identifies the JWT in a JWKS (JSON Web Key Set). You must set this key for RS256-signed JWTs.|
 
 ### Configuring API gateway or app
 

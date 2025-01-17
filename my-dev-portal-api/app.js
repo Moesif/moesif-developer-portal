@@ -27,7 +27,7 @@ const {
   getUnifiedCustomerId,
   getUnifiedCustomerIdCached,
 } = require("./services/commonUtils");
-const { BillingProvider } = require("./services/BillingProvider");
+const { BillingProvider } = require("./services/billingProvider");
 
 const app = express();
 app.use(express.static(path.join(__dirname)));
