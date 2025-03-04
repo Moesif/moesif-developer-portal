@@ -4,14 +4,14 @@ The Moesif developer portal is an open-source app that you can deploy to provide
 
 As an open-source project, you can customize the brand and user experience to meet your requirements without fear of vendor lock-in.
 
+![Screenshot of Moesif Developer Portal](https://www.moesif.com/docs/images/docs/developer-portal/dev-portal-products-and-plans.png)
+
 ## Overview
 
 There are two main components
 
 - `my-dev-portal` is a React based frontend for customers to subscribe to APIs
 - `my-dev-portal-api` is a Node.js API to communicate with the Moesif APIs and Billing APIs in a secure environment.
-
-![Architecture Diagram of Moesif Developer Portal](https://raw.githubusercontent.com/Moesif/moesif-developer-portal/main/my-dev-portal/src/images/assets/dev-portal-architecture-diagram.svg)
 
 > As of December 2024, the Moesif developer portal is now Generally Available and ready for production use. If you are using an early version, we recommend merging the latest changes for production readiness.
 
@@ -44,6 +44,8 @@ Below are the currently supported solutions in the developer portal. They may be
 - AWS API Gateway
 - Kong
 - Tyk
+
+![Architecture Diagram of Moesif Developer Portal](https://raw.githubusercontent.com/Moesif/moesif-developer-portal/main/my-dev-portal/src/images/assets/dev-portal-architecture-diagram.svg)
 
 ## Prerequisites
 
