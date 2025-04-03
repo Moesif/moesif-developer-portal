@@ -22,7 +22,7 @@ Before going to production, you should confirm a few things:
 1. Ensure APIs are secured using HTTPS
 2. Ensuring all keys stored securely in a keystore
 3. Customize the CSS for your brand
-4. Check assumptions in the DATA-MODEL.md, if your data mapping needs is different, you may want to adjust the code according.
+4. Check assumptions in the DATA-MODEL.md, if your data mapping needs are different, you may want to adjust the code accordingly.
 
 ## Supported Solutions
 
