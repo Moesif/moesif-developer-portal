@@ -92,15 +92,6 @@ You can also implement your own logic to generate API keys. For more information
 
 ## Running the Portal
 
-There are two docker images available to run:
-
-- `moesif/dev-portal` runs the frontend
-- `moesif/dev-portal-api` runs the backend
-
-To run the docker examples, modify the envvars in `distribution/docker/docker-compose.yml` and then run it as:
-
-`docker-compose up -d`
-
 ### Source Code Layout
 
 Within the project, you will see two subfolders: `my-dev-portal` and `my-dev-portal-api`. For the project to work, both applications must be running.
@@ -145,9 +136,21 @@ Testing out all of the moving parts of the Developer Portal is crucial to making
 
 To start, navigate to your developer portal in the browser, and at the Home Screen of the Developer Portal click the **Sign Up** button in the top right. On the form that appears, create your user, select a product, and complete the checkout process, and then you should land in the **Dashboard** screen of the Developer Portal. At this point, you can confirm a few things that apply to your setup:
 
-## Building Docker Image
+## Running as a Docker Container
 
-You can deploy the two components (the frontend and the API) from the Docker images available.
+While not required, you can also run the portal as a Docker container. 
+There are two docker images available to run:
+
+- `moesif/dev-portal` runs the frontend
+- `moesif/dev-portal-api` runs the backend
+
+To run the docker examples, modify the envvars in `distribution/docker/docker-compose.yml` and then run it as:
+
+`docker-compose up -d`
+
+### Building Docker Image
+
+You can modify the source code and build your own Docker image if required. The two components (the frontend and the API) from the Docker images available.
 To build the Docker images:
 
 1. cd into `./distribution/docker`
