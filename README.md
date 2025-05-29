@@ -75,7 +75,7 @@ In order for new customers to purchase paid plans with a credit card, you must c
 
 ### 3. Configuring API Management or Provisioning Plugin
 
-Lastly, you'll need to configure a service to generate API keys. This enables new sign ups to access your APIs and meter their usage.
+You'll need to configure a service to generate API keys. This enables new sign ups to access your APIs and meter their usage.
 The developer portal has plugins for many different provisioning flows including popular API gateways like Kong along with standards like Json Web Tokens (JWT)
 
 The plugins are available in the `./plugins` directory of the repository. Instructions are below:
@@ -86,9 +86,16 @@ The plugins are available in the `./plugins` directory of the repository. Instru
 - [Configure Kong Konnect plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/kong-konnect) as the key provisioning service
 - [Configure Tyk plugin](https://github.com/Moesif/moesif-developer-portal/tree/main/plugins/tyk) as the key provisioning service
 
-### Building Your Own Provisioning Plugin
+#### Building Your Own Provisioning Plugin
 
 You can also implement your own logic to generate API keys. For more information, see [Build Your Own Key Provisioning Plugin](http://moesif.com/docs/developer-portal/setup-custom-provisioning/#build-your-own-key-provisioning-plugin).
+
+### 4. Configure Moesif Management APIs & Embedded Dashboards
+
+You will need to configure Moesif Management API to support getting synced plans/prices from Moesif, and embedded dashboards.
+
+- [Configure Moesif Management APIs](https://www.moesif.com/docs/developer-portal/configuring-the-management-api/)
+- [Configure the Embedded Dashboards](https://www.moesif.com/docs/developer-portal/configuring-the-dashboards/)
 
 ## Running the Portal
 
@@ -138,7 +145,7 @@ To start, navigate to your developer portal in the browser, and at the Home Scre
 
 ## Running as a Docker Container
 
-While not required, you can also run the portal as a Docker container. 
+While not required, you can also run the portal as a Docker container.
 There are two docker images available to run:
 
 - `moesif/dev-portal` runs the frontend
