@@ -73,11 +73,13 @@ app.post(
   async (req, res) => {
     const priceId = req.query?.price_id;
     const email = req.user?.email;
+    const quantity = req.query?.quantity || undefined;
 
     try {
       const session = await createStripeCheckoutSession(
         email,
         priceId,
+        quantity,
         req?.user
       );
       console.log("got session back from stripe session");

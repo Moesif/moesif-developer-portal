@@ -15,6 +15,19 @@ function MoesifPlans(props) {
   const { plans, plansLoading: loading, plansError: error } = usePlans();
 
   const getActionButton = (price, plan, options) => {
+    // Helper to determine if price needs quantity
+    const needsQuantity = (() => {
+      // Stripe price object: usage_type === 'metered' means do NOT include quantity
+      // For other pricing models, quantity is required
+      // If price has price_meter and pricing_model is 'per_unit' and no usage_type, treat as metered
+      if (price.usage_type === "metered") return false;
+      if (price.pricing_model === "per_unit" && price.price_meter) return false;
+      // Otherwise, quantity is needed
+      return true;
+    })();
+
+    const quantityParam = needsQuantity ? "&quantity=1" : "";
+
     if (options?.disable) {
       return (
         <button disabled className="button__price-action">
@@ -30,7 +43,7 @@ function MoesifPlans(props) {
         <Link
           to={`/checkout?price_id_to_purchase=${encodeURIComponent(
             price.id
-          )}&plan_id_to_purchase=${encodeURIComponent(plan?.id)}`}
+          )}&plan_id_to_purchase=${encodeURIComponent(plan?.id)}${quantityParam}`}
         >
           <button className="button__price-action">Select</button>
         </Link>
