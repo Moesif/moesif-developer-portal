@@ -6,12 +6,14 @@ import {
   EmbeddedCheckout,
 } from "@stripe/react-stripe-js";
 
-const stripePromise = loadStripe(import.meta.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = loadStripe(
+  import.meta.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
+);
 
 // used on embedded checkout example code:
 // https://docs.stripe.com/checkout/embedded/quickstart
 
-function StripeCheckoutForm({ priceId, user, idToken }) {
+function StripeCheckoutForm({ priceId, user, idToken, quantity }) {
   const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
@@ -24,7 +26,7 @@ function StripeCheckoutForm({ priceId, user, idToken }) {
         import.meta.env.REACT_APP_DEV_PORTAL_API_SERVER
       }/create-stripe-checkout-session?price_id=${priceId}&email=${encodeURIComponent(
         user?.email
-      )}`,
+      )}${quantity ? `&quantity=${quantity}` : ""}`,
       {
         method: "POST",
         headers: {
@@ -37,7 +39,7 @@ function StripeCheckoutForm({ priceId, user, idToken }) {
         console.log(JSON.stringify(data));
         setClientSecret(data.clientSecret);
       });
-  }, [priceId, user, idToken]);
+  }, [priceId, user, idToken, quantity]);
 
   return (
     <div id="checkout">

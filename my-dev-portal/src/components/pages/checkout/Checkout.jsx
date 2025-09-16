@@ -14,13 +14,15 @@ function Checkout(props) {
   const urlParams = new URLSearchParams(queryString);
   const urlPriceIdToPurchase = urlParams.get("price_id_to_purchase");
   const urlPlanIdToPurchase = urlParams.get("plan_id_to_purchase");
+  const urlQuantity = urlParams.get("quantity");
 
   useEffect(() => {
     window.moesif?.track("about-to-checkout", {
       price_id: urlPriceIdToPurchase,
       plan_id: urlPlanIdToPurchase,
+      quantity: urlQuantity,
     });
-  }, [urlPriceIdToPurchase, urlPlanIdToPurchase]);
+  }, [urlPriceIdToPurchase, urlPlanIdToPurchase, urlQuantity]);
 
   if (isLoading || !idToken) {
     return <PageLoader />;
@@ -46,6 +48,7 @@ function Checkout(props) {
           <StripeCheckoutForm
             key={urlPriceIdToPurchase}
             priceId={urlPriceIdToPurchase}
+            quantity={urlQuantity}
             user={user}
             idToken={idToken}
           />

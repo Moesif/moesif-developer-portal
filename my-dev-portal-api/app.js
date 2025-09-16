@@ -73,11 +73,19 @@ app.post(
   async (req, res) => {
     const priceId = req.query?.price_id;
     const email = req.user?.email;
+    const quantity = req.query?.quantity || undefined;
+
+    console.log(`create-stripe-checkout-session called for ${email} priceId ${priceId} quantity ${quantity}`);
+
+    if (!priceId) {
+      return res.status(400).json({ message: "price_id is required" });
+    }
 
     try {
       const session = await createStripeCheckoutSession(
         email,
         priceId,
+        quantity,
         req?.user
       );
       console.log("got session back from stripe session");
