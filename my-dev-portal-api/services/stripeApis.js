@@ -79,6 +79,12 @@ async function createStripeCheckoutSession(email, priceId, authUser) {
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
         price: priceId,
+        quantity: 1,
+        // It does not hurt to always include quantity in your Stripe Checkout Session, even for usage-based (metered) prices. Stripe will ignore the quantity for metered subscription prices, as actual usage is reported later via the API.
+        // In summary:
+        // For metered/usage-based prices, quantity is ignored at checkout.
+        // For flat prices and not-metered per-unit prices, quantity is required.
+        // Setting quantity to 1 for all prices is safe and recommended for simplicity.
       },
     ],
     customer: customerId,

@@ -275,7 +275,7 @@ app.post(
             email,
             stripe_subscription_id
           );
-          console.log(JSON.stringify(user));
+          console.log('provisioned user:', JSON.stringify(user));
         }
         // we still pass on result.
         console.log(JSON.stringify(stripeCheckOutSessionInfo));
