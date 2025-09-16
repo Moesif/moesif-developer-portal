@@ -90,6 +90,23 @@ import PriceTile from "../plans/PriceTile";
 //   },
 // ];
 
+/**
+ * Displays subscription details and associated plan/price information.
+ *
+ * Management of subscription (e.g., changing, downgrading, or canceling) is marked as TBI ("To Be Implemented").
+ * This is intentionally left for customers to implement themselves, as every business has unique policies regarding
+ * subscription management. For example, some businesses do not allow self-downgrade or self-cancellation, while others do.
+ * Rules around plan changes, eligibility for promotions, and upgrade/downgrade paths can vary widely. In addition, in
+ * case of multiple users under one subscription, the management actions may need to be restricted to certain users only.
+ *
+ * Because it is not feasible to cover every possible business use case in this open source project, we provide only a placeholder
+ * for the "Manage" action. Customers should implement subscription management according to their own business requirements.
+ *
+ * @param {Object} props
+ * @param {Object} props.sub - The subscription object containing details and items.
+ * @param {Array} props.plans - Array of available plans with pricing information.
+ * @returns {JSX.Element} Subscription display UI.
+ */
 function SubDisplay({ sub, plans }) {
   const items = sub?.items;
 
