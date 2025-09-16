@@ -79,7 +79,8 @@ async function createStripeCheckoutSession(email, priceId, quantity, authUser) {
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
         price: priceId,
-        quantity: quantity ? undefined : parseInt(quantity) || 1,
+        // for metered billing, do NOT include quantity
+        quantity: quantity ? parseInt(quantity) || 1 : undefined,
       },
     ],
     customer: customerId,

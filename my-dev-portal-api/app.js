@@ -75,6 +75,12 @@ app.post(
     const email = req.user?.email;
     const quantity = req.query?.quantity || undefined;
 
+    console.log(`create-stripe-checkout-session called for ${email} priceId ${priceId} quantity ${quantity}`);
+
+    if (!priceId) {
+      return res.status(400).json({ message: "price_id is required" });
+    }
+
     try {
       const session = await createStripeCheckoutSession(
         email,
