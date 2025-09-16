@@ -19,9 +19,10 @@ function MoesifPlans(props) {
     const needsQuantity = (() => {
       // Stripe price object: usage_type === 'metered' means do NOT include quantity
       // For other pricing models, quantity is required
-      // If price has price_meter and pricing_model is 'per_unit' and no usage_type, treat as metered
+      // If price has price meter or usage_aggregator, quantity is not needed
       if (price.usage_type === "metered") return false;
-      if (price.pricing_model === "per_unit" && price.price_meter) return false;
+      if (price.price_meter) return false;
+      if (price.usage_aggregator) return false;
       // Otherwise, quantity is needed
       return true;
     })();
