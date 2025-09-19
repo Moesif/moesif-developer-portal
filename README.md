@@ -69,9 +69,10 @@ In order for new customers to sign up, you must configure an identity provider. 
 
 ### 2. Configuring Billing Provider
 
-In order for new customers to purchase paid plans with a credit card, you must configure a billing provider. Currently, Stripe is the only supported billing provider. However, the portal can be modified for alternate checkout flows.
+In order for new customers to purchase paid plans with a credit card, you must configure a billing provider. Currently, Stripe is the only supported billing provider. However, the portal can be modified for alternate checkout flows for custom billing providers. 
 
 - [Configure Stripe as the billing provider](https://www.moesif.com/docs/developer-portal/configuring-stripe-as-a-billing-provider/)
+- [Configure a custom billing provider](https://www.moesif.com/docs/developer-portal/set-up-custom-billing-provider/)
 
 ### 3. Configuring API Management or Provisioning Plugin
 
