@@ -12,7 +12,7 @@
   "author": "",
   "license": " Apache-2.0",
   "dependencies": {
-    "@okta/okta-auth-js": "^7.8.1",
+    "@okta/okta-auth-js": "^7.13.1",
     "@okta/okta-sdk-nodejs": "^7.1.1",
     "@stripe/stripe-js": "^1.29.0",
     "body-parser": "^1.20.0",
