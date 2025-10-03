@@ -185,5 +185,5 @@ With all parts of the ecosystem working properly, the Moesif Developer Portal ca
 
 ## FAQ
 
-The Moesif Developer Portal is an open-source template provided to help you get started quickly. We offer this minimalist, foundational feature set because we recognize that beyond core API documentation, every company has unique requirements (e.g., custom user management, specific payment flows, unique branding).
+The Moesif Developer Portal is an open-source template provided to help you get started quickly. We offer this minimalist, foundational feature set because we recognize that beyond core integration of API Gatway & Moesif Usage Billing, every company has unique requirements (e.g., custom user management, specific payment flows, unique branding).
 The Moesif team will not be accepting requests for custom feature development or complex business logic implementation (such as multi-org management, user invitation systems, or third-party billing integrations other than placeholers within this repository or as part of our support scope. These features are intended to be implemented and maintained by your development team to ensure they align perfectly with your existing backend and business processes.
