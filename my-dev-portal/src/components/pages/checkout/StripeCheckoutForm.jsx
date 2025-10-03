@@ -18,7 +18,7 @@ function StripeCheckoutForm({ priceId, user, idToken, quantity }) {
 
   useEffect(() => {
     // Create a Checkout Session as soon as the page loads
-    if (!idToken) {
+    if (!idToken || !priceId || !user?.email) {
       return;
     }
     fetch(

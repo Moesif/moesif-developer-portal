@@ -133,7 +133,6 @@ function Return(props) {
       {
         stripe_session_id: sessionId,
         price_id: priceId,
-        status,
       }
     );
     if (isCustom && idToken) {
@@ -148,7 +147,7 @@ function Return(props) {
         setLoading,
         setProvisionError,
       });
-    } else {
+    } else if (!isCustom && idToken) {
       registerPurchaseStripe({
         sessionId,
         idToken,
@@ -158,7 +157,7 @@ function Return(props) {
         setProvisionError,
       });
     }
-  }, [sessionId, idToken, isCustom, status, user, priceId, planId]);
+  }, [sessionId, idToken, isCustom, user, priceId, planId]);
 
   if (status === "open") {
     return <Navigate to={`/checkout?price_id_to_purchase=${priceId}`} />;
