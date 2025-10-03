@@ -14,7 +14,7 @@
   "dependencies": {
     "@okta/okta-auth-js": "^7.13.1",
     "@okta/okta-sdk-nodejs": "^7.1.1",
-    "@stripe/stripe-js": "^1.29.0",
+    "@stripe/stripe-js": "^8.0.0",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "dev-portal-auth0-m2m-plugin": "file:../plugins/auth0-m2m",
@@ -31,7 +31,7 @@
     "moesif-nodejs": "^3.5.8",
     "node-fetch": "^2.6.5",
     "path": "^0.12.7",
-    "stripe": "^8.222.0"
+    "stripe": "^19.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
