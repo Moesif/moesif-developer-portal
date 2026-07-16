@@ -25,7 +25,11 @@ function Auth0Settings(props) {
 
   return (
     <PageLayout>
-      <h1>My Settings</h1>
+      <div className="page-heading">
+        <p className="page-eyebrow">Account</p>
+        <h1>Settings</h1>
+        <p>Manage your profile and billing details.</p>
+      </div>
       {isAuthenticated && user ? (
         <div className="container-box">
           <div className="user-profile">
@@ -36,7 +40,7 @@ function Auth0Settings(props) {
                 alt={user.name}
               />
             )}
-            <h1>{user.name}</h1>
+            <h2>{user.name}</h2>
           </div>
           <div>
             <button
@@ -53,27 +57,7 @@ function Auth0Settings(props) {
           <NoticeBox
             iconSrc={profileIcon}
             title="No Profile found"
-            description="There might have been an error"
-            actions={
-              <>
-                <a
-                  href="https://www.moesif.com/docs/developer-portal/developer-portal-overview/"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <button className="button button__link">See Docs</button>
-                </a>
-                <a
-                  href="https://www.moesif.com"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <button className="button button--outline-secondary">
-                    Go to Moesif
-                  </button>
-                </a>
-              </>
-            }
+            description="We could not load your profile. Please refresh the page or sign in again."
           />
         </div>
       )}

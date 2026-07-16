@@ -30,7 +30,7 @@ function formatNumberToHuman(input) {
 }
 
 function TierTable(props) {
-  const { tiers } = props;
+  const { tiers, currency } = props;
 
   // const exampleTiers = [
   //   {
@@ -85,7 +85,7 @@ function TierTable(props) {
         header: "/Unit",
         accessor: "unit_price_in_decimal",
         cell: ({ index, value, row }) => {
-          return formatPrice(value);
+          return formatPrice(value, currency);
         },
         justifyContent: "flex-end",
       },
@@ -109,7 +109,7 @@ function TierTable(props) {
         header: <span>Flat Fee</span>,
         accessor: "flat_price_in_decimal",
         cell: ({ index, value, row }) => {
-          return formatPrice(value);
+          return formatPrice(value, currency);
         },
         justifyContent: "flex-end",
         width: "60px",
@@ -122,7 +122,7 @@ function TierTable(props) {
         header: <span>Flat Fee</span>,
         accessor: "flat_price_in_decimal",
         cell: ({ index, value, row }) => {
-          return formatPrice(value);
+          return formatPrice(value, currency);
         },
         justifyContent: "flex-end",
       },
@@ -134,7 +134,7 @@ function TierTable(props) {
         header: "/Unit",
         accessor: "unit_price_in_decimal",
         cell: ({ index, value, row }) => {
-          return formatPrice(value);
+          return formatPrice(value, currency);
         },
         justifyContent: "flex-end",
       },
@@ -157,12 +157,12 @@ function PriceTile(props) {
           {price?.name || plan?.name || "Place Holder Plan"}
         </div>
         {price.tiers ? (
-          <TierTable tiers={price.tiers} />
+          <TierTable tiers={price.tiers} currency={price.currency} />
         ) : (
           <div className="single-price">
             <div>
               <span className="single-price--price">
-                {formatPrice(price.price_in_decimal)}
+                {formatPrice(price.price_in_decimal, price.currency)}
               </span>{" "}
               <span className="single-price--unit">
                 {price.pricing_model === "per_unit"

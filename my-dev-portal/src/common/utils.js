@@ -1,19 +1,19 @@
 import isNil from "lodash/isNil";
 
-export function formatPrice(priceInDecimal = 0) {
+export function formatPrice(priceInDecimal = 0, currency) {
   if (isNil(priceInDecimal)) {
     return "";
   }
 
-  const priceInDollars = Number(priceInDecimal) / 100;
+  const priceInMajorUnits = Number(priceInDecimal) / 100;
 
-  // Format the price as a currency string with up to 10 decimal places
-  return new Intl.NumberFormat("en-US", {
+  // Prices default to GBP; pass the price object's currency when available.
+  return new Intl.NumberFormat("en-GB", {
     style: "currency",
-    currency: "USD",
+    currency: (currency || "GBP").toUpperCase(),
     minimumFractionDigits: 0, // Minimum number of decimal places
     maximumFractionDigits: 10, // Maximum number of decimal places
-  }).format(priceInDollars);
+  }).format(priceInMajorUnits);
 }
 
 export function formatPeriod(periodUnits, period) {
@@ -48,44 +48,48 @@ export function formatIsoTimestamp(isoString) {
   }
 }
 
-let stripeCustomerCache = {};
+const portalContextCache = {};
 
 export async function moesifIdentifyUserFrontEndIfPossible(idToken, user) {
-  // we are using stripe customer id
-  // and as the user_id mapped to moesif users.
-  // See DATA_MODEL.md
   if (!window?.moesif || !idToken) {
     return;
   }
 
-  console.log(
-    "try to identifyUser for moesif using stripe customer id if exists"
-  );
-
-  if (import.meta.env.REACT_APP_PAYMENT_PROVIDER === "custom") {
-    return user?.sub || user?.user_id || user?.id;
-  }
-
-  if (stripeCustomerCache[idToken]) {
-    const stripeCustomerObject = stripeCustomerCache[idToken];
-    window.moesif.identifyUser(stripeCustomerObject.id, {
-      ...stripeCustomerObject,
-    });
-  } else {
-    fetch(`${import.meta.env.REACT_APP_DEV_PORTAL_API_SERVER}/stripe/customer`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((stripeCustomerObject) => {
-        if (stripeCustomerObject && stripeCustomerObject.id) {
-          window.moesif.identifyUser(stripeCustomerObject.id, {
-            ...stripeCustomerObject,
-          });
-          stripeCustomerCache[idToken] = stripeCustomerObject;
+  try {
+    let context = portalContextCache[idToken];
+    if (!context) {
+      const response = await fetch(
+        `${import.meta.env.REACT_APP_DEV_PORTAL_API_SERVER}/portal-context`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
         }
+      );
+      if (response.status === 404) {
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(`Portal context request failed (${response.status})`);
+      }
+      context = await response.json();
+      portalContextCache[idToken] = context;
+    }
+
+    window.moesif.identifyUser(context.moesif_user_id, {
+      email: context.email || user?.email,
+      auth0_user_id: context.auth0_user_id || user?.sub,
+      stripe_customer_id: context.stripe_customer_id,
+      company_id: context.moesif_company_id,
+    });
+    if (typeof window.moesif.identifyCompany === "function") {
+      window.moesif.identifyCompany(context.moesif_company_id, {
+        name: context.organization_name,
+        stripe_customer_id: context.stripe_customer_id,
       });
+    }
+  } catch (error) {
+    console.error("Failed to identify the canonical Moesif user", error);
   }
 }

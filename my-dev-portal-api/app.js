@@ -11,7 +11,16 @@ const {
   verifyStripeSession,
   getStripeCustomer,
   createStripeCheckoutSession,
+  updateStripeCustomerIdentity,
 } = require("./services/stripeApis");
+const {
+  provisionSnApiCustomer,
+  getSnApiPortalContext,
+  listSnApiKeys,
+  createSnApiKey,
+  revokeSnApiKey,
+  rotateSnApiKey,
+} = require("./services/snApiProvisioning");
 const {
   syncToMoesif,
   getInfoForEmbeddedWorkspaces,
@@ -63,13 +72,66 @@ const moesifMiddleware = moesif({
   identifyUser: function (req, _res) {
     return getUnifiedCustomerIdCached(req?.user);
   },
+  identifyCompany: function (req, _res) {
+    return req?.user?.moesif_company_id;
+  },
 });
 
 app.use(moesifMiddleware, cors());
 
+const PORTAL_CONTEXT_CACHE_TTL_MS = 5 * 60 * 1000;
+const portalContextCache = new Map();
+
+function applyPortalContext(req, context) {
+  req.portalContext = context;
+  req.user.moesif_user_id = context.moesif_user_id;
+  req.user.moesif_company_id = context.moesif_company_id;
+  req.user.sn_api_user_id = context.user_id;
+  req.user.sn_api_organization_id = context.organization_id;
+}
+
+function invalidatePortalContext(auth0UserId) {
+  if (auth0UserId) {
+    portalContextCache.delete(auth0UserId);
+  }
+}
+
+async function attachSnApiPortalContext(req, _res, next) {
+  const auth0UserId = req.user?.sub;
+  const cached = auth0UserId ? portalContextCache.get(auth0UserId) : undefined;
+
+  if (cached && Date.now() - cached.fetchedAt < PORTAL_CONTEXT_CACHE_TTL_MS) {
+    applyPortalContext(req, cached.context);
+    return next();
+  }
+
+  try {
+    const context = await getSnApiPortalContext(req.user);
+    portalContextCache.set(auth0UserId, { context, fetchedAt: Date.now() });
+    applyPortalContext(req, context);
+  } catch (error) {
+    if (error.status === 404) {
+      // Authentication can happen before checkout has provisioned the
+      // API account. Not cached so the context appears promptly once
+      // provisioning completes.
+      invalidatePortalContext(auth0UserId);
+    } else {
+      console.error("Failed to resolve SN API portal context:", error);
+      if (cached) {
+        // SN API is unavailable; serve the stale context rather than
+        // emitting anonymous Moesif events.
+        applyPortalContext(req, cached.context);
+      }
+    }
+  }
+  next();
+}
+
+const portalAuthMiddleware = [authMiddleware, attachSnApiPortalContext];
+
 app.post(
   "/create-stripe-checkout-session",
-  authMiddleware,
+  portalAuthMiddleware,
   async (req, res) => {
     const priceId = req.query?.price_id;
     const email = req.user?.email;
@@ -112,7 +174,7 @@ app.get("/plans", jsonParser, async (req, res) => {
     });
 });
 
-app.get("/subscriptions", authMiddleware, jsonParser, async (req, res) => {
+app.get("/subscriptions", portalAuthMiddleware, jsonParser, async (req, res) => {
   // But in this project, we get from Moesif, because
   // Moesif syncs subscriptions from several billing providers.
   // - from moesif, you can get a list of associated subscriptions
@@ -232,7 +294,7 @@ app.post("/okta/register", jsonParser, async (req, res) => {
 // - Please see DATA-MODEL.md see the assumptions and background on data mapping.
 app.post(
   "/register/stripe/:checkout_session_id",
-  authMiddleware,
+  portalAuthMiddleware,
   function (req, res) {
     const checkout_session_id = req.params.checkout_session_id;
 
@@ -240,50 +302,51 @@ app.post(
       .then(async (result) => {
         const stripeCheckOutSessionInfo = result;
         console.log("in stripe register");
+        if (result.status !== "complete") {
+          return res.status(409).json({ message: "Stripe checkout is not complete" });
+        }
         if (result.customer && result.subscription) {
           console.log("customer and subscription present");
-          const email = result.customer_details.email;
-          const stripe_customer_id = result.customer;
-          const stripe_subscription_id = result.subscription;
-          try {
-            if (
-              process.env.MOESIF_MONETIZATION_VERSION &&
-              process.env.MOESIF_MONETIZATION_VERSION.toUpperCase() === "V1"
-            ) {
-              console.log("updating company and user with V1");
-              // in v1, companyId and subscription id has one to one mapping.
-              syncToMoesif({
-                companyId: stripe_subscription_id,
-                subscriptionId: stripe_subscription_id,
-                userId: stripe_customer_id,
-                email: email,
-              });
-            }
-            // V2 as default
-            else {
-              console.log("updating company and user with V2");
-              // assume you have one user per subscription
-              // but if you have multiple users per each subscription
-              // please check out https://www.moesif.com/docs/getting-started/overview/
-              // for the different entities how they are related to each other.
-              syncToMoesif({
-                companyId: stripe_customer_id,
-                subscriptionId: stripe_subscription_id,
-                userId: stripe_customer_id,
-                email: email,
-              });
-            }
-          } catch (error) {
-            console.error("Error updating user/company/sub:", error);
-          }
-
-          // Provision new user for access to API
-          const user = await provisioningService.provisionUser(
-            stripe_customer_id,
-            email,
-            stripe_subscription_id
+          const email = result.customer_details?.email || result.customer.email;
+          const price = result.line_items?.data?.[0]?.price;
+          const provisionedCustomer = await provisionSnApiCustomer({
+            authUser: req.user,
+            customer: result.customer,
+            subscription: result.subscription,
+            price,
+            product: price?.product,
+          });
+          console.log("provisioned SN API customer:", JSON.stringify({
+            user_id: provisionedCustomer.user_id,
+            organization_id: provisionedCustomer.organization_id,
+            api_key_created: provisionedCustomer.api_key_created,
+          }));
+          req.user.moesif_user_id = String(provisionedCustomer.user_id);
+          req.user.moesif_company_id = String(
+            provisionedCustomer.moesif_company_id ||
+              provisionedCustomer.organization_id
           );
-          console.log('provisioned user:', JSON.stringify(user));
+          await updateStripeCustomerIdentity(result.customer.id, {
+            moesifUserId: req.user.moesif_user_id,
+            moesifCompanyId: req.user.moesif_company_id,
+            auth0UserId: req.user.sub,
+            subscriptionId: result.subscription.id,
+          });
+          syncToMoesif({
+            companyId: req.user.moesif_company_id,
+            userId: req.user.moesif_user_id,
+            email,
+            auth0UserId: req.user.sub,
+            stripeCustomerId: provisionedCustomer.stripe_customer_id,
+          });
+          // Drop any pre-provisioning cache entry so the next request
+          // fetches the full canonical context from the SN API.
+          invalidatePortalContext(req.user.sub);
+          stripeCheckOutSessionInfo.sn_api = {
+            user_id: provisionedCustomer.user_id,
+            organization_id: provisionedCustomer.organization_id,
+            api_key_created: provisionedCustomer.api_key_created,
+          };
         }
         // we still pass on result.
         console.log(JSON.stringify(stripeCheckOutSessionInfo));
@@ -306,7 +369,7 @@ app.post(
 // - provision the by calling API gateway plugin.
 app.post(
   "/register/custom",
-  authMiddleware,
+  portalAuthMiddleware,
   jsonParser,
   async function (req, res) {
     const customerId = await getUnifiedCustomerId(req.user);
@@ -354,7 +417,7 @@ app.post(
   }
 );
 
-app.get("/stripe/customer", authMiddleware, function (req, res) {
+app.get("/stripe/customer", portalAuthMiddleware, function (req, res) {
   const email = req.user?.email;
 
   getStripeCustomer(email)
@@ -373,36 +436,84 @@ app.get("/stripe/customer", authMiddleware, function (req, res) {
     });
 });
 
-app.post("/create-key", authMiddleware, jsonParser, async function (req, res) {
+app.get("/portal-context", portalAuthMiddleware, function (req, res) {
+  if (!req.portalContext) {
+    return res.status(404).json({
+      message: "Your API organization has not been provisioned yet.",
+    });
+  }
+  return res.status(200).json(req.portalContext);
+});
+
+function sendKeyManagementError(res, error) {
+  console.error("API key management error:", error);
+  res.status(error.status || 500).json({
+    message: error.message || "API key request failed",
+  });
+}
+
+app.get("/api-keys", portalAuthMiddleware, async function (req, res) {
   try {
-    // if authentication used, email can come from idToken claims,
-    // otherwise we use email from body.
-    const email = req.user?.email;
-
-    const customerId = await getUnifiedCustomerId(req.user, email);
-    if (!customerId) {
-      throw new Error(
-        `Customer Id unknown. Ensure you're subscribed to a plan. If you just subscribed, try again.`
-      );
-    }
-
-    // Provision new key for access to API
-    const apiKey = await provisioningService.createApiKey(customerId, email);
-    // Send the Tyk API key back as the response
-    res.status(200).send({ apikey: apiKey });
+    res.status(200).json(await listSnApiKeys(req.user));
   } catch (error) {
-    console.error("Error creating key:", error);
-    res.status(500).json({ message: "Failed to create key" });
+    sendKeyManagementError(res, error);
+  }
+});
+
+app.post("/api-keys", portalAuthMiddleware, jsonParser, async function (req, res) {
+  try {
+    res.status(201).json(
+      await createSnApiKey(req.user, {
+        name: req.body?.name,
+        description: req.body?.description,
+      })
+    );
+  } catch (error) {
+    sendKeyManagementError(res, error);
+  }
+});
+
+app.delete("/api-keys/:api_key_id", portalAuthMiddleware, async function (req, res) {
+  try {
+    await revokeSnApiKey(req.user, req.params.api_key_id);
+    res.status(204).send();
+  } catch (error) {
+    sendKeyManagementError(res, error);
+  }
+});
+
+app.post(
+  "/api-keys/:api_key_id/rotate",
+  portalAuthMiddleware,
+  async function (req, res) {
+    try {
+      res.status(200).json(
+        await rotateSnApiKey(req.user, req.params.api_key_id)
+      );
+    } catch (error) {
+      sendKeyManagementError(res, error);
+    }
+  }
+);
+
+app.post("/create-key", portalAuthMiddleware, jsonParser, async function (req, res) {
+  try {
+    const apiKey = await createSnApiKey(req.user, {
+      name: req.body?.name || "API key",
+      description: req.body?.description,
+    });
+    res.status(200).send({ apikey: apiKey.api_key });
+  } catch (error) {
+    sendKeyManagementError(res, error);
   }
 });
 
 app.get(
   "/embed-charts(/:authUserId)",
-  authMiddleware,
+  portalAuthMiddleware,
   async function (req, res) {
     // if authMiddleware is enabled, the data for user should come from the auth data.
     // otherwise use query param.
-    const authUserId = req.user?.sub;
     const email = req.user?.email;
 
     // depends your data model (see assumptions in DATA_MODEL.md),
@@ -411,10 +522,12 @@ app.get(
     // Perhaps, you have your own userId for your own system.
     // the most important aspect is the user_id used in your identifyUser hook
     try {
-      const customerId = await getUnifiedCustomerId(req.user, email);
-      if (!customerId) {
-        console.error("Customer Id not found when fetching for " + email);
-        return res.status(400).json({ message: "Customer Id not found. For Stripe billing provider, please purchase a plan first." });
+      const companyId = req.user?.moesif_company_id;
+      if (!companyId) {
+        console.error("Canonical company ID not found when fetching for " + email);
+        return res.status(400).json({
+          message: "Your API organization has not been provisioned yet.",
+        });
       }
 
       const embedInfoArray = await Promise.all(
@@ -422,7 +535,7 @@ app.get(
           (workspaceId) =>
             getInfoForEmbeddedWorkspaces({
               workspaceId: workspaceId,
-              userId: customerId,
+              companyId,
             })
         )
       );

@@ -15,7 +15,7 @@ const LogoutButtonWithOkta = () => {
 
   return (
     <button className="button__logout" onClick={handleLogout}>
-      Log Out
+      Log out
     </button>
   );
 };
@@ -37,7 +37,7 @@ const LogoutButtonWithAuth0 = () => {
 
   return (
     <button className="button__logout" onClick={handleLogout}>
-      Log Out
+      Log out
     </button>
   );
 };

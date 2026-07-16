@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 56px;
+  gap: 40px;
 
   min-height: 90vh;
   height: 100%;
@@ -10,8 +10,9 @@
 }
 
 .page-layout--home {
-  background-image: url('../../../images/assets/dev-portal-hero-bg@2x.png');
-  background-repeat: no-repeat;
+  background:
+    linear-gradient(180deg, rgba(220, 236, 230, 0.58) 0%, rgba(246, 247, 244, 0) 360px),
+    var(--overall-bg);
 }
 
 .page-layout > * {
@@ -25,20 +26,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 56px;
+  gap: 40px;
   width: 100%;
   white-space: pre-wrap;
-
-  a {
-    color: white;
-  }
-
-  a:hover {
-    color: white;
-    text-decoration: underline;
-    text-decoration-thickness: 1%;
-    text-underline-offset: 4px;
-  }
 
 }
 
@@ -49,9 +39,10 @@
 
 .page-layout__focus {
   background: var(--focus-bg);
+  border: 1px solid var(--border-subtle);
   padding: 3rem;
   width: 100%;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .page-layout__focus.dashboards {

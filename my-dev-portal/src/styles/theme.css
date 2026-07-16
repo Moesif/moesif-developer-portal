@@ -3,14 +3,14 @@
 /* Theme */
 
 :root {
-  --dark-theme-0: #272F34;
-  --dark-theme-1: #2D353A;
+  --dark-theme-0: #17221f;
+  --dark-theme-1: #22312d;
   --dark-theme-2: rgba(255, 255, 255, 0.1);
   --dark-theme-3: #5B676E;
   --dark-theme-4: #AAB4BD;
   --dark-theme-5: #D2DADE;
   --dark-theme-6: #FFFFFF;
-  --dark-background: #121212;
+  --dark-background: #f6f7f4;
 
   --light-theme-0: #FFFFFF;
   --light-theme-1: #FAFAFA;
@@ -21,7 +21,7 @@
   --light-theme-6: #272F34;
 
 
-  --orange: #ff4f00;
+  --orange: #166f5d;
   --indigo: #635dff;
   --white: #fff;
   --light-aluminium: #eaecee;
@@ -34,15 +34,23 @@
   --blue: #3885ff;
   --aqua: #3ec6eb;
   --emerald: #1bc99f;
-  --moesif-black: #272f34;
+  --moesif-black: #17221f;
 
-  --overall-bg: var(--dark-background);
-  --nav-bg: #121212;
-  --focus-bg: var(--dark-theme-0);
-  --button-outline: var(--dark-theme-5);
-  --body-text-color: var(--dark-theme-5);
-  --link-text-color: var(--dark-theme-5);
-  --link-hover-color: var(--dark-theme-4);
+  --overall-bg: #f6f7f4;
+  --nav-bg: #17221f;
+  --focus-bg: #ffffff;
+  --button-outline: #cdd8d2;
+  --body-text-color: #1d2925;
+  --muted-text-color: #687871;
+  --link-text-color: #166f5d;
+  --link-hover-color: #0e4f42;
+  --surface: #ffffff;
+  --surface-muted: #edf3ef;
+  --border-subtle: #dbe4df;
+  --accent: #166f5d;
+  --accent-dark: #0e4f42;
+  --accent-soft: #dcece6;
+  --warning-soft: #fff3d4;
 
   --yellow-mandarine-gradient: linear-gradient(
     153.07deg,
@@ -91,7 +99,7 @@
     var(--emerald) -2.47%,
     var(--yellow) 102.78%
   );
-  --font-primary: Roboto, system-ui, -apple-system, BlinkMacSystemFont,
+  --font-primary: Inter, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
     sans-serif;
   --font-secondary: "Space Grotesk", sans-serif;

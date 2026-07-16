@@ -1,17 +1,17 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import yourLogo from '../../../images/icons/your-logo.svg';
+import openOpportunitiesLogo from "../../../images/assets/open-opportunities-logo.png";
 
 export const MobileNavBarBrand = ({ handleClick }) => {
   return (
     <div onClick={handleClick} className="mobile-nav-bar__brand">
-      <NavLink to="/">
+      <NavLink className="mobile-nav-bar__brand-link" to="/">
         <img
-          className="mobile-nav-bar__logo"
-          src={yourLogo}
-          alt="Your logo"
-          height="24"
+          className="mobile-nav-bar__logo-full"
+          src={openOpportunitiesLogo}
+          alt="Open Opportunities"
         />
+        <span className="mobile-nav-bar__brand-text">Developer Portal</span>
       </NavLink>
     </div>
   );

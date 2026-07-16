@@ -1,15 +1,42 @@
 const StripeSDK = require("stripe");
 const stripe = StripeSDK(process.env.STRIPE_API_KEY);
 
-function verifyStripeSession(checkout_session_id) {
-  return fetch(
-    `https://api.stripe.com/v1/checkout/sessions/${checkout_session_id}`,
-    {
-      headers: {
-        Authorization: `bearer ${process.env.STRIPE_API_KEY}`,
-      },
-    }
-  ).then((res) => res.json());
+function verifyStripeSession(checkoutSessionId) {
+  return stripe.checkout.sessions.retrieve(checkoutSessionId, {
+    expand: ["customer", "subscription", "line_items.data.price.product"],
+  });
+}
+
+async function getActiveStripeSubscription(email, authUserId) {
+  const customers = await stripe.customers.search({
+    query: `email:"${email.replace(/"/g, "\\\"")}"`,
+    limit: 10,
+  });
+  const customer =
+    customers.data.find(
+      (candidate) => candidate.metadata?.authUserId === authUserId
+    ) || customers.data[0];
+  if (!customer) throw new Error("Stripe customer not found");
+
+  const subscriptions = await stripe.subscriptions.list({
+    customer: customer.id,
+    status: "all",
+    limit: 10,
+  });
+  const subscription = subscriptions.data.find((candidate) =>
+    ["active", "trialing", "past_due"].includes(candidate.status)
+  );
+  if (!subscription) throw new Error("Active Stripe subscription not found");
+
+  const price = subscription.items.data[0]?.price;
+  if (!price) throw new Error("Stripe subscription price not found");
+
+  const product =
+    typeof price.product === "string"
+      ? await stripe.products.retrieve(price.product)
+      : price.product;
+
+  return { customer, subscription, price, product };
 }
 
 function getStripeCustomer(email) {
@@ -91,10 +118,38 @@ async function createStripeCheckoutSession(email, priceId, quantity, authUser) {
   return session;
 }
 
+async function updateStripeCustomerIdentity(
+  customerId,
+  { moesifUserId, moesifCompanyId, auth0UserId, subscriptionId }
+) {
+  const metadata = {
+    moesif_user_id: String(moesifUserId),
+    moesif_company_id: String(moesifCompanyId),
+    sn_user_id: String(moesifUserId),
+    sn_organization_id: String(moesifCompanyId),
+    authUserId: auth0UserId,
+  };
+
+  const customer = await stripe.customers.update(customerId, { metadata });
+
+  // The subscription webhook fires before provisioning writes the customer
+  // metadata, so Moesif can process the subscription without a company
+  // mapping. Touching the subscription metadata afterwards emits
+  // customer.subscription.updated, making Moesif reprocess it with the
+  // mapping in place.
+  if (subscriptionId) {
+    await stripe.subscriptions.update(subscriptionId, { metadata });
+  }
+
+  return customer;
+}
+
 module.exports = {
   verifyStripeSession,
   createStripeCheckoutSession,
+  updateStripeCustomerIdentity,
   getStripeCustomer,
   getStripeCustomerId,
   getStripeCustomerIdFromCache,
+  getActiveStripeSubscription,
 };

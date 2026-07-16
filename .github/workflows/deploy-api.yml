@@ -1,0 +1,158 @@
+name: Deploy Developer Portal API
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+  push:
+    branches:
+      - develop
+      - staging
+      - main
+    paths:
+      - "my-dev-portal-api/**"
+      - "plugins/**"
+      - "distribution/docker/Dockerfile-dev-portal-api"
+      - ".github/workflows/deploy-api.yml"
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  DOCKERFILE: distribution/docker/Dockerfile-dev-portal-api
+  DOCKER_BUILD_CONTEXT: .
+  CONTAINER_NAME: ${{ vars.ECS_CONTAINER_NAME || 'portal-api' }}
+
+jobs:
+  resolve-environment:
+    name: Resolve environment
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.resolve.outputs.environment }}
+    steps:
+      - id: resolve
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          case "${{ github.ref_name }}" in
+            main)
+              echo "environment=production" >> "$GITHUB_OUTPUT"
+              ;;
+            staging)
+              echo "environment=staging" >> "$GITHUB_OUTPUT"
+              ;;
+            develop)
+              echo "environment=development" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Unsupported branch: ${{ github.ref_name }}" >&2
+              exit 1
+              ;;
+          esac
+
+  deploy:
+    name: Build, push, and deploy API
+    runs-on: ubuntu-latest
+    needs: resolve-environment
+    environment: ${{ needs.resolve-environment.outputs.environment }}
+    concurrency:
+      group: developer-portal-api-${{ needs.resolve-environment.outputs.environment }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Resolve ECR registry
+        id: login-ecr
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+          ECR_REGISTRY="${ACCOUNT_ID}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com"
+
+          aws ecr get-login-password --region "${{ vars.AWS_REGION }}" \
+            | docker login --username AWS --password-stdin "${ECR_REGISTRY}"
+
+          echo "registry=${ECR_REGISTRY}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push image
+        id: image
+        shell: bash
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          DEPLOY_ENV: ${{ needs.resolve-environment.outputs.environment }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${ECR_REPOSITORY}" ]; then
+            echo "ECR_REPOSITORY environment variable is not set." >&2
+            exit 1
+          fi
+
+          SHORT_SHA="${GITHUB_SHA::7}"
+          IMAGE_TAG="${DEPLOY_ENV}-${SHORT_SHA}"
+          IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
+          LATEST_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${DEPLOY_ENV}-latest"
+
+          docker build \
+            --file "${DOCKERFILE}" \
+            --tag "${IMAGE_URI}" \
+            --tag "${LATEST_URI}" \
+            "${DOCKER_BUILD_CONTEXT}"
+
+          docker push "${IMAGE_URI}"
+          docker push "${LATEST_URI}"
+
+          echo "image_uri=${IMAGE_URI}" >> "$GITHUB_OUTPUT"
+
+      - name: Download current task definition
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -z "${{ vars.ECS_TASK_DEFINITION_FAMILY }}" ]; then
+            echo "ECS_TASK_DEFINITION_FAMILY environment variable is not set." >&2
+            exit 1
+          fi
+
+          aws ecs describe-task-definition \
+            --task-definition "${{ vars.ECS_TASK_DEFINITION_FAMILY }}" \
+            --query taskDefinition \
+            > task-definition.json
+
+      - name: Render task definition
+        id: render-task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.image.outputs.image_uri }}
+
+      - name: Deploy task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
+          cluster: ${{ vars.ECS_CLUSTER }}
+          service: ${{ vars.ECS_SERVICE }}
+          wait-for-service-stability: false

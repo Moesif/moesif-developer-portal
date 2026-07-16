@@ -1,0 +1,74 @@
+.welcome-page {
+  display: flex;
+  flex-direction: column;
+  gap: 3.2rem;
+}
+
+.welcome-steps {
+  display: grid;
+  gap: 1.6rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .welcome-steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.welcome-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2.4rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.8rem;
+  background: var(--surface);
+}
+
+.welcome-step__number {
+  display: grid;
+  width: 3.2rem;
+  height: 3.2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.welcome-step h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.welcome-step p {
+  flex: 1;
+  margin: 0;
+  color: var(--muted-text-color);
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+.welcome-step__link {
+  align-self: flex-start;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+a.welcome-step__link {
+  color: var(--link-text-color);
+}
+
+a.welcome-step__link:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+}

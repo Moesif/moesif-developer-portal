@@ -29,12 +29,16 @@ function Checkout(props) {
   }
 
   if (!urlPriceIdToPurchase && !urlPlanIdToPurchase) {
-    <Navigate to="/plans" />;
+    return <Navigate replace to="/plans" />;
   }
 
   return (
     <PageLayout>
-      <h1>Subscribe</h1>
+      <div className="page-heading">
+        <p className="page-eyebrow">Billing</p>
+        <h1>Subscribe</h1>
+        <p>Complete your purchase to activate API access.</p>
+      </div>
       <div className="page-layout__focus">
         {import.meta.env.REACT_APP_PAYMENT_PROVIDER === "custom" ? (
           <CustomCheckoutForm

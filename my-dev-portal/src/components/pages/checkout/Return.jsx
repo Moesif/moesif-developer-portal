@@ -175,13 +175,6 @@ function Return(props) {
           description={`You are now subscribed to the plan and price. An email should be sent to ${customerEmail}`}
           actions={
             <>
-              <a
-                href="https://www.moesif.com/docs/developer-portal/"
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                <button className="button button__link">See Docs</button>
-              </a>
               <Link to="/keys" rel="noreferrer noopener">
                 <button className="button button--outline-secondary">
                   Get API Key
@@ -206,19 +199,11 @@ function Return(props) {
         title={provisionError ? "Provision Service Failed" : "Checkout Failed"}
         description={
           provisionError
-            ? provisionError.toString() +
-              " Please check the route /register/stripe/, and see if you set up provision plugin correctly for your API gateway."
+            ? "We could not finish setting up your access. Please try again shortly."
             : "Seems you didn't checkout successfully?"
         }
         actions={
           <>
-            <a
-              href="https://www.moesif.com/docs/developer-portal/"
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              <button className="button button__link">See Docs</button>
-            </a>
             <Link to="/plans" rel="noreferrer noopener">
               <button className="button button--outline-secondary">
                 Go to Plans

@@ -1,7 +1,20 @@
+.plans-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rem;
+  width: 100%;
+}
+
+.plans-section > * {
+  width: 100%;
+  max-width: 1200px;
+}
+
 .plans--container {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px; /* Space between tiles */
+  gap: 20px;
   align-items: stretch;
 }
 
@@ -11,13 +24,17 @@
   justify-content: space-between;
   height: 100%;
   border: 1px solid $border-color;
-  padding: 15px;
+  background: var(--surface);
+  padding: 20px;
   border-width: 1px;
-  border-radius: 10px;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(23, 34, 31, 0.05);
 }
 
 .plan--subscription-period {
-  font-size: xx-small;
+  color: var(--muted-text-color);
+  font-size: 1.2rem;
+  font-weight: 600;
   margin-bottom: 5px;
 }
 
@@ -35,22 +52,28 @@
   }
 
   .single-price--price {
-    font-size: x-large;
+    color: var(--body-text-color);
+    font-size: 3rem;
+    font-weight: 800;
   }
 
   .single-price--unit {
-    font-size: x-small;
+    color: var(--muted-text-color);
+    font-size: 1.2rem;
+    font-weight: 600;
   }
 }
 
 .price-name {
-  font-weight: 600;
+  color: var(--body-text-color);
+  font-weight: 800;
   margin-bottom: 5px;
 }
 
 .plan-period {
-  font-weight: 300;
-  font-size: medium;
+  color: var(--muted-text-color);
+  font-weight: 500;
+  font-size: 1.4rem;
   margin-bottom: 1em;
 }
 
@@ -78,33 +101,35 @@
 
 .plans-title-section {
   display: flex;
-  padding-bottom: 20px;
-  max-width: 600px;
+  padding-bottom: 0;
+  max-width: 720px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center horizontally */
-  justify-content: center; /* Center vertically */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 
   .plans-title {
-    font-size: 2em;
-    font-weight: 600;
-    padding: 0.5em;
+    color: var(--body-text-color);
+    font-size: 3.2rem;
+    font-weight: 800;
+    padding: 0 0 1rem;
   }
 
   .plans-hint {
     text-align: center;
-    font-size: 1.25em;
-    font-weight: 300;
+    font-size: 1.7rem;
+    font-weight: 400;
     color: $muted-text-color;
     transition: 0.9s ease-in;
 
     a {
-      color: white;
+      color: var(--link-text-color);
 
     }
 
     a:hover {
-      color: white;
+      color: var(--link-hover-color);
       text-decoration: underline;
       text-decoration-thickness: 1%;
       text-underline-offset: 4px;

@@ -29,7 +29,7 @@ export const MobileNavBarTabs = ({ handleClick }) => {
           />
           <MobileNavBarTab
             path="/dashboard"
-            label="Dashboard"
+            label="Usage"
             handleClick={handleClick}
           />
           <MobileNavBarTab

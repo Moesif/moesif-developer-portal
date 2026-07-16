@@ -6,45 +6,22 @@ function NoPriceFound(props) {
   return (
     <NoticeBox
       iconSrc={noPriceIcon}
-      title="No Prices Found"
+      title="No plans available"
       description={
         <>
-          Plan pricing options will appear here when you create stripe plans
-          using the{" "}
-          <a
-            href="https://www.moesif.com/docs/product-catalog/"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            Product Catalogue
-          </a>{" "}
-          feature in{" "}
-          <a
-            href="https://www.moesif.com"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            Moesif
-          </a>
-          . Sign in to get started.
+          Open Opportunities API pricing will appear here once active plans are
+          available for self-service checkout.
         </>
       }
       actions={
         <>
           <a
-            href="https://www.moesif.com/docs/product-catalog/"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            <button className="button button__link">See Docs</button>
-          </a>
-          <a
-            href="https://www.moesif.com"
+            href="https://openopps.com/api/"
             target="_blank"
             rel="noreferrer noopener"
           >
             <button className="button button--outline-secondary">
-              Go to Moesif
+              Learn more
             </button>
           </a>
         </>

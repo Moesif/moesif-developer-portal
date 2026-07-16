@@ -36,8 +36,8 @@ body {
 
 label {
   display: block;
-  color: #5b676e;
-  font-family: Roboto;
+  color: var(--muted-text-color);
+  font-family: var(--font-primary);
   font-size: 14px;
   font-style: normal;
   font-weight: 700;
@@ -57,8 +57,10 @@ h6 {
 }
 
 h1 {
-  font-size: 3rem;
-  font-weight: 500;
+  color: var(--body-text-color);
+  font-size: 3.2rem;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 h2 {
@@ -83,7 +85,9 @@ h6 {
 
 p {
   margin: 0 0 1.3rem;
-  font-weight: 300;
+  color: var(--muted-text-color);
+  font-weight: 400;
+  line-height: 1.65;
 }
 
 strong {
@@ -122,7 +126,7 @@ textarea {
 }
 
 a {
-  color: var(--body-text-color);
+  color: var(--link-text-color);
   text-decoration: none;
 }
 
@@ -146,7 +150,104 @@ pre {
 }
 
 code {
-  color: var(--emerald);
+  color: var(--accent);
+}
+
+.alert-error {
+  width: 100%;
+  max-width: 72rem;
+  padding: 1.2rem 1.4rem;
+  border: 1px solid #e3aaa3;
+  border-radius: 0.4rem;
+  color: #8b2c21;
+  background: #fff1ef;
+  font-size: 1.4rem;
+}
+
+.empty-state {
+  display: grid;
+  min-height: 28rem;
+  place-items: center;
+  align-content: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 3rem 2rem;
+  border: 1px dashed var(--button-outline);
+  border-radius: 0.6rem;
+  background: var(--surface);
+  text-align: center;
+}
+
+.empty-state > svg {
+  width: 4rem;
+  height: 4rem;
+}
+
+.empty-state h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.empty-state p {
+  max-width: 48rem;
+  margin: 0;
+  color: var(--muted-text-color);
+}
+
+.empty-state__hint {
+  font-size: 1.3rem;
+}
+
+.empty-state .button {
+  margin-top: 1rem;
+}
+
+.page-eyebrow,
+.hero-kicker {
+  margin: 0 0 1.2rem;
+  color: var(--accent);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.page-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.page-heading p {
+  max-width: 72rem;
+}
+
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 2rem;
+}
+
+.brand-lockup--body {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.brand-lockup img {
+  width: auto;
+  height: 4.2rem;
+}
+
+.brand-lockup--body img {
+  filter: invert(1) brightness(0.34) sepia(0.14) saturate(0.7) hue-rotate(104deg);
+}
+
+@media (max-width: 640px) {
+  .brand-lockup img {
+    height: 3.4rem;
+  }
 }
 
 #root {

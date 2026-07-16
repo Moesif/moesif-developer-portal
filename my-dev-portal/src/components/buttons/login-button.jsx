@@ -16,7 +16,7 @@ const LoginButtonWithOkta = ({ isLink }) => {
 
   return (
     <button className={className} onClick={handleLogin}>
-      Log In
+      Log in
     </button>
   );
 };
@@ -42,7 +42,7 @@ const LoginButtonWithAuth0 = ({ isLink }) => {
 
   return (
     <button className={className} onClick={handleLogin}>
-      Log In
+      Log in
     </button>
   );
 };

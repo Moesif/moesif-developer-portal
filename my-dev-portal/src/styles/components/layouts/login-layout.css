@@ -1,7 +1,48 @@
-.login-page h1 {
-  margin-bottom: 24px;
+.login-page {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
-.login-page h2 {
-  margin-bottom: 40px;
+.login-card {
+  width: 100%;
+  max-width: 64rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 24px 70px rgba(23, 34, 31, 0.09);
+  padding: 4rem;
+}
+
+.login-card h1 {
+  margin-bottom: 1.6rem;
+  font-size: 4rem;
+  font-weight: 800;
+}
+
+.login-card p {
+  font-size: 1.7rem;
+}
+
+.login-card__actions {
+  display: flex;
+  gap: 1.2rem;
+  margin: 2.8rem 0 1.6rem;
+}
+
+.login-card__hint {
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 2rem;
+  padding-top: 1.6rem;
+  font-size: 1.4rem !important;
+}
+
+@media (max-width: 640px) {
+  .login-card {
+    padding: 2.4rem;
+  }
+
+  .login-card h1 {
+    font-size: 3.2rem;
+  }
 }

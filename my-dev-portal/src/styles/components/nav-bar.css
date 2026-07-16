@@ -6,6 +6,8 @@
 
   z-index: 300;
   background-color: var(--nav-bg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
 }
 
 .nav-bar {
@@ -17,7 +19,7 @@
 
   /* responsive */
 
-  height: 80px;
+  height: 72px;
   max-width: 1200px;
 
   margin: 0;
@@ -35,14 +37,38 @@
 
   /* responsive */
 
-  margin-right: 64px;
+  margin-right: 48px;
 }
 
-.nav-bar__link {
+.nav-bar__link,
+.nav-bar__brand-link {
   display: flex;
   align-items: center;
 
   height: 100%;
+}
+
+.nav-bar__brand-link {
+  gap: 16px;
+  color: var(--white);
+}
+
+.nav-bar__brand-link:hover {
+  color: var(--white);
+  text-decoration: none;
+}
+
+.nav-bar__logo-full {
+  width: auto;
+  height: 34px;
+}
+
+.nav-bar__portal-label {
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+  padding-left: 16px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .nav-bar__logo {
@@ -66,6 +92,7 @@
   font-weight: 400;
   font-size: 16px;
   line-height: 16px;
+  color: rgba(255, 255, 255, 0.72);
   transition: background 0.1s ease-out, color 0.3s ease-out;
 }
 
@@ -74,9 +101,10 @@
 }
 
 .nav-bar__tab--active {
+  color: var(--white);
   text-decoration-line: underline;
   text-decoration-style: solid;
-  text-decoration-color: var(--white);
+  text-decoration-color: var(--accent);
 
   /* responsive */
 
@@ -92,7 +120,7 @@
 .nav-bar__tab--active:hover {
   text-decoration-line: underline;
   text-decoration-style: solid;
-  text-decoration-color: var(--orange);
+  text-decoration-color: var(--accent);
 
   /* responsive */
 
@@ -111,11 +139,11 @@
 
 @media only screen and (max-width: 640px) and (hover: none) {
   .mobile-nav-bar__tab:hover {
-    color: var(--white);
+    color: var(--accent);
   }
 
   .mobile-nav-bar__tab--active:hover {
-    color: var(--white);
+    color: var(--accent);
   }
 }
 
@@ -147,7 +175,7 @@
 
   .nav-bar__tab--active {
     text-decoration-line: none;
-    color: var(--pink);
+    color: var(--accent);
   }
 
   .nav-bar__label {
@@ -188,7 +216,7 @@
 
   .nav-bar__tab--active {
     text-decoration-line: none;
-    color: var(--pink);
+    color: var(--accent);
   }
 
   .nav-bar__buttons {

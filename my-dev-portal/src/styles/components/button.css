@@ -4,7 +4,7 @@ button {
 
 .button {
   border: 0;
-  border-radius: 0.8rem;
+  border-radius: 0.6rem;
 
   font-family: var(--font-primary);
   font-size: 1.4rem;
@@ -27,11 +27,12 @@ button {
 }
 
 .button--primary {
-  background-color: var(--orange);
+  background-color: var(--accent);
+  color: var(--white);
 }
 
 .button--primary:hover {
-  background: rgba(99, 93, 255, 0.85);
+  background: var(--accent-dark);
 }
 
 .button--secondary {
@@ -44,9 +45,9 @@ button {
 }
 
 .button--outline-secondary {
-  border: 1px solid #aab4bd;
-  color: #5b676e;
-  background-color: white;
+  border: 1px solid var(--button-outline);
+  color: var(--body-text-color);
+  background-color: var(--surface);
 }
 
 @media only screen and (max-width: 480px) {
@@ -75,10 +76,10 @@ button {
 .button__logout {
   min-width: 8.4rem;
 
-  border: 0.1rem solid var(--white);
-  color: var(--black);
-  background: var(--white);
-  width: 50%;
+  border: 0.1rem solid var(--accent);
+  color: var(--white);
+  background: var(--accent);
+  width: auto;
   font-size: 1.6rem;
 
   margin-right: 1.6rem;
@@ -88,7 +89,7 @@ button {
   font-weight: 600;
   line-height: 3.2rem;
   padding: 0.8rem 0;
-  border-radius: 0.8rem;
+  border-radius: 0.6rem;
   text-align: center;
 
   cursor: pointer;
@@ -102,8 +103,8 @@ button {
 }
 
 .button__purp {
-  background: var(--white);
-  color: var(--black);
+  background: var(--accent);
+  color: var(--white);
   width: 100%;
   border: unset;
 }
@@ -111,9 +112,9 @@ button {
 .button__sign-up {
   min-width: 8.4rem;
 
-  border: 0.1rem solid var(--white);
-  color: var(--white);
-  background-color: transparent;
+  border: 0.1rem solid var(--button-outline);
+  color: var(--body-text-color);
+  background-color: var(--surface);
   /* width: 50%; */
   font-size: 1.4rem;
 
@@ -123,7 +124,7 @@ button {
   font-weight: 500;
   line-height: 1.6rem;
   padding: 0.8rem 0;
-  border-radius: 0.8rem;
+  border-radius: 0.6rem;
   text-align: center;
 
   cursor: pointer;
@@ -132,7 +133,7 @@ button {
 }
 
 .button__sign-up:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--surface-muted);
 }
 
 .button__login:last-child,
@@ -154,7 +155,7 @@ button {
 
 .button__link {
   border: none;
-  color: inherit;
+  color: var(--link-text-color);
   padding-inline: 2px;
   width: fit-content;
   background-color: inherit;
@@ -162,15 +163,15 @@ button {
 }
 
 .button__link:hover {
-  color: white;
+  color: var(--link-hover-color);
 }
 
 .button__price-action {
   min-width: 8.4rem;
 
-  border: 1px solid var(--button-outline);
+  border: 1px solid var(--accent);
   color: var(--white);
-  background-color: transparent;
+  background-color: var(--accent);
   width: 100%;
   font-size: 1.6rem;
 
@@ -178,7 +179,7 @@ button {
   font-weight: 500;
   line-height: 3.2rem;
   padding: 0.3rem 0;
-  border-radius: 0.8rem;
+  border-radius: 0.6rem;
   text-align: center;
 
   cursor: pointer;
@@ -187,5 +188,23 @@ button {
 }
 
 .button__price-action:hover {
-  background: rgba(255, 255, 255, 0.10);
+  background: var(--accent-dark);
+}
+
+.button__price-action-note {
+  font-size: 1.1rem;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+.button:disabled,
+.button__price-action:disabled,
+.button__purp:disabled,
+.button__sign-up:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.button__price-action:disabled:hover {
+  background: var(--accent);
 }

@@ -19,7 +19,11 @@ function OktaSettings(props) {
   return (
     isAuthenticated && (
       <PageLayout>
-        <h1>Settings</h1>
+        <div className="page-heading">
+          <p className="page-eyebrow">Account</p>
+          <h1>Settings</h1>
+          <p>Manage your profile and billing details.</p>
+        </div>
         <div className="user-profile">
           {user.picture && (
             <img
@@ -28,7 +32,7 @@ function OktaSettings(props) {
               alt={user.name}
             />
           )}
-          <h1>{user.name || user.preferred_username}</h1>
+          <h2>{user.name || user.preferred_username}</h2>
         </div>
         <div className="page-layout__focus">
           <button

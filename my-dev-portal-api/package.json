@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "start-server": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "npm run install-plugins",

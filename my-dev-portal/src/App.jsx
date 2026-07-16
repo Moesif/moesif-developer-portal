@@ -12,12 +12,20 @@ import { AuthenticationGuard } from "./components/authentication-guard";
 import SignUp from "./components/pages/signup/SignUp";
 import RedirectToSignIn from "./components/pages/signup/OktaPostCreate";
 import Return from "./components/pages/checkout/Return";
-import Setup from "./components/pages/setup/Setup";
 import Plans from "./components/pages/plans/Plans";
 import Home from "./components/pages/home/Home";
 import Checkout from "./components/pages/checkout/Checkout";
 import Subscription from "./components/pages/subscription/Subscription";
+import Welcome from "./components/pages/welcome/Welcome";
 import { PageFooter } from "./components/page-footer";
+import { PageLoader } from "./components/page-loader";
+
+function Auth0HomeRoute() {
+  const { isAuthenticated, isLoading } = useAuth0();
+
+  if (isLoading) return <PageLoader />;
+  return isAuthenticated ? <Navigate replace to="/dashboard" /> : <Home />;
+}
 
 function App() {
   const { isAuthenticated } = useAuth0();
@@ -33,7 +41,6 @@ function App() {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="login/callback" element={<LoginCallback />} />
                 <Route path="/return" element={<Return />} />
-                <Route path="/setup" element={<Setup />} />
                 <Route path="/plans" element={<Plans />} />
                 <Route
                   path="login/oktapostcreate"
@@ -80,6 +87,14 @@ function App() {
                   }
                 />
                 <Route
+                  path="welcome"
+                  element={
+                    <SecureRoute>
+                      <Welcome />
+                    </SecureRoute>
+                  }
+                />
+                <Route
                   path="subscriptions"
                   element={
                     <SecureRoute>
@@ -112,7 +127,6 @@ function App() {
                   }
                 />
                 <Route path="/return" element={<Return />} />
-                <Route path="/setup" element={<Setup />} />
                 <Route path="/plans" element={<Plans />} />
                 <Route
                   path="/checkout"
@@ -133,6 +147,10 @@ function App() {
                 <Route
                   path="keys"
                   element={<AuthenticationGuard component={Keys} />}
+                />
+                <Route
+                  path="welcome"
+                  element={<AuthenticationGuard component={Welcome} />}
                 />
                 <Route
                   path="subscription"

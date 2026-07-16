@@ -16,7 +16,7 @@ const SignupButtonWithOkta = ({ isLink }) => {
 
   return (
     <button className={className} onClick={handleSignUp}>
-      Sign Up
+      Create account
     </button>
   );
 };
@@ -47,7 +47,7 @@ const SignupButtonWithAuth0 = ({ isLink, isPriceAction }) => {
 
   return (
     <button className={className} onClick={handleSignUp}>
-      Sign Up
+      Create account
     </button>
   );
 };

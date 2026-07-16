@@ -6,7 +6,7 @@ import useAuthCombined from "../../../hooks/useAuthCombined";
 import { PageLoader } from "../../page-loader";
 import { Link } from "react-router-dom";
 import usePlans from "../../../hooks/usePlans";
-import NoticeBox from "../../notice-box";
+import SVG from "react-inlinesvg";
 import noPriceIcon from "../../../images/icons/empty-state-price.svg";
 import SubDisplay from "./SubDisplay";
 
@@ -33,40 +33,33 @@ function Subscription(props) {
 
   return (
     <PageLayout>
-      <h1>My Current Subscriptions</h1>
-      {(!subscriptions || subscriptions.length <= 0) && (
-        <>
-          <NoticeBox
-            iconSrc={noPriceIcon}
-            title={subscriptionsError?.toString() || "No Subscription found"}
-            description={
-              <span>
-                If you just purchased a plan, please{" "}
-                <strong>wait at least 10 to 15 minutes</strong> for the systems
-                to sync.
-              </span>
-            }
-            actions={
-              <>
-                <a
-                  href="https://www.moesif.com/docs/product-catalog/"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <button className="button button__link">See Docs</button>
-                </a>
-                <Link
-                  to="/plans"
-                  rel="noreferrer noopener"
-                >
-                  <button className="button button--outline-secondary">
-                    Go to Plans
-                  </button>
-                </Link>
-              </>
-            }
-          />
-        </>
+      <div className="page-heading">
+        <p className="page-eyebrow">Billing</p>
+        <h1>Subscriptions</h1>
+        <p>Review your active plans and billing periods.</p>
+      </div>
+      {subscriptionsError && (
+        <div className="alert-error" role="alert">
+          We could not load your subscriptions. Please refresh the page or try
+          again shortly.
+        </div>
+      )}
+      {!subscriptionsError && (!subscriptions || subscriptions.length <= 0) && (
+        <div className="empty-state">
+          <SVG src={noPriceIcon} aria-hidden="true" />
+          <h2>No active subscription yet</h2>
+          <p>
+            Your account is ready. Choose a plan to activate API access, then
+            create a key and start making calls.
+          </p>
+          <p className="empty-state__hint">
+            Just checked out? New subscriptions can take a few minutes to
+            appear here.
+          </p>
+          <Link to="/plans">
+            <button className="button button--primary">View plans</button>
+          </Link>
+        </div>
       )}
       {subscriptions?.length > 0 && (
         <div className="plans--container">
@@ -75,12 +68,11 @@ function Subscription(props) {
           ))}
         </div>
       )}
-      <p className="text-muted">
-        Newly created subscriptions may take up to 10 to 15 minutes to sync. For
-        developers, if you want subscriptions to sync faster, you can locally
-        cache the subscription in your system. In this example project, there is
-        no local database or storage.
-      </p>
+      {subscriptions?.length > 0 && (
+        <p className="text-muted">
+          Recent changes to your plan can take a few minutes to appear here.
+        </p>
+      )}
     </PageLayout>
   );
 }
